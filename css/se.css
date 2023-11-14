@@ -1,5 +1,80 @@
 .container {
-    display: grid;
-    grid-template-columns: 2fr 1fr 1fr;
+
   }
-  
+
+/***********************************************************************************************************
+CSS pour le bandeau en haut de page
+*************************************************************************************************************/
+
+  .top_bar{
+    display: flexbox;
+  }
+
+
+/***********************************************************************************************************
+CSS pour les onglets
+*************************************************************************************************************/
+  .tabs { 
+    font-family: 'Lucida Sans', sans-serif;
+    font-size: 20px;
+}
+
+.tabs .tab-registers {
+    display: flex;
+    background-color: RGB(255, 255, 255);
+}
+
+
+.tabs button {
+    padding: 0.5em;
+    background-color: RGB(255, 255, 255);
+    border: none;
+    font: inherit;
+}
+
+.tabs .tab-registers button:hover {
+    cursor: pointer;
+}
+
+.tabs .tab-bodies {
+    padding: 0.5em;
+    background-color: RGB(235, 235, 235);
+    flex-grow: 1;
+    overflow-y: auto;
+}
+
+.tabs button.active-tab {
+    background-color: rgb(235, 235, 235);
+}
+
+
+/***********************************************************************************************************
+CSS l'accordeon panel
+*************************************************************************************************************/
+.tab{
+  display:block;
+}
+
+.accordion {
+  background-color: #eee;
+  color: #444;
+  cursor: pointer;
+  padding: 18px;
+  width: 100%;
+  border: none;
+  text-align: left;
+  outline: none;
+  font-size: 15px;
+  transition: 0.4s;
+}
+
+.active, .accordion:hover {
+  background-color: #ccc; 
+}
+
+.panel {
+  padding: 0 18px;
+  display: none;
+  background-color: white;
+  overflow: hidden;
+}
