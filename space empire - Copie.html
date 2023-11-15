@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head><!-- Commentaires html : Code non interprété par le navigateur Ici, nous sommes dans le head, la zone des métadonnées, des instructions 
+        qui s'adressent au serveur, au navigateur, au moteur de recherche -->
+  <title>Présentation de ma page en moins de 70 caractères</title>
+  <meta name="description" content="Mise en valeur de ma page en moins de 157 caractères.">
+  <meta charset="utf-8" />
+
+  <!-- Eléments non obligatoires-->
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="stylesheet" href="css/se.css">
+
+</head>
+
+<body>
+
+  <div class="container">
+    <div class="top_bar">
+      <label>Space Empire 4X V0.1</label>
+      <label id="numTour">1</label>
+      <button>Nouveau Tour</button>
+      <button>Reset Tour</button>
+
+    </div>
+    <div class="tabs">
+      <div class="tab-registers">
+        <button class="active-tab">Production</button>
+        <button>Mouvement</button>
+        <button>Historique</button>
+      </div>
+      <div class="tab-bodies">
+        <div class="tab" style="display:block;">
+          <button class="accordion">Economie</button>
+          <div class="panel">
+            <label >CP</label>
+            <button class="none">sdsd5</button><input id="colonie" type="number" value="20">
+          </div>
+
+          <button class="accordion">Technologie</button>
+          <div class="panel">
+            <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et
+              dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex
+              ea commodo consequat.</p>
+          </div>
+
+          <button class="accordion">Construction</button>
+          <div class="panel">
+            <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et
+              dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex
+              ea commodo consequat.</p>
+          </div>
+        </div>
+        <div style="display:none;">
+          Contenu Tab 2
+        </div>
+        <div style="display:none;">
+          Contenu Tab 3
+        </div>
+        <button>Historique</button>
+      </div>
+      <button>Historique</button>
+    </div>
+    <button>Historique</button>
+  </div>
+  <button>Historique</button>
+  <script src="js/se.js"></script>
+</body>
+
+</html>
