@@ -1,4 +1,3 @@
-
 /***********************************************************************************************************
 Gestion des onglets
 *************************************************************************************************************/
@@ -20,4 +19,53 @@ Array.from(document.querySelectorAll('.tabs')).forEach((tab_container, TabID) =>
 })
 })
 
-}}
+
+function changeBody(registers, bodies, activeRegister) {
+  Array.from(registers.children).forEach((el, i) => {
+      if (bodies.children[i]) {
+          bodies.children[i].style.display = el == activeRegister ? 'block' : 'none'
+      }
+
+      el.setAttribute('aria-expanded', el == activeRegister ? 'true' : 'false')
+  })
+}
+
+/***********************************************************************************************************
+gestion de l'accordeon panel
+*************************************************************************************************************/
+var acc = document.getElementsByClassName("accordion");
+var i;
+
+for (i = 0; i < acc.length; i++) {
+  acc[i].addEventListener("click", function() {
+    this.classList.toggle("active");
+    var panel = this.nextElementSibling;
+    if (panel.style.display === "block") {
+      panel.style.display = "none";
+    } else {
+      panel.style.display = "block";
+    }
+  });
+}
+
+/***********************************************************************************************************
+gestion des boutons PRODUCTION 
+*************************************************************************************************************/
+
+function modifValeurNum(id, valeur){
+    let nbre = document.getElementById(id);
+    nbre.value = parseInt(nbre.value) + valeur;
+    calculEconomie();
+}
+
+function calculEconomie(){
+  let report = parseInt(document.getElementById("report").value);
+  let cp = parseInt(document.getElementById("colonie").value);
+  let minerai = parseInt(document.getElementById('minerai').value);
+  let pipeline = parseInt(document.getElementById('pipeline').value);
+  let maint = parseInt(document.getElementById('maintenance').value);
+  let init = parseInt(document.getElementById('init').value);
+  let total = report + cp + minerai + pipeline - maint - init;
+
+  document.getElementById('bt_economie').innerHTML = "Economie <br>CP :  " + total+"("+total+")" + " - Maint : " + maint + " Init : "+init;
+}

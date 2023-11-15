@@ -1,13 +1,18 @@
 .container {
 
-  }
+}
+
+input{
+  width: 3em;
+}
 
 /***********************************************************************************************************
 CSS pour le bandeau en haut de page
 *************************************************************************************************************/
 
   .top_bar{
-    display: flexbox;
+    display: flex;
+    gap: 15px;
   }
 
 
@@ -25,14 +30,14 @@ CSS pour les onglets
 }
 
 
-.tabs button {
+.tabs > .tab-registers > button {
     padding: 0.5em;
     background-color: RGB(255, 255, 255);
     border: none;
     font: inherit;
 }
 
-.tabs .tab-registers button:hover {
+.tabs .tab-registers  button:hover {
     cursor: pointer;
 }
 
@@ -77,4 +82,19 @@ CSS l'accordeon panel
   display: none;
   background-color: white;
   overflow: hidden;
+}
+
+.body-accordeon{
+  display: flex;
+  flex-direction: column;
+  
+
+}
+
+.body-accordeon-row{
+  display: flex;
+  flex-direction: row;
+  
+  gap: 15px;
+  margin: 15px 0;
 }

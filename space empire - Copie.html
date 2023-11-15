@@ -30,24 +30,83 @@
         <button>Historique</button>
       </div>
       <div class="tab-bodies">
-        <div class="tab" style="display:block;">
-          <button class="accordion">Economie</button>
+        <div class="tab">
+          <button class="accordion" id="bt_economie">Economie</button>
           <div class="panel">
-            <label >CP</label>
-            <button class="none">sdsd5</button><input id="colonie" type="number" value="20">
-          </div>
 
+            <div class="body-accordeon">
+              
+              <div class="body-accordeon-row">
+                <label>Report Dernier tour</label>
+                <div>
+                  <input id="report" type="number" value="0" readonly>
+                </div>
+              </div>
+              <div class="body-accordeon-row">
+                <label>CP</label>
+                <div>
+                  <button class="none" onclick="modifValeurNum('colonie',-5)">-5</button>
+                  <button class="none" onclick="modifValeurNum('colonie',-3)">-3</button>
+                  <button class="none" onclick="modifValeurNum('colonie',-1)">-1</button>
+                  <input id="colonie" type="number" value="20" readonly>
+                  <button class="none" onclick="modifValeurNum('colonie',1)">+1</button>
+                  <button class="none" onclick="modifValeurNum('colonie',3)">+3</button>
+                  <button class="none" onclick="modifValeurNum('colonie',5)">+5</button>
+                </div>
+              </div>
+
+
+
+              <div class="body-accordeon-row">
+                <label>Minerai</label>
+                <div>
+                  <button class="none" onclick="modifValeurNum('minerai',-10)">-10</button>
+                  <button class="none" onclick="modifValeurNum('minerai',-5)">-5</button>
+                  <input id="minerai" type="number" value="0" readonly>
+                  <button class="none" onclick="modifValeurNum('minerai',5)">+5</button>
+                  <button class="none" onclick="modifValeurNum('minerai',10)">+10</button>
+                </div>
+              </div>
+              <div class="body-accordeon-row">
+                <label>MS Pipeline</label>
+                <div>
+                  <button class="none" onclick="modifValeurNum('pipeline',-1)">-1</button>
+                  <input id="pipeline" type="number" value="0" readonly>
+                  <button class="none" onclick="modifValeurNum('pipeline',1)">+1</button>
+                </div>
+              </div>
+              <div class="body-accordeon-row">
+                <label>Maintenance</label>
+                <div>
+                  <button class="none" onclick="modifValeurNum('maintenance',-1)">-1</button>
+                  <input id="maintenance" type="number" value="0" readonly>
+                  <button class="none" onclick="modifValeurNum('maintenance',1)">+1</button>
+                </div>
+              </div>
+              <div class="body-accordeon-row">
+                <label>Initiative</label>
+                <div>
+                  <button class="none" onclick="modifValeurNum('init',-1)">-1</button>
+                  <input id="init" type="number" value="0" readonly>
+                  <button class="none" onclick="modifValeurNum('init',1)">+1</button>
+                </div>
+              </div>
+            </div>
+
+          </div>
           <button class="accordion">Technologie</button>
           <div class="panel">
             <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et
-              dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex
+              dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip
+              ex
               ea commodo consequat.</p>
           </div>
 
           <button class="accordion">Construction</button>
           <div class="panel">
             <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et
-              dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex
+              dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip
+              ex
               ea commodo consequat.</p>
           </div>
         </div>
@@ -57,14 +116,12 @@
         <div style="display:none;">
           Contenu Tab 3
         </div>
-        <button>Historique</button>
+
       </div>
-      <button>Historique</button>
     </div>
-    <button>Historique</button>
-  </div>
-  <button>Historique</button>
-  <script src="js/se.js"></script>
+
+
+    <script src="js/se.js"></script>
 </body>
 
 </html>
