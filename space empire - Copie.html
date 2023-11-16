@@ -9,6 +9,7 @@
 
   <!-- Eléments non obligatoires-->
   <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="stylesheet" href="css/reset.css">
   <link rel="stylesheet" href="css/se.css">
 
 </head>
@@ -35,7 +36,7 @@
           <div class="panel">
 
             <div class="body-accordeon">
-              
+
               <div class="body-accordeon-row">
                 <label>Report Dernier tour</label>
                 <div>
@@ -43,7 +44,7 @@
                 </div>
               </div>
               <div class="body-accordeon-row">
-                <label>CP</label>
+                <label title="Revenus de toutes les colonies, planète mère incluse">CP</label>
                 <div>
                   <button class="none" onclick="modifValeurNum('colonie',-5)">-5</button>
                   <button class="none" onclick="modifValeurNum('colonie',-3)">-3</button>
@@ -96,10 +97,12 @@
           </div>
           <button class="accordion">Technologie</button>
           <div class="panel">
-            <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et
-              dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip
-              ex
-              ea commodo consequat.</p>
+            <div class="body-accordeon">
+              <div class="body-accordeon-row" id="tech-template">
+                <!-- Les technologies sont ajoutées dynamiquement en js en remplaçant cette div "template" qui 
+                      ne sert juste que de point d'ancrage initial-->
+              </div>
+            </div>
           </div>
 
           <button class="accordion">Construction</button>

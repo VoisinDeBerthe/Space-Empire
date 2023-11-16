@@ -1,4 +1,5 @@
 .container {
+  font-size: 1rem;
 
 }
 
@@ -21,7 +22,7 @@ CSS pour les onglets
 *************************************************************************************************************/
   .tabs { 
     font-family: 'Lucida Sans', sans-serif;
-    font-size: 20px;
+    font-size: 1.2rem;
 }
 
 .tabs .tab-registers {
@@ -93,8 +94,28 @@ CSS l'accordeon panel
 
 .body-accordeon-row{
   display: flex;
-  flex-direction: row;
-  
-  gap: 15px;
-  margin: 15px 0;
+  font-size: 1rem;
+  gap: 5px;
+  margin: 10px 0;
+}
+
+.not-visible{
+  display: none;
+}
+
+.body-accordeon-row > p{
+  margin:0;
+}
+
+.body-accordeon-row > button{
+  font-size: 0.8rem;
+}
+
+.body-accordeon-row > .label-tech{
+  background-color: darksalmon;
+}
+
+.indice{
+  font-size: 0.5rem;
+  vertical-align : sub;
 }
