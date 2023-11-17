@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head><!-- Commentaires html : Code non interprété par le navigateur Ici, nous sommes dans le head, la zone des métadonnées, des instructions 
+        qui s'adressent au serveur, au navigateur, au moteur de recherche -->
+  <title>Space Empire 4X</title>
+  <meta name="description" content="POC pour aide de jeu Space Empire 4X">
+  <meta charset="utf-8" />
+
+  <!-- Eléments non obligatoires-->
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="stylesheet" href="css/reset.css">
+  <link rel="stylesheet" href="css/se.css">
+
+</head>
+
+<body>
+
+  <div class="container">
+    <div class="top_bar">
+      <label>Space Empire 4X V0.1</label>
+      <label id="numTour">1</label>
+      <button>Nouveau Tour</button>
+      <button>Reset Tour</button>
+
+    </div>
+    <div class="tabs">
+      <div class="tab-registers">
+        <button class="active-tab">Production</button>
+        <button>Mouvement</button>
+        <button>Historique</button>
+      </div>
+      <div class="tab-bodies">
+        <div class="tab">
+          <button class="accordion" id="bt_economie">Economie</button>
+          <div class="panel">
+
+            <div class="body-accordeon">
+
+              <div class="body-accordeon-row">
+                <label>Report Dernier tour</label>
+                <div>
+                  <input id="report" type="number" value="0" readonly>
+                </div>
+              </div>
+              <div class="body-accordeon-row">
+                <label title="Revenus de toutes les colonies, planète mère incluse">CP</label>
+                <div>
+                  <button class="none" onclick="modifValeurNum('colonie',-5)">-5</button>
+                  <button class="none" onclick="modifValeurNum('colonie',-3)">-3</button>
+                  <button class="none" onclick="modifValeurNum('colonie',-1)">-1</button>
+                  <input id="colonie" type="number" value="20" readonly>
+                  <button class="none" onclick="modifValeurNum('colonie',1)">+1</button>
+                  <button class="none" onclick="modifValeurNum('colonie',3)">+3</button>
+                  <button class="none" onclick="modifValeurNum('colonie',5)">+5</button>
+                </div>
+              </div>
+
+
+
+              <div class="body-accordeon-row">
+                <label>Minerai</label>
+                <div>
+                  <button class="none" onclick="modifValeurNum('minerai',-10)">-10</button>
+                  <button class="none" onclick="modifValeurNum('minerai',-5)">-5</button>
+                  <input id="minerai" type="number" value="0" readonly>
+                  <button class="none" onclick="modifValeurNum('minerai',5)">+5</button>
+                  <button class="none" onclick="modifValeurNum('minerai',10)">+10</button>
+                </div>
+              </div>
+              <div class="body-accordeon-row">
+                <label>MS Pipeline</label>
+                <div>
+                  <button class="none" onclick="modifValeurNum('pipeline',-1)">-1</button>
+                  <input id="pipeline" type="number" value="0" readonly>
+                  <button class="none" onclick="modifValeurNum('pipeline',1)">+1</button>
+                </div>
+              </div>
+              <div class="body-accordeon-row">
+                <label>Maintenance</label>
+                <div>
+                  <button class="none" onclick="modifValeurNum('maintenance',-1)">-1</button>
+                  <input id="maintenance" type="number" value="0" readonly>
+                  <button class="none" onclick="modifValeurNum('maintenance',1)">+1</button>
+                </div>
+              </div>
+              <div class="body-accordeon-row">
+                <label>Initiative</label>
+                <div>
+                  <button class="none" onclick="modifValeurNum('init',-1)">-1</button>
+                  <input id="init" type="number" value="0" readonly>
+                  <button class="none" onclick="modifValeurNum('init',1)">+1</button>
+                </div>
+              </div>
+            </div>
+
+          </div>
+          <button class="accordion"  id="bt_technologie">Technologie</button>
+          <div class="panel">
+            <div class="body-accordeon">
+              <div class="body-accordeon-row" id="tech-template">
+                <!-- Les technologies sont ajoutées dynamiquement en js en remplaçant cette div "template" qui 
+                      ne sert juste que de point d'ancrage initial-->
+              </div>
+            </div>
+          </div>
+
+          <button class="accordion" id="bt_construction">Construction</button>
+          <div class="panel">
+            <div class="body-accordeon">
+              <div class="body-accordeon-row">
+                <p>SC - Scout <span class="indice">6</span></p> 
+                <button> - </button> 
+                <button> + </button> 
+                <label>2</label>
+                <label>(5)</label>
+              </div>
+              <div class="body-accordeon-row" id="construct-template">
+                <!-- Les technologies sont ajoutées dynamiquement en js en remplaçant cette div "template" qui 
+                      ne sert juste que de point d'ancrage initial-->
+              </div>
+            </div>
+          </div>
+        </div>
+        <div style="display:none;">
+          Contenu Tab 2
+        </div>
+        <div style="display:none;">
+          Contenu Tab 3
+        </div>
+
+      </div>
+    </div>
+
+
+    <script src="js/se.js"></script>
+</body>
+
+</html>
