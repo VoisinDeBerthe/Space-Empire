@@ -45,7 +45,7 @@ for (let index = 0; index < dataConstructionBase.length; index++) {
 }
 
 //construction de départ
-constructionTotal[getIdConstruction('SY')] = 4;
+constructionTotal[getIdConstruction('SY')] = 5;
 constructionTotal[getIdConstruction('CO')] = 3;
 constructionTotal[getIdConstruction('SC')] = 3;
 constructionTotal[getIdConstruction('Mi')] = 1;
@@ -414,7 +414,7 @@ function getHullCapacity() {
       resultat = resultat * 2;
       break;
     case 2:
-      resultat = qteSY * 1.5
+      resultat = resultat * 1.5
       break;
     default: // level 1 pas de facteur multiplicateur
   }
