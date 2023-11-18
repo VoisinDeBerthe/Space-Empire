@@ -76,24 +76,18 @@ dataTechnoBase.forEach((el, i) => {
   let div = document.createElement('div');
   div.setAttribute('class', 'tab-techno');
 
-  let button = document.createElement("button");
-  button.textContent = '+';
-  button.setAttribute("id", el.tech + "_plus");
+  let button = createButton(el.tech + "_plus","bt","fa fa-plus");
   button.addEventListener('click', function () { modifNivTech(idNewLineTech, 'plus') });
   if (el.researched == 1) {
     button.setAttribute("class", "not-visible");
   }
-  button.setAttribute("class", "bt");
   div.appendChild(button);
 
-  button = document.createElement("button");
-  button.textContent = '-';
-  button.setAttribute("id", el.tech + "_moins");
+  button = createButton(el.tech + "_moins","bt","fa fa-minus");
   button.addEventListener('click', function () { modifNivTech(idNewLineTech, 'moins') });
   if (el.researched == 0) {
     button.setAttribute("class", "not-visible");
   }
-  button.setAttribute("class", "bt");
   div.appendChild(button);
 
   //on ajoute la div avec les deux boutons à la ligne de tech en cours
@@ -461,25 +455,19 @@ function majConstrucDispo() {
       construct.setAttribute("class", "libelle");
       newLineConstruct.appendChild(construct);
 
-      button = document.createElement("button");
-      button.textContent = '-';
-      button.setAttribute("id", el.construction + "_moins");
+      button = createButton(el.construction + "_moins","bt-moins","fa fa-minus");
       button.addEventListener('click', function () { modifConstruction(idNewLineConstruct, 'moins') });
       if (constructionTour[i] == 0) {
         button.setAttribute("disabled", true);
       }
-      button.setAttribute("class", "bt-moins");
       newLineConstruct.appendChild(button);
 
 
-      button = document.createElement("button");
-      button.textContent = '+';
-      button.setAttribute("id", el.construction + "_plus");
+      button = createButton(el.construction + "_plus","bt-plus","fa fa-plus");
       button.addEventListener('click', function () { modifConstruction(idNewLineConstruct, 'plus') });
       if (constructionTour[i] + constructionTotal[i] == el.maxUnit && el.maxUnit != 0) {
         button.setAttribute("disabled", true);
       }
-      button.setAttribute("class", "bt-plus");
       newLineConstruct.appendChild(button);
 
       label = document.createElement("label");
@@ -502,3 +490,22 @@ function majConstrucDispo() {
   })
 
 }
+/**
+ * 
+ * @param {String} id : identifiant du bouton
+ * @param {String} classes : class attribuées au bouton, séparées par une virgule
+ * @param {String} icon : identifiant de l'icone font awesome
+ * @returns renvoie le bouton créé, prêt à être attaché au DOM
+ */
+      function createButton(id,classes,icon){
+        let b = document.createElement("button");
+        b.setAttribute("class",classes);
+        b.setAttribute("id",id);
+
+        let i = document.createElement("i");
+        i.setAttribute("class",icon);
+
+        b.appendChild(i);
+
+        return b;
+      }
