@@ -13,20 +13,20 @@ const dataTechnoBase = [
 ]
   ;
 
-  const dataConstructionBase = [
-    { id: 0, construction: "SC", requiredSS: 1, libelle: "Scout", hull: 1, cost : 6, maint : 1 , maxUnit : 36, upgradable : 1},
-    { id: 1, construction: "DD", requiredSS: 2, libelle: "Destroyer", hull: 1, cost : 9, maint : 1 , maxUnit : 36, upgradable : 1},
-    { id: 2, construction: "CA", requiredSS: 3, libelle: "Cruiser", hull: 2, cost : 12, maint : 2 , maxUnit : 36, upgradable : 1},
-    { id: 3, construction: "BC", requiredSS: 4, libelle: "Battle Cruiser", hull: 2, cost : 15, maint : 2 , maxUnit : 36, upgradable : 1},
-    { id: 4, construction: "BB", requiredSS: 5, libelle: "BattleShip", hull: 3, cost : 20, maint : 3 , maxUnit : 36, upgradable : 1},
-    { id: 5, construction: "DN", requiredSS: 6, libelle: "Dreadnaught", hull: 3, cost : 24, maint : 3 , maxUnit : 36, upgradable : 1},
-    { id: 6, construction: "CO", requiredSS: 1, libelle: "Colony Ship", hull: 1, cost : 12, maint : 0 , maxUnit : 0, upgradable : 0},
-    { id: 7, construction: "Ba", requiredSS: 1, libelle: "Base", hull: 3, cost : 12, maint : 0 , maxUnit : 4, upgradable : 0},
-    { id: 8, construction: "Mi", requiredSS: 1, libelle: "Miner", hull: 1, cost : 5, maint : 0 , maxUnit : 0, upgradable : 1},
-    { id: 9, construction: "De", requiredSS: 1, libelle: "Decoy", hull: 0, cost : 1, maint : 0 , maxUnit : 4, upgradable : 1},
-    { id: 10, construction: "SY", requiredSS: 1, libelle: "Ship Yard", hull: 1, cost : 6, maint : 0 , maxUnit : 36, upgradable : 0}
-  ]
-    ;
+const dataConstructionBase = [
+  { id: 0, construction: "SC", requiredTech: [[0,1]], libelle: "Scout", hull: 1, cost: 6, maint: 1, maxUnit: 36, upgradable: 1 },
+  { id: 1, construction: "DD", requiredTech: [[0,2]], libelle: "Destroyer", hull: 1, cost: 9, maint: 1, maxUnit: 36, upgradable: 1 },
+  { id: 2, construction: "CA", requiredTech: [[0,3]], libelle: "Cruiser", hull: 2, cost: 12, maint: 2, maxUnit: 36, upgradable: 1 },
+  { id: 3, construction: "BC", requiredTech: [[0,4]], libelle: "Battle Cruiser", hull: 2, cost: 15, maint: 2, maxUnit: 36, upgradable: 1 },
+  { id: 4, construction: "BB", requiredTech: [[0,5]], libelle: "BattleShip", hull: 3, cost: 20, maint: 3, maxUnit: 36, upgradable: 1 },
+  { id: 5, construction: "DN", requiredTech: [[0,6]], libelle: "Dreadnaught", hull: 3, cost: 24, maint: 3, maxUnit: 36, upgradable: 1 },
+  { id: 6, construction: "CO", requiredTech: [[0,1]], libelle: "Colony Ship", hull: 1, cost: 12, maint: 0, maxUnit: 0, upgradable: 0 },
+  { id: 7, construction: "Ba", requiredTech: [[0,1]], libelle: "Base", hull: 3, cost: 12, maint: 0, maxUnit: 4, upgradable: 0 },
+  { id: 8, construction: "Mi", requiredTech: [[0,1]], libelle: "Miner", hull: 1, cost: 5, maint: 0, maxUnit: 0, upgradable: 1 },
+  { id: 9, construction: "De", requiredTech: [[0,1]], libelle: "Decoy", hull: 0, cost: 1, maint: 0, maxUnit: 4, upgradable: 1 },
+  { id: 10, construction: "SY", requiredTech: [[0,1]], libelle: "Ship Yard", hull: 1, cost: 6, maint: 0, maxUnit: 36, upgradable: 0 }
+]
+  ;
 
 /************************************************************************************************************/
 /* Initialisation des données la partie en fonction des choix de l'utilisateur
@@ -36,16 +36,17 @@ const dataTechnoBase = [
 /**
  * Variables globales
  */
-var tour = {numTour : 1,totalCP : 0, remainingCP : 0, reportCP:0, coutTechno :0, coutConstruction:0, maintenance : 0,futurMaintenance : 0};
-var constructionTotal = (dataConstructionBase.length);
-var constructionTour = (dataConstructionBase.length);
+var tour = { numTour: 1, totalCP: 0, remainingCP: 0, reportCP: 0, coutTechno: 0, coutConstruction: 0, maintenance: 0, futurMaintenance: 0 };
+var constructionTotal = new Array(dataConstructionBase.length);;
+var constructionTour = new Array(dataConstructionBase.length);
 for (let index = 0; index < dataConstructionBase.length; index++) {
   constructionTour[index] = 0;
   constructionTotal[index] = 0;
 }
 
-
+// la méthode calcul() ici permet de mettre à jour tous les boutons du collapse avec les valeurs initialisées
 calcul();
+
 /************************************************************************************************************/
 /* Modification du DOM en fonction de l'initialisation
 /************************************************************************************************************/
@@ -121,45 +122,7 @@ template.remove();
 
 //Bon ben puisque ça marche on passe aux constructions... même combat
 
-template = document.getElementById("construct-template");
-
-dataConstructionBase.forEach((el, i) => {
-  let newLineConstruct = template.cloneNode(true);
-  let idNewLineConstruct = el.id + '_' + el.construction;
-  newLineConstruct.setAttribute("id", idNewLineConstruct);
-  let construct = document.createElement("p");
-  construct.textContent = el.construction + ' - ' + el.libelle;
-  let prixConstruct = document.createElement("span");
-  prixConstruct.setAttribute("class", "indice");
-  prixConstruct.textContent = el.cost;
-  construct.appendChild(prixConstruct);
-  newLineConstruct.appendChild(construct);
-
-  button = document.createElement("button");
-  button.textContent = '-';
-  button.setAttribute("id", el.construction + "_moins");
-  button.addEventListener('click', function () { modifConstruction(idNewLineConstruct, 'moins') });
-  newLineConstruct.appendChild(button);
-
-  button = document.createElement("button");
-  button.textContent = '+';
-  button.setAttribute("id", el.construction + "_plus");
-  button.addEventListener('click', function () { modifConstruction(idNewLineConstruct, 'plus') });
-  newLineConstruct.appendChild(button);
-
-  label = document.createElement("label");
-  label.textContent = constructionTour[i];
-  label.setAttribute("id",el.construction+"_enCours_"+i);
-  newLineConstruct.appendChild(label);
-
-  label = document.createElement("label");
-  label.textContent ='( ' + constructionTotal[i] + ' )';
-  label.setAttribute("id",el.construction+"_total_"+i);
-  newLineConstruct.appendChild(label);
-
-  template.parentNode.appendChild(newLineConstruct);
-})
-template.remove();
+majConstrucDispo();
 
 
 /*************************************************************************************************************/
@@ -216,12 +179,14 @@ for (i = 0; i < acc.length; i++) {
 /* gestion des boutons PRODUCTION 
 /*************************************************************************************************************/
 
+//appelé par tous les boutons dans le bloc économie
 function modifValeurNum(id, valeur) {
   let nbre = document.getElementById(id);
   nbre.value = parseInt(nbre.value) + valeur;
   calcul();
 }
 
+//appelé par tous les boutons dans le bloc Technologie
 function modifNivTech(idNewLineTech, type) {
   let tab = idNewLineTech.split('_');
   let boutonPlus = document.getElementById(tab[1] + '_plus');
@@ -253,27 +218,46 @@ function modifNivTech(idNewLineTech, type) {
         document.getElementById(dataTechnoBase[tab[0]].tech + '_' + (level + 1)).setAttribute("class", "label-tech");
         document.getElementById(dataTechnoBase[tab[0]].tech + '_' + level).removeAttribute("class", "label-tech");
         console.log(dataTechnoBase[tab[0]].grid.length);
-        console.log(level+1);
-        if(dataTechnoBase[tab[0]].grid.length == level+2){
+        console.log(level + 1);
+        if (dataTechnoBase[tab[0]].grid.length == level + 2) {
           gestionNivMax(tab[1]);
         }
       }
   }
+  
   calcul();
 }
 
-function gestionNivMax(id){
+//Permet de désactiver les boutons d'une technologie lorsqu'elle est niveau max
+function gestionNivMax(id) {
   let boutonPlus = document.getElementById(id + '_plus');
   let boutonMoins = document.getElementById(id + '_moins');
   let boutonWreck = document.getElementById(id + '_wreck');
-  boutonPlus.setAttribute('disabled',true);
-  boutonMoins.setAttribute('disabled',true);
-  boutonWreck.setAttribute('disabled',true);
+  boutonPlus.setAttribute('disabled', true);
+  boutonMoins.setAttribute('disabled', true);
+  boutonWreck.setAttribute('disabled', true);
 }
 
-function calcul(){
+//est appelé par tous les boutons du bloc construction
+function modifConstruction(idNewLineConst, type) {
+  let tab = idNewLineConst.split('_');
+  let boutonPlus = document.getElementById(tab[1] + '_plus');
+  let boutonMoins = document.getElementById(tab[1] + '_moins');
+  if(type == 'plus'){
+    constructionTour[tab[0]] ++;
+    
+  }else{
+    constructionTour[tab[0]] --;
+  }
+  
+  calcul();
+}
+
+//Mets àjour l'affichage sur tous les bandeaux avec les valeurs actuelles en mémoires
+function calcul() {
   calculTechnologie();
   calculConstruction();
+  majConstrucDispo();
   calculEconomie();
 }
 
@@ -290,35 +274,156 @@ function calculEconomie() {
 
 }
 
-function calculTechnologie(){
+function calculTechnologie() {
   tour.coutTechno = 0;
-  let stringBandeau =" ( "
+  let stringBandeau = " ( "
   dataTechnoBase.forEach((el, i) => {
-    if(el.researched){
+    if (el.researched) {
       tour.coutTechno += el.grid[el.level][1];
-      stringBandeau += el.tech +":"+ (el.level + el.grid[0][0]) + ' - ';
-      if(dataTechnoBase.length > i ){
-        
-      }else{
-        
+      stringBandeau += el.tech + ":" + (el.level + el.grid[0][0]) + ' - ';
+      if (dataTechnoBase.length > i) {
+
+      } else {
+
       }
     }
   })
 
-  if(stringBandeau.length == 3) {
+  if (stringBandeau.length == 3) {
     stringBandeau = "";
-  }else{
-    stringBandeau = stringBandeau.slice(0,stringBandeau.length - 3);
+  } else {
+    stringBandeau = stringBandeau.slice(0, stringBandeau.length - 3);
     stringBandeau += ' )';
   }
 
-  document.getElementById('bt_technologie').innerHTML = "Technologie <br>CP : - "+tour.coutTechno+stringBandeau;
+  document.getElementById('bt_technologie').innerHTML = "Technologie <br>CP : - " + tour.coutTechno + stringBandeau;
 
 }
 
-function calculConstruction(){
-  tour.coutVaisseau = 0;
+function calculConstruction() {
+  tour.coutConstruction = 0;
+  tour.futurMaintenance = 0;
+
+  let stringBandeau = " ( "
+  constructionTour.forEach((qte, i) => {
+    if (qte>0) {
+      tour.coutConstruction += dataConstructionBase[i].cost * qte;
+      stringBandeau += dataConstructionBase[i].construction+ ":" + qte + ' - ';
+      tour.futurMaintenance += dataConstructionBase[i].maint * qte;
+      if (dataTechnoBase.length > i) {
+
+      } else {
+
+      }
+    }
+  })
+
+  if (stringBandeau.length == 3) {
+    stringBandeau = "";
+  } else {
+    stringBandeau = stringBandeau.slice(0, stringBandeau.length - 3);
+    stringBandeau += ' )';
+  }
+  document.getElementById('bt_construction').innerHTML = "Construction <br>CP : - " + tour.coutConstruction + stringBandeau +' +maint:' + tour.futurMaintenance;
+
+}
+
+
+/**Renvoie le niveau d'une technologie donnée en paramètre. renvoie -1 si la techno n'est pas dans connue */
+function getNiveauTech(tech) {
+  let resultat = -1;
+
+  dataTechnoBase.forEach(el => {
+    //parfois le niveau de départ est 0, parfois 1 dans le tableau (grid), l'attribut level fais toujours référence 
+    //au premier niveau avec 0 comme valeur, c'est pourquoi on y ajoute le premier élément de la grille (soit 0, soit 1) 
+    if (el.tech == tech) {
+      resultat = (el.level + parseInt(el.grid[0]));
+    }
+  })
+  return resultat;
+}
+
+
+
+/**
+ * Renvoie vrai si les technologies requises pour cette construction sont recherchées
+ * @param {number} idConstruct : index dans le tableau des construction
+ * @returns 
+ */
+function isConstructionPossible(idConstruct){
+  let resultat = true;
+  dataConstructionBase[idConstruct].requiredTech.forEach(req =>{
+    if (dataTechnoBase[req[0]].level + parseInt(dataTechnoBase[req[0]].grid[0]) >= req[1]){
+      resultat = resultat & true;
+    }else{
+      resultat = false;
+    }
+  })
   
-  document.getElementById('bt_construction').innerHTML = "Construction <br>CP : - "+tour.coutConstruction;
+  return resultat;
+}
+
+
+
+/**On clone le body des constructions mais sans aucune ligne puis on reconstruit tout avec les data
+ * en fonction du niveau de ShipSize
+ */
+function majConstrucDispo(){
+  //on supprime toutes 
+  let template = document.getElementById("body-construction");
+  let newBodyConstruction = template.cloneNode(false);
+  template.parentNode.replaceChild(newBodyConstruction,template);
+
+  dataConstructionBase.forEach((el, i) => {
+    if (isConstructionPossible(i)) {
+      let newLineConstruct = document.createElement("div");
+      newLineConstruct.setAttribute("class","body-accordeon-row");
+
+      let idNewLineConstruct = el.id + '_' + el.construction;
+      newLineConstruct.setAttribute("id", idNewLineConstruct);
+
+      let construct = document.createElement("p");
+      construct.textContent = el.construction + ' - ' + el.libelle;
+      let prixConstruct = document.createElement("span");
+      prixConstruct.setAttribute("class", "indice");
+      prixConstruct.textContent = ' ' + el.cost;
+      construct.appendChild(prixConstruct);
+      newLineConstruct.appendChild(construct);
+  
+      button = document.createElement("button");
+      button.textContent = '-';
+      button.setAttribute("id", el.construction + "_moins");
+      button.addEventListener('click', function () { modifConstruction(idNewLineConstruct, 'moins') });
+      if(constructionTour[i] == 0){
+        button.setAttribute("disabled",true);
+      }
+      newLineConstruct.appendChild(button);
+      
+      
+      button = document.createElement("button");
+      button.textContent = '+';
+      button.setAttribute("id", el.construction + "_plus");
+      button.addEventListener('click', function () { modifConstruction(idNewLineConstruct, 'plus') });
+      if(constructionTour[i]+constructionTotal[i] == el.maxUnit && el.maxUnit!=0){
+        button.setAttribute("disabled",true);
+      }
+      newLineConstruct.appendChild(button);
+  
+      label = document.createElement("label");
+      label.textContent = constructionTour[i];
+      label.setAttribute("id", el.construction + "_enCours_" + i);
+      newLineConstruct.appendChild(label);
+  
+      label = document.createElement("label");
+      label.textContent = '( ' + constructionTotal[i] + ' )';
+      label.setAttribute("id", el.construction + "_total_" + i);
+      newLineConstruct.appendChild(label);
+  
+      newBodyConstruction.appendChild(newLineConstruct);
+    }else{
+      //si on a pas le droit de construire on remet à 0 la qte construite ce tour ci (cas où finalement on annule une recherche pour faire autre chose)
+      constructionTour[i]=0;
+    }
+  })
 
 }

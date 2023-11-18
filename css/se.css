@@ -108,7 +108,7 @@ CSS l'accordeon panel
 }
 
 .body-accordeon-row > button{
-  font-size: 0.8rem;
+  font-size: 0.7rem;
 }
 
 .body-accordeon-row > .label-tech{
@@ -116,6 +116,6 @@ CSS l'accordeon panel
 }
 
 .indice{
-  font-size: 0.5rem;
+  font-size: 0.7rem;
   vertical-align : sub;
 }
