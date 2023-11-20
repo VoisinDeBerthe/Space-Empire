@@ -33,37 +33,42 @@
     </div>
     <div class="tabs">
       <div class="tab-registers">
-        <button class="active-tab">Production</button>
-        <button>Mouvement</button>
+        <button class="active-tab">Mouvement</button>
+        <button >Production</button>     
         <button>Historique</button>
       </div>
       <div class="tab-bodies">
-        <div class="tab">
+        <div class="tab" >
+          <div class="mouvement" id="tab-mouvement">
+
+          </div>
+        </div>
+        <div style="display:none;">
           <button class="accordion" id="bt_economie">Economie</button>
           <div class="panel">
 
             <div class="body-accordeon">
 
-              <div class="body-accordeon-row production">
-                <div class="col1">
+              <div class="body-accordeon-row economie">
+                <div class="col1-eco">
                   <label>Report</label>
                 </div>
-                <div class="col2">
+                <div class="col2-eco">
                   <input id="report" type="number" value="0" readonly>
                 </div>
               </div>
-              <div class="body-accordeon-row production">
-                <div class="col1 right">
+              <div class="body-accordeon-row economie">
+                <div class="col1-eco right">
                   <label title="Revenus de toutes les colonies, planète mère incluse">CP</label>
                   <div>
                     <button class="none" onclick="modifValeurNum('colonie',-5)">-5</button>
                     <button class="none" onclick="modifValeurNum('colonie',-1)">-1</button>
                   </div>
                 </div>
-                <div class="col2">
+                <div class="col2-eco">
                   <input id="colonie" type="number" value="20" readonly>
                 </div>
-                <div class="col3">
+                <div class="col3-eco">
                   <button class="none" onclick="modifValeurNum('colonie',1)">+1</button>
                   <button class="none" onclick="modifValeurNum('colonie',5)">+5</button>
                 </div>
@@ -71,57 +76,57 @@
 
 
 
-              <div class="body-accordeon-row production">
-                <div class="col1 right">
+              <div class="body-accordeon-row economie">
+                <div class="col1-eco right">
                   <label>Minerai</label>
                   <div>
                     <button class="none" onclick="modifValeurNum('minerai',-10)">-10</button>
                     <button class="none" onclick="modifValeurNum('minerai',-5)">-5</button>
                   </div>
                 </div>
-                <div class="col2">
+                <div class="col2-eco">
                   <input id="minerai" type="number" value="0" readonly>
                 </div>
-                <div class="col3">
+                <div class="col3-eco">
                   <button class="none" onclick="modifValeurNum('minerai',5)">+5</button>
                   <button class="none" onclick="modifValeurNum('minerai',10)">+10</button>
                 </div>
               </div>
-              <div class="body-accordeon-row production">
-                <div class="col1 right">
+              <div class="body-accordeon-row economie">
+                <div class="col1-eco right">
                   <label>MS Pipeline</label>
 
                   <button class="none" onclick="modifValeurNum('pipeline',-1)">-1</button>
                 </div>
-                <div class="col2">
+                <div class="col2-eco">
                   <input id="pipeline" type="number" value="0" readonly>
                 </div>
-                <div class="col3">
+                <div class="col3-eco">
                   <button class="none" onclick="modifValeurNum('pipeline',1)">+1</button>
                 </div>
               </div>
-              <div class="body-accordeon-row production">
-                <div class="col1 right">
+              <div class="body-accordeon-row economie">
+                <div class="col1-eco right">
                   <label>Maintenance</label>
 
                   <button class="none" onclick="modifValeurNum('maintenance',-1)">-1</button>
                 </div>
-                <div class="col2">
+                <div class="col2-eco">
                   <input id="maintenance" type="number" value="0" readonly>
                 </div>
-                <div class="col3">
+                <div class="col3-eco">
                   <button class="none" onclick="modifValeurNum('maintenance',1)">+1</button>
                 </div>
               </div>
-              <div class="body-accordeon-row production">
-                <div class="col1 right">
+              <div class="body-accordeon-row economie">
+                <div class="col1-eco right">
                   <label>Initiative</label>
                   <button class="none" onclick="modifValeurNum('init',-1)">-1</button>
                 </div>
-                <div class="col2">
+                <div class="col2-eco">
                   <input id="init" type="number" value="0" readonly>
                 </div>
-                <div class="col3">
+                <div class="col3-eco">
                   <button class="none" onclick="modifValeurNum('init',1)">+1</button>
                 </div>
               </div>
@@ -148,9 +153,7 @@
             </div>
           </div>
         </div>
-        <div style="display:none;">
-          Contenu Tab 2
-        </div>
+        
         <div style="display:none;">
           Contenu Tab 3
         </div>

@@ -36,6 +36,8 @@ CSS pour les onglets
   background-color: RGB(255, 255, 255);
   border: none;
   font: inherit;
+  border-radius: 7% 7% 0 0;
+  background-color: rgb(194, 239, 250);
 }
 
 .tabs .tab-registers button:hover {
@@ -43,14 +45,14 @@ CSS pour les onglets
 }
 
 .tabs .tab-bodies {
-  padding: 0.5em;
-  background-color: RGB(235, 235, 235);
+  padding: 0.5em 0;
+  background-color: rgb(114, 227, 255);
   flex-grow: 1;
   overflow-y: auto;
 }
 
 .tabs button.active-tab {
-  background-color: rgb(235, 235, 235);
+  background-color: rgb(114, 227, 255);
 }
 
 
@@ -62,7 +64,8 @@ CSS l'accordeon panel
 }
 
 .accordion {
-  background-color: #eee;
+  
+  background-color: rgb(114, 227, 255);
   color: #444;
   cursor: pointer;
   padding: 18px;
@@ -76,13 +79,13 @@ CSS l'accordeon panel
 
 .active,
 .accordion:hover {
-  background-color: #ccc;
+  background-color: rgb(194, 239, 250);
 }
 
 .panel {
   padding: 0 18px;
   display: none;
-  background-color: white;
+  background-color: rgb(194, 239, 250);
   overflow: hidden;
 }
 
@@ -149,7 +152,7 @@ CSS l'accordeon panel
 
 }
 
-.production {
+.economie {
   padding: 0;
   align-items: center;
   font-size: 1rem;
@@ -158,7 +161,20 @@ CSS l'accordeon panel
   grid-template-columns: 50% 20% 30%;
   grid-template-rows: auto;
   grid-template-areas:
-    "col1 col2 col3";
+    "col1-eco col2-eco col3-eco";
+
+}
+
+.mouvement {
+  padding: 0;
+  align-items: center;
+  font-size: 0.9rem;
+  display: grid;
+  column-gap: 10px;
+  grid-template-columns: 35% 10% 10% 45%;
+  grid-template-rows: auto;
+  grid-template-areas:
+    "col1-mvt col2-mvt col3-mvt col4-mvt";
 
 }
 

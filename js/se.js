@@ -1,6 +1,10 @@
 /************************************************************************************************************/
 /* Variables contenant toutes les données de référence du jeu
 /************************************************************************************************************/
+
+/////////////////////////////////////////
+//Jeu de base V1.X
+/////////////////////////////////////////
 const dataTechnoBase = [
   { id: 0, tech: "SS", researched: 0, libelle: "Ship Size", level: 3, grid: [[1,], [2, 10], [3, 15], [4, 20], [5, 20], [6, 20]] },
   { id: 1, tech: "A", researched: 0, libelle: "Attack", level: 0, grid: [[0,], [1, 20], [2, 30], [3, 25]] },
@@ -28,6 +32,42 @@ const dataConstructionBase = [
 ]
   ;
 
+/////////////////////////////////////////
+//Jeu de base règles avancées V1.X
+/////////////////////////////////////////
+
+const dataTechnoAvance = [
+  { id: 0, tech: "SS", researched: 0, libelle: "Ship Size", level: 3, grid: [[1,], [2, 10], [3, 15], [4, 20], [5, 20], [6, 20]] },
+  { id: 1, tech: "A", researched: 0, libelle: "Attack", level: 0, grid: [[0,], [1, 20], [2, 30], [3, 25]] },
+  { id: 2, tech: "D", researched: 0, libelle: "Defense", level: 0, grid: [[0,], [1, 20], [2, 30], [3, 25]] },
+  { id: 3, tech: "Ta", researched: 0, libelle: "Tactic", level: 0, grid: [[0,], [1, 15], [2, 15]] },
+  { id: 4, tech: "M", researched: 0, libelle: "Move", level: 0, grid: [[1,], [2, 20], [3, 25], [4, 25], [5, 25], [6, 20], [7, 20]] },
+  { id: 5, tech: "SY", researched: 0, libelle: "Ship Yard", level: 0, grid: [[1,], [2, 20], [3, 25]] },
+  { id: 6, tech: "Te", researched: 0, libelle: "Move", level: 0, grid: [[0,], [1, 20]] },
+  { id: 7, tech: "E", researched: 0, libelle: "Exploration", level: 0, grid: [[0,], [1, 15]] }
+]
+  ;
+
+const dataConstructionAvance = [
+  { id: 0, construction: "SC", requiredTech: [[0, 1]], libelle: "Scout", hull: 1, cost: 6, maint: 1, maxUnit: 36, upgradable: 1 },
+  { id: 1, construction: "DD", requiredTech: [[0, 2]], libelle: "Destroyer", hull: 1, cost: 9, maint: 1, maxUnit: 36, upgradable: 1 },
+  { id: 2, construction: "CA", requiredTech: [[0, 3]], libelle: "Cruiser", hull: 2, cost: 12, maint: 2, maxUnit: 36, upgradable: 1 },
+  { id: 3, construction: "BC", requiredTech: [[0, 4]], libelle: "Battle Cruiser", hull: 2, cost: 15, maint: 2, maxUnit: 36, upgradable: 1 },
+  { id: 4, construction: "BB", requiredTech: [[0, 5]], libelle: "BattleShip", hull: 3, cost: 20, maint: 3, maxUnit: 36, upgradable: 1 },
+  { id: 5, construction: "DN", requiredTech: [[0, 6]], libelle: "Dreadnaught", hull: 3, cost: 24, maint: 3, maxUnit: 36, upgradable: 1 },
+  { id: 6, construction: "CO", requiredTech: [[0, 1]], libelle: "Colony Ship", hull: 1, cost: 12, maint: 0, maxUnit: 0, upgradable: 0 },
+  { id: 7, construction: "Ba", requiredTech: [[0, 1]], libelle: "Base", hull: 3, cost: 12, maint: 0, maxUnit: 4, upgradable: 0 },
+  { id: 8, construction: "Mi", requiredTech: [[0, 1]], libelle: "Miner", hull: 1, cost: 5, maint: 0, maxUnit: 0, upgradable: 1 },
+  { id: 9, construction: "De", requiredTech: [[0, 1]], libelle: "Decoy", hull: 0, cost: 1, maint: 0, maxUnit: 4, upgradable: 1 },
+  { id: 10, construction: "SY", requiredTech: [[0, 1]], libelle: "Ship Yard", hull: 1, cost: 6, maint: 0, maxUnit: 36, upgradable: 0 }
+]
+  ;
+
+
+
+
+
+
 /************************************************************************************************************/
 /* Initialisation des données la partie en fonction des choix de l'utilisateur
 /************************************************************************************************************/
@@ -36,16 +76,23 @@ const dataConstructionBase = [
 /**
  * Variables globales
  */
-var tour = { numTour: 1, totalCP: 0, remainingCP: 0, reportCP: 0, coutTechno: 0, coutConstruction: 0, maintenance: 0, futurMaintenance: 0 };
-var constructionTotal = new Array(dataConstructionBase.length);;
-var constructionTour = new Array(dataConstructionBase.length);
-for (let index = 0; index < dataConstructionBase.length; index++) {
+var dataConstruction = dataConstructionBase.slice();
+var dataTechno = dataTechnoBase.slice();
+
+var tour = { numTour: 1, totalCP: 0, remainingCP: 0, reportCP: 0, coutTechno: 0, coutConstruction: 0, maintenance: 0, futurMaintenance: 0, bid: 0 };
+var constructionTotal = new Array(dataConstruction.length);;
+var constructionTour = new Array(dataConstruction.length);
+
+var histoTour = [tour];
+
+
+for (let index = 0; index < dataConstruction.length; index++) {
   constructionTour[index] = 0;
   constructionTotal[index] = 0;
 }
 
 //construction de départ
-constructionTotal[getIdConstruction('SY')] = 5;
+constructionTotal[getIdConstruction('SY')] = 4;
 constructionTotal[getIdConstruction('CO')] = 3;
 constructionTotal[getIdConstruction('SC')] = 3;
 constructionTotal[getIdConstruction('Mi')] = 1;
@@ -61,7 +108,7 @@ calcul();
 
 let template = document.getElementById("tech-template");
 
-dataTechnoBase.forEach((el, i) => {
+dataTechno.forEach((el, i) => {
   let newLineTech = template.cloneNode(true);
   let idNewLineTech = el.id + '_' + el.tech;
   newLineTech.setAttribute("id", idNewLineTech);
@@ -76,14 +123,14 @@ dataTechnoBase.forEach((el, i) => {
   let div = document.createElement('div');
   div.setAttribute('class', 'tab-techno');
 
-  let button = createButton(el.tech + "_plus","bt","fa fa-plus");
+  let button = createButton(el.tech + "_plus", "bt", "fa fa-plus");
   button.addEventListener('click', function () { modifNivTech(idNewLineTech, 'plus') });
   if (el.researched == 1) {
     button.setAttribute("class", "not-visible");
   }
   div.appendChild(button);
 
-  button = createButton(el.tech + "_moins","bt","fa fa-minus");
+  button = createButton(el.tech + "_moins", "bt", "fa fa-minus");
   button.addEventListener('click', function () { modifNivTech(idNewLineTech, 'moins') });
   if (el.researched == 0) {
     button.setAttribute("class", "not-visible");
@@ -208,35 +255,35 @@ function modifNivTech(idNewLineTech, type) {
   let tab = idNewLineTech.split('_');
   let boutonPlus = document.getElementById(tab[1] + '_plus');
   let boutonMoins = document.getElementById(tab[1] + '_moins');
-  let level = dataTechnoBase[tab[0]].level;
+  let level = dataTechno[tab[0]].level;
 
   switch (type) {
     case 'plus':
       boutonPlus.setAttribute("class", "not-visible");
       boutonMoins.removeAttribute("class", "not-visible");
-      dataTechnoBase[tab[0]].level = level + 1;
-      dataTechnoBase[tab[0]].researched = 1;
-      document.getElementById(dataTechnoBase[tab[0]].tech + '_' + (level + 1)).setAttribute("class", "label-tech");
-      document.getElementById(dataTechnoBase[tab[0]].tech + '_' + level).removeAttribute("class", "label-tech");
+      dataTechno[tab[0]].level = level + 1;
+      dataTechno[tab[0]].researched = 1;
+      document.getElementById(dataTechno[tab[0]].tech + '_' + (level + 1)).setAttribute("class", "label-tech");
+      document.getElementById(dataTechno[tab[0]].tech + '_' + level).removeAttribute("class", "label-tech");
 
       break;
     case 'moins':
       boutonMoins.setAttribute("class", "not-visible");
       boutonPlus.removeAttribute("class", "not-visible");
-      dataTechnoBase[tab[0]].level = level - 1;
-      dataTechnoBase[tab[0]].researched = 0;
-      document.getElementById(dataTechnoBase[tab[0]].tech + '_' + (level - 1)).setAttribute("class", "label-tech");
-      document.getElementById(dataTechnoBase[tab[0]].tech + '_' + level).removeAttribute("class", "label-tech");
+      dataTechno[tab[0]].level = level - 1;
+      dataTechno[tab[0]].researched = 0;
+      document.getElementById(dataTechno[tab[0]].tech + '_' + (level - 1)).setAttribute("class", "label-tech");
+      document.getElementById(dataTechno[tab[0]].tech + '_' + level).removeAttribute("class", "label-tech");
 
       break;
     default: /* wreck*/
-      if (confirm("Gagner un niveau en " + dataTechnoBase[tab[0]].libelle + " grâce au remorquage d'une épave ?")) {
-        dataTechnoBase[tab[0]].level = level + 1;
-        document.getElementById(dataTechnoBase[tab[0]].tech + '_' + (level + 1)).setAttribute("class", "label-tech");
-        document.getElementById(dataTechnoBase[tab[0]].tech + '_' + level).removeAttribute("class", "label-tech");
-        console.log(dataTechnoBase[tab[0]].grid.length);
+      if (confirm("Gagner un niveau en " + dataTechno[tab[0]].libelle + " grâce au remorquage d'une épave ?")) {
+        dataTechno[tab[0]].level = level + 1;
+        document.getElementById(dataTechno[tab[0]].tech + '_' + (level + 1)).setAttribute("class", "label-tech");
+        document.getElementById(dataTechno[tab[0]].tech + '_' + level).removeAttribute("class", "label-tech");
+        console.log(dataTechno[tab[0]].grid.length);
         console.log(level + 1);
-        if (dataTechnoBase[tab[0]].grid.length == level + 2) {
+        if (dataTechno[tab[0]].grid.length == level + 2) {
           gestionNivMax(tab[1]);
         }
       }
@@ -262,7 +309,7 @@ function modifConstruction(idNewLineConst, type) {
   let boutonPlus = document.getElementById(tab[1] + '_plus');
   let boutonMoins = document.getElementById(tab[1] + '_moins');
   if (type == 'plus') {
-    if (getHullConstructTurn() + dataConstructionBase[tab[0]].hull > getHullCapacity()) {
+    if (getHullConstructTurn() + dataConstruction[tab[0]].hull > getHullCapacity()) {
       alert("Capacité de construction dépassée (max : " + getHullCapacity() + ')');
       return
     }
@@ -275,12 +322,21 @@ function modifConstruction(idNewLineConst, type) {
   calcul();
 }
 
+function destruction(id) {
+  if (constructionTotal[id] > 0) {
+    constructionTotal[id]--;
+  } 
+  majTabMouvement();
+
+}
+
 //Mets àjour l'affichage sur tous les bandeaux avec les valeurs actuelles en mémoires
 function calcul() {
   calculTechnologie();
   calculConstruction();
   majConstrucDispo();
   calculEconomie();
+  majTabMouvement();
 }
 
 function calculEconomie() {
@@ -299,11 +355,11 @@ function calculEconomie() {
 function calculTechnologie() {
   tour.coutTechno = 0;
   let stringBandeau = " ( "
-  dataTechnoBase.forEach((el, i) => {
+  dataTechno.forEach((el, i) => {
     if (el.researched) {
       tour.coutTechno += el.grid[el.level][1];
       stringBandeau += el.tech + ":" + (el.level + el.grid[0][0]) + ' - ';
-      if (dataTechnoBase.length > i) {
+      if (dataTechno.length > i) {
 
       } else {
 
@@ -329,10 +385,10 @@ function calculConstruction() {
   let stringBandeau = " ( "
   constructionTour.forEach((qte, i) => {
     if (qte > 0) {
-      tour.coutConstruction += dataConstructionBase[i].cost * qte;
-      stringBandeau += dataConstructionBase[i].construction + ":" + qte + ' - ';
-      tour.futurMaintenance += dataConstructionBase[i].maint * qte;
-      if (dataTechnoBase.length > i) {
+      tour.coutConstruction += dataConstruction[i].cost * qte;
+      stringBandeau += dataConstruction[i].construction + ":" + qte + ' - ';
+      tour.futurMaintenance += dataConstruction[i].maint * qte;
+      if (dataTechno.length > i) {
 
       } else {
 
@@ -355,7 +411,7 @@ function calculConstruction() {
 function getNiveauTech(tech) {
   let resultat = -1;
 
-  dataTechnoBase.forEach(el => {
+  dataTechno.forEach(el => {
     //parfois le niveau de départ est 0, parfois 1 dans le tableau (grid), l'attribut level fais toujours référence 
     //au premier niveau avec 0 comme valeur, c'est pourquoi on y ajoute le premier élément de la grille (soit 0, soit 1) 
     if (el.tech == tech) {
@@ -368,7 +424,7 @@ function getNiveauTech(tech) {
 /**Retourne l'index d'une construction dans le tableau dataConstruction */
 function getIdConstruction(construction) {
   let resultat = 0;
-  dataConstructionBase.forEach(el => {
+  dataConstruction.forEach(el => {
     if (el.construction == construction) {
       resultat = el.id;
     }
@@ -384,8 +440,8 @@ function getIdConstruction(construction) {
  */
 function isConstructionPossible(idConstruct) {
   let resultat = true;
-  dataConstructionBase[idConstruct].requiredTech.forEach(req => {
-    if (dataTechnoBase[req[0]].level + parseInt(dataTechnoBase[req[0]].grid[0]) >= req[1]) {
+  dataConstruction[idConstruct].requiredTech.forEach(req => {
+    if (dataTechno[req[0]].level + parseInt(dataTechno[req[0]].grid[0]) >= req[1]) {
       resultat = resultat & true;
     } else {
       resultat = false;
@@ -422,7 +478,7 @@ function getHullCapacity() {
 function getHullConstructTurn() {
   result = 0;
   constructionTour.forEach((qte, i) => {
-    result += dataConstructionBase[i].hull * qte;
+    result += dataConstruction[i].hull * qte;
   })
   return result;
 }
@@ -438,7 +494,7 @@ function majConstrucDispo() {
   let newBodyConstruction = template.cloneNode(false);
   template.parentNode.replaceChild(newBodyConstruction, template);
 
-  dataConstructionBase.forEach((el, i) => {
+  dataConstruction.forEach((el, i) => {
     if (isConstructionPossible(i)) {
       let newLineConstruct = document.createElement("div");
       newLineConstruct.setAttribute("class", "body-accordeon-row, construction");
@@ -455,7 +511,7 @@ function majConstrucDispo() {
       construct.setAttribute("class", "libelle");
       newLineConstruct.appendChild(construct);
 
-      button = createButton(el.construction + "_moins","bt-moins","fa fa-minus");
+      button = createButton(el.construction + "_moins", "bt-moins", "fa fa-minus");
       button.addEventListener('click', function () { modifConstruction(idNewLineConstruct, 'moins') });
       if (constructionTour[i] == 0) {
         button.setAttribute("disabled", true);
@@ -463,7 +519,7 @@ function majConstrucDispo() {
       newLineConstruct.appendChild(button);
 
 
-      button = createButton(el.construction + "_plus","bt-plus","fa fa-plus");
+      button = createButton(el.construction + "_plus", "bt-plus", "fa fa-plus");
       button.addEventListener('click', function () { modifConstruction(idNewLineConstruct, 'plus') });
       if (constructionTour[i] + constructionTotal[i] == el.maxUnit && el.maxUnit != 0) {
         button.setAttribute("disabled", true);
@@ -490,6 +546,34 @@ function majConstrucDispo() {
   })
 
 }
+function majTabMouvement() {
+  let temp = document.getElementById("tab-mouvement");
+  let tabMouvement = temp.cloneNode(false);
+  temp.parentElement.replaceChild(tabMouvement, temp);
+  constructionTotal.forEach((c, i) => {
+    if (c > 0) {
+      let label = document.createElement("label");
+      label.textContent = dataConstruction[i].libelle;
+      label.setAttribute("class", "col1-mvt");
+      tabMouvement.appendChild(label);
+      label = document.createElement("label");
+      label.textContent = c ;
+      label.setAttribute("class", "col2-mvt");
+      tabMouvement.appendChild(label);
+      let button = createButton("", "col3-mvt", "fa fa-minus");
+      button.addEventListener('click', function () { destruction(i) });
+      tabMouvement.appendChild(button);
+      label = document.createElement("label");
+      label.textContent = "(1x1, 4x2) 9 CP";
+      label.setAttribute("class", "col4-mvt");
+      tabMouvement.appendChild(label);
+
+
+
+    }
+    
+  })
+}
 /**
  * 
  * @param {String} id : identifiant du bouton
@@ -497,15 +581,15 @@ function majConstrucDispo() {
  * @param {String} icon : identifiant de l'icone font awesome
  * @returns renvoie le bouton créé, prêt à être attaché au DOM
  */
-      function createButton(id,classes,icon){
-        let b = document.createElement("button");
-        b.setAttribute("class",classes);
-        b.setAttribute("id",id);
+function createButton(id, classes, icon) {
+  let b = document.createElement("button");
+  b.setAttribute("class", classes);
+  b.setAttribute("id", id);
 
-        let i = document.createElement("i");
-        i.setAttribute("class",icon);
+  let i = document.createElement("i");
+  i.setAttribute("class", icon);
 
-        b.appendChild(i);
+  b.appendChild(i);
 
-        return b;
-      }
+  return b;
+}
