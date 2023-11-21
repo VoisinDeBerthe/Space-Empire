@@ -129,84 +129,8 @@ calcul();
 /************************************************************************************************************/
 
 //Aller on le tente avec les technologies. Franchement j'y crois pas trop mais si ça marche ben... ça marche quoi.
+initTechnologie();
 
-let template = document.getElementById("tech-template");
-
-dataTechno.forEach((el, i) => {
-  let newLineTech = template.cloneNode(true);
-  let idNewLineTech = el.id + '_' + el.tech;
-  newLineTech.setAttribute("id", idNewLineTech);
-  newLineTech.setAttribute("class", "technology");
-  let label = document.createElement("label");
-  label.textContent = el.tech;
-  label.title = el.libelle;
-  label.setAttribute("class", "libelle");
-  newLineTech.appendChild(label);
-
-  //création d'une div pour regrouper les boutons plus et moins dans la deuxième colonne de la ligne de techno
-  let div = document.createElement('div');
-  div.setAttribute('class', 'tab-techno');
-
-  let button = createButton(el.tech + "_plus", "bt", "fa fa-plus");
-  button.addEventListener('click', function () { modifNivTech(idNewLineTech, 'plus') });
-  if (el.researched == 1) {
-    button.setAttribute("class", "not-visible");
-  }
-  div.appendChild(button);
-
-  button = createButton(el.tech + "_moins", "bt", "fa fa-minus");
-  button.addEventListener('click', function () { modifNivTech(idNewLineTech, 'moins') });
-  if (el.researched == 0) {
-    button.setAttribute("class", "not-visible");
-  }
-  div.appendChild(button);
-
-  //on ajoute la div avec les deux boutons à la ligne de tech en cours
-  newLineTech.appendChild(div);
-
-  button = document.createElement("button");
-  button.textContent = 'Wreck';
-  button.setAttribute("id", el.tech + "_wreck");
-  button.addEventListener('click', function () { modifNivTech(idNewLineTech, 'wreck') });
-  button.setAttribute("class", "wreck");
-  newLineTech.appendChild(button);
-
-
-  //on crré une div qui regroupera tous les <p> des level de techno dans la 4ème colonne
-  div = document.createElement('div');
-  div.setAttribute('class', 'tab-techno');
-  el.grid.forEach((nivTech, j) => {
-    /* on créé un paragraphe pour afficher le niveau de la techno */
-    let nivTechno = document.createElement("p");
-    nivTechno.textContent = nivTech[0];
-    nivTechno.setAttribute("id", el.tech + '_' + j);
-    if (j == el.level) {
-      /* Si le niveau de la techno correspond au niveau de recherche actuelle de l'utilisateur 
-      alors on applique la class de mise en valeur du niveau*/
-      nivTechno.setAttribute("class", "label-tech");
-    }
-
-    /*On rajoute le prix du niveau de technologie en indice du niveau
-    Pour ça il faut rajouter un span à l'intérireur du paragraphe  */
-    let prixTechno = document.createElement("span");
-    prixTechno.setAttribute("class", "indice");
-    prixTechno.textContent = nivTech[1];
-    nivTechno.appendChild(prixTechno);
-
-    /**Puis on finit par ajouter le niveau à la suite dans la div de la 4ème colonne */
-    div.appendChild(nivTechno);
-
-  })
-  //on ajoute la la div avec tous les niveau de la techno dans la ligne en cours (4eme colonne) 
-  newLineTech.appendChild(div);
-  /**On ajoute la ligne complète au parent de la ligne initial(c'est la div body-accordeon) 
-   * Les nouvelles lignes sont placées à la suite après la ligne de template
-  */
-  template.parentNode.appendChild(newLineTech);
-})
-
-//Suppression du template vide
-template.remove();
 
 //Bon ben puisque ça marche on passe aux constructions... même combat
 
@@ -534,7 +458,87 @@ function getHullConstructTurn() {
   return result;
 }
 
+/**
+ * Permet de créer complétement dynamiquement le collapse des technologies dans l'onglet Prodution
+ */
+function initTechnologie() {
+  let template = document.getElementById("tech-template");
+  dataTechno.forEach((el, i) => {
+    let newLineTech = template.cloneNode(true);
+    let idNewLineTech = el.id + '_' + el.tech;
+    newLineTech.setAttribute("id", idNewLineTech);
+    newLineTech.setAttribute("class", "technology");
+    let label = document.createElement("label");
+    label.textContent = el.tech;
+    label.title = el.libelle;
+    label.setAttribute("class", "libelle");
+    newLineTech.appendChild(label);
 
+    //création d'une div pour regrouper les boutons plus et moins dans la deuxième colonne de la ligne de techno
+    let div = document.createElement('div');
+    div.setAttribute('class', 'tab-techno');
+
+    let button = createButton(el.tech + "_plus", "bt", "fa fa-plus");
+    button.addEventListener('click', function () { modifNivTech(idNewLineTech, 'plus') });
+    if (el.researched == 1) {
+      button.setAttribute("class", "not-visible");
+    }
+    div.appendChild(button);
+
+    button = createButton(el.tech + "_moins", "bt", "fa fa-minus");
+    button.addEventListener('click', function () { modifNivTech(idNewLineTech, 'moins') });
+    if (el.researched == 0) {
+      button.setAttribute("class", "not-visible");
+    }
+    div.appendChild(button);
+
+    //on ajoute la div avec les deux boutons à la ligne de tech en cours
+    newLineTech.appendChild(div);
+
+    button = document.createElement("button");
+    button.textContent = 'Wreck';
+    button.setAttribute("id", el.tech + "_wreck");
+    button.addEventListener('click', function () { modifNivTech(idNewLineTech, 'wreck') });
+    button.setAttribute("class", "wreck");
+    newLineTech.appendChild(button);
+
+
+    //on crré une div qui regroupera tous les <p> des level de techno dans la 4ème colonne
+    div = document.createElement('div');
+    div.setAttribute('class', 'tab-techno');
+    el.grid.forEach((nivTech, j) => {
+      /* on créé un paragraphe pour afficher le niveau de la techno */
+      let nivTechno = document.createElement("p");
+      nivTechno.textContent = nivTech[0];
+      nivTechno.setAttribute("id", el.tech + '_' + j);
+      if (j == el.level) {
+        /* Si le niveau de la techno correspond au niveau de recherche actuelle de l'utilisateur 
+        alors on applique la class de mise en valeur du niveau*/
+        nivTechno.setAttribute("class", "label-tech");
+      }
+
+      /*On rajoute le prix du niveau de technologie en indice du niveau
+      Pour ça il faut rajouter un span à l'intérireur du paragraphe  */
+      let prixTechno = document.createElement("span");
+      prixTechno.setAttribute("class", "indice");
+      prixTechno.textContent = nivTech[1];
+      nivTechno.appendChild(prixTechno);
+
+      /**Puis on finit par ajouter le niveau à la suite dans la div de la 4ème colonne */
+      div.appendChild(nivTechno);
+
+    })
+    //on ajoute la la div avec tous les niveau de la techno dans la ligne en cours (4eme colonne) 
+    newLineTech.appendChild(div);
+    /**On ajoute la ligne complète au parent de la ligne initial(c'est la div body-accordeon) 
+     * Les nouvelles lignes sont placées à la suite après la ligne de template
+    */
+    template.parentNode.appendChild(newLineTech);
+  })
+
+  //Suppression du template vide
+  template.remove();
+}
 
 /**
  * Met à jour l'affichage du collapse Construction dans l'onglet Production
@@ -674,9 +678,9 @@ function cloneJSON(obj) {
   return cloneO;
 }
 
-function calculMaintenance(){
+function calculMaintenance() {
   tour.maintenance = 0;
-  tour.constructionTotal.forEach((qte,i) =>{
+  tour.constructionTotal.forEach((qte, i) => {
     tour.maintenance += qte * dataConstruction[i].maint;
   })
 }
