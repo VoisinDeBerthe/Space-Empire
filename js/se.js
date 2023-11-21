@@ -72,19 +72,52 @@ const dataConstructionAvance = [
 /* Initialisation des données la partie en fonction des choix de l'utilisateur
 /************************************************************************************************************/
 //TODO A faire plus tard, déjà essaye de le faire marcher avec le jeux de base ...
+/**
+ * Constantes !!!!Attention à pas modifier!!!!!!!!!!!
+ */
+const REPORT_MAX_CP = 30;
+const REPORT_MAX_RP = 30;
 
 /**
  * Variables globales
  */
 var dataConstruction = dataConstructionBase.slice();
 var dataTechno = dataTechnoBase.slice();
-
-var tour = { numTour: 1, totalCP: 0, remainingCP: 0, reportCP: 0, coutTechno: 0, coutConstruction: 0, maintenance: 0, futurMaintenance: 0, bid: 0 };
-var constructionTotal = new Array(dataConstruction.length);;
+var constructionTotal = new Array(dataConstruction.length);
 var constructionTour = new Array(dataConstruction.length);
 
-var histoTour = [tour];
+var tour = { numTour: 1, reportCP: 0, totalCP: 0, colonieCP: 0, mineurCP: 0, pipelineCP: 0, remainingCP: 0, maintenance: 0, bid: 0, coutTechno: 0, coutConstruction: 0, futurMaintenance: 0, constructionTotal: constructionTotal, constructionTour: constructionTour, upgrade: [] };
+var histoTour=[];
 
+
+function nouveauTour() {
+  let newTurn = cloneJSON(tour);
+  newTurn.numTour++;
+  document.getElementById("numTour").textContent = newTurn.numTour;
+  newTurn.coutConstruction = 0;
+  newTurn.coutTechno = 0;
+  newTurn.futurMaintenance = 0;
+  newTurn.maintenance = 0;
+  newTurn.reportCP = tour.remainingCP;
+  if (newTurn.reportCP > REPORT_MAX_CP) {
+    newTurn.reportCP = REPORT_MAX_CP;
+  }
+  newTurn.mineurCP = 0;
+  newTurn.remainingCP = tour.colonieCP;
+
+  newTurn.constructionTotal.forEach((qte,i) => {
+    //Les constructions du tour sont cumulées dans les constructions totales 
+    qte += tour.constructionTour[i];
+    // RAZ des construction du tour
+    newTurn.constructionTour = 0;
+    // Calcul de la maintenance 
+    newTurn.maintenance += qte * dataConstruction[i].maint
+  })
+  maintenance = 
+  histoTour.splice(0, 0, tour);
+  calcul();
+  return newTurn;
+}
 
 for (let index = 0; index < dataConstruction.length; index++) {
   constructionTour[index] = 0;
@@ -245,8 +278,20 @@ for (i = 0; i < acc.length; i++) {
 
 //appelé par tous les boutons dans le bloc économie
 function modifValeurNum(id, valeur) {
+  switch (id) {
+    case 'colonie': tour.colonieCP = tour.colonieCP + valeur;
+      break;
+    case 'minerai' : tour.mineurCP =  tour.mineurCP + valeur;
+    break;
+    case 'maintenance' : tour.maintenance =  tour.maintenance + valeur;
+    break;
+    case 'pipeline' : tour.pipelineCP =  tour.pipelineCP + valeur;
+    break;
+    case 'init' : tour.bid =  tour.bid + valeur;
+    break;
+  }
   let nbre = document.getElementById(id);
-  nbre.value = parseInt(nbre.value) + valeur;
+  nbre.value = parseInt(nbre.textContent) + valeur;
   calcul();
 }
 
@@ -325,7 +370,7 @@ function modifConstruction(idNewLineConst, type) {
 function destruction(id) {
   if (constructionTotal[id] > 0) {
     constructionTotal[id]--;
-  } 
+  }
   majTabMouvement();
 
 }
@@ -340,15 +385,15 @@ function calcul() {
 }
 
 function calculEconomie() {
-  let report = parseInt(document.getElementById("report").value);
-  let cp = parseInt(document.getElementById("colonie").value);
-  let minerai = parseInt(document.getElementById('minerai').value);
-  let pipeline = parseInt(document.getElementById('pipeline').value);
-  let maint = parseInt(document.getElementById('maintenance').value);
-  let init = parseInt(document.getElementById('init').value);
-  tour.totalCP = report + cp + minerai + pipeline - maint - init;
+  document.getElementById("report").textContent = tour.reportCP;
+  document.getElementById("colonie").textContent = tour.colonieCP;
+  document.getElementById('minerai').textContent = tour.mineurCP
+  document.getElementById('pipeline').textContent = tour.pipelineCP;
+  document.getElementById('maintenance').textContent = tour.maintenance;
+  document.getElementById('init').textContent = tour.bid;
+  tour.totalCP = tour.reportCP + tour.colonieCP + tour.mineurCP + tour.pipelineCP - tour.maintenance - tour.bid;
   tour.remainingCP = tour.totalCP - tour.coutTechno - tour.coutConstruction;
-  document.getElementById('bt_economie').innerHTML = "Economie <br>CP :  " + tour.remainingCP + "(" + tour.totalCP + ")" + " - Maint : " + maint + " Init : " + init;
+  document.getElementById('bt_economie').innerHTML = "Economie <br>CP :  " + tour.remainingCP + "(" + tour.totalCP + ")" + " - Maint : " + tour.maintenance + " Init : " + tour.bid;
 
 }
 
@@ -557,7 +602,7 @@ function majTabMouvement() {
       label.setAttribute("class", "col1-mvt");
       tabMouvement.appendChild(label);
       label = document.createElement("label");
-      label.textContent = c ;
+      label.textContent = c;
       label.setAttribute("class", "col2-mvt");
       tabMouvement.appendChild(label);
       let button = createButton("", "col3-mvt", "fa fa-minus");
@@ -571,7 +616,7 @@ function majTabMouvement() {
 
 
     }
-    
+
   })
 }
 /**
@@ -592,4 +637,26 @@ function createButton(id, classes, icon) {
   b.appendChild(i);
 
   return b;
+}
+
+
+function cloneJSON(obj) {
+  // basic type deep copy
+  if (obj === null || obj === undefined || typeof obj !== 'object')  {
+      return obj
+  }
+  // array deep copy
+  if (obj instanceof Array) {
+      var cloneA = [];
+      for (var i = 0; i < obj.length; ++i) {
+          cloneA[i] = cloneJSON(obj[i]);
+      }              
+      return cloneA;
+  }                  
+  // object deep copy
+  var cloneO = {};   
+  for (var i in obj) {
+      cloneO[i] = cloneJSON(obj[i]);
+  }                  
+  return cloneO;
 }

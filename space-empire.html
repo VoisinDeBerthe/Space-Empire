@@ -21,7 +21,7 @@
     <div class="top_bar">
       <label>Space Empire 4X V0.1</label>
       <label id="numTour">1</label>
-      <button>Nouveau Tour
+      <button onclick="nouveauTour();">Nouveau Tour
         <svg xmlns="http://www.w3.org/2000/svg" height="1em"
           viewBox="0 0 448 512"><!--! Font Awesome Free 6.4.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2023 Fonticons, Inc. -->
           <path
@@ -51,10 +51,10 @@
 
               <div class="body-accordeon-row economie">
                 <div class="col1-eco">
-                  <label>Report</label>
+                  <label >Report</label>
                 </div>
                 <div class="col2-eco">
-                  <input id="report" type="number" value="0" readonly>
+                  <label id="report" ></label>
                 </div>
               </div>
               <div class="body-accordeon-row economie">
@@ -66,7 +66,7 @@
                   </div>
                 </div>
                 <div class="col2-eco">
-                  <input id="colonie" type="number" value="20" readonly>
+                  <label id="colonie" ></label>
                 </div>
                 <div class="col3-eco">
                   <button class="none" onclick="modifValeurNum('colonie',1)">+1</button>
@@ -85,7 +85,7 @@
                   </div>
                 </div>
                 <div class="col2-eco">
-                  <input id="minerai" type="number" value="0" readonly>
+                  <label id="minerai" ></label>
                 </div>
                 <div class="col3-eco">
                   <button class="none" onclick="modifValeurNum('minerai',5)">+5</button>
@@ -99,7 +99,7 @@
                   <button class="none" onclick="modifValeurNum('pipeline',-1)">-1</button>
                 </div>
                 <div class="col2-eco">
-                  <input id="pipeline" type="number" value="0" readonly>
+                  <label id="pipeline" ></label>
                 </div>
                 <div class="col3-eco">
                   <button class="none" onclick="modifValeurNum('pipeline',1)">+1</button>
@@ -112,7 +112,7 @@
                   <button class="none" onclick="modifValeurNum('maintenance',-1)">-1</button>
                 </div>
                 <div class="col2-eco">
-                  <input id="maintenance" type="number" value="0" readonly>
+                  <label id="maintenance" ></label>
                 </div>
                 <div class="col3-eco">
                   <button class="none" onclick="modifValeurNum('maintenance',1)">+1</button>
@@ -124,7 +124,7 @@
                   <button class="none" onclick="modifValeurNum('init',-1)">-1</button>
                 </div>
                 <div class="col2-eco">
-                  <input id="init" type="number" value="0" readonly>
+                  <label id="init" ></label>
                 </div>
                 <div class="col3-eco">
                   <button class="none" onclick="modifValeurNum('init',1)">+1</button>
