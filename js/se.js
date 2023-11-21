@@ -25,10 +25,10 @@ const dataConstructionBase = [
   { id: 4, construction: "BB", requiredTech: [[0, 5]], libelle: "BattleShip", hull: 3, cost: 20, maint: 3, maxUnit: 36, upgradable: 1 },
   { id: 5, construction: "DN", requiredTech: [[0, 6]], libelle: "Dreadnaught", hull: 3, cost: 24, maint: 3, maxUnit: 36, upgradable: 1 },
   { id: 6, construction: "CO", requiredTech: [[0, 1]], libelle: "Colony Ship", hull: 1, cost: 12, maint: 0, maxUnit: 0, upgradable: 0 },
-  { id: 7, construction: "Ba", requiredTech: [[0, 1]], libelle: "Base", hull: 3, cost: 12, maint: 0, maxUnit: 4, upgradable: 0 },
-  { id: 8, construction: "Mi", requiredTech: [[0, 1]], libelle: "Miner", hull: 1, cost: 5, maint: 0, maxUnit: 0, upgradable: 1 },
-  { id: 9, construction: "De", requiredTech: [[0, 1]], libelle: "Decoy", hull: 0, cost: 1, maint: 0, maxUnit: 4, upgradable: 1 },
-  { id: 10, construction: "SY", requiredTech: [[0, 1]], libelle: "Ship Yard", hull: 1, cost: 6, maint: 0, maxUnit: 36, upgradable: 0 }
+  { id: 7, construction: "Ba", requiredTech: [[0, 1]], libelle: "Base", hull: 0, cost: 12, maint: 0, maxUnit: 4, upgradable: 0 },
+  { id: 8, construction: "Mi", requiredTech: [[0, 1]], libelle: "Miner", hull: 1, cost: 5, maint: 0, maxUnit: 0, upgradable: 0 },
+  { id: 9, construction: "De", requiredTech: [[0, 1]], libelle: "Decoy", hull: 0, cost: 1, maint: 0, maxUnit: 4, upgradable: 0 },
+  { id: 10, construction: "SY", requiredTech: [[0, 1]], libelle: "Ship Yard", hull: 0, cost: 6, maint: 0, maxUnit: 36, upgradable: 0 }
 ]
   ;
 
@@ -56,10 +56,10 @@ const dataConstructionAvance = [
   { id: 4, construction: "BB", requiredTech: [[0, 5]], libelle: "BattleShip", hull: 3, cost: 20, maint: 3, maxUnit: 36, upgradable: 1 },
   { id: 5, construction: "DN", requiredTech: [[0, 6]], libelle: "Dreadnaught", hull: 3, cost: 24, maint: 3, maxUnit: 36, upgradable: 1 },
   { id: 6, construction: "CO", requiredTech: [[0, 1]], libelle: "Colony Ship", hull: 1, cost: 12, maint: 0, maxUnit: 0, upgradable: 0 },
-  { id: 7, construction: "Ba", requiredTech: [[0, 1]], libelle: "Base", hull: 3, cost: 12, maint: 0, maxUnit: 4, upgradable: 0 },
-  { id: 8, construction: "Mi", requiredTech: [[0, 1]], libelle: "Miner", hull: 1, cost: 5, maint: 0, maxUnit: 0, upgradable: 1 },
-  { id: 9, construction: "De", requiredTech: [[0, 1]], libelle: "Decoy", hull: 0, cost: 1, maint: 0, maxUnit: 4, upgradable: 1 },
-  { id: 10, construction: "SY", requiredTech: [[0, 1]], libelle: "Ship Yard", hull: 1, cost: 6, maint: 0, maxUnit: 36, upgradable: 0 }
+  { id: 7, construction: "Ba", requiredTech: [[0, 1]], libelle: "Base", hull: 0, cost: 12, maint: 0, maxUnit: 4, upgradable: 0 },
+  { id: 8, construction: "Mi", requiredTech: [[0, 1]], libelle: "Miner", hull: 1, cost: 5, maint: 0, maxUnit: 0, upgradable: 0 },
+  { id: 9, construction: "De", requiredTech: [[0, 1]], libelle: "Decoy", hull: 0, cost: 1, maint: 0, maxUnit: 4, upgradable: 0 },
+  { id: 10, construction: "SY", requiredTech: [[0, 1]], libelle: "Ship Yard", hull: 0, cost: 6, maint: 0, maxUnit: 36, upgradable: 0 }
 ]
   ;
 
@@ -83,14 +83,36 @@ const REPORT_MAX_RP = 30;
  */
 var dataConstruction = dataConstructionBase.slice();
 var dataTechno = dataTechnoBase.slice();
-var constructionTotal = new Array(dataConstruction.length);
-var constructionTour = new Array(dataConstruction.length);
 
-var tour = { numTour: 1, reportCP: 0, totalCP: 0, colonieCP: 0, mineurCP: 0, pipelineCP: 0, remainingCP: 0, maintenance: 0, bid: 0, coutTechno: 0, coutConstruction: 0, futurMaintenance: 0, constructionTotal: constructionTotal, constructionTour: constructionTour, upgrade: [] };
-var histoTour=[];
+
+var tour = { //Mon objet JSon tour qui fait tout, même le café. Après j'ai jamais dit qui le faisait bien...
+  numTour: 1, //N° de tour
+  reportCP: 0, // CP reportés du tour précédant
+  totalCP: 0, // total des CP gagné durant ce tour de production
+  colonieCP: 0, // CP gagnés grâce aux colonies et à la planète mère
+  mineurCP: 0, // CP gagnés grâce au vaisseaux mineur (minerai et exploitation de nébuleuse)
+  pipelineCP: 0, // CP gagnés grâce aux routes commerciales des MS pipeline
+  remainingCP: 0, // CP qui restent au fr et à mesure des dépenses du tour (deviendra le reportCP au prochain tour)
+  maintenance: 0, // Maintenance à payer ce tour ci de production (ne tient pas compte des nouvelles constructions)
+  bid: 0, // montant parié pour l'initiative
+  coutTechno: 0, // cout total en CP des technologies ce tour ci
+  coutConstruction: 0, // cout total des constructions ce tour ci
+  futurMaintenance: 0, // le surcout de maintenance au prochain tour en prévision
+  constructionTotal: new Array(dataConstruction.length), // tableau qui contient la quantité total de chaque construction (même index que dataConstrucion)
+  constructionTour: new Array(dataConstruction.length), // tableau qui contient les nouvelles constructions du tour(aditionnées à constructionTotal à chaque nouveau tour)
+  upgrade: [] // tableau d'historique des upgrades du tour pendant la phase de mouvement
+};
+
+var histoTour = [];//Comme son nom l'indique contient l'historique de tous les tours de France le [0] étant toujours le dernier inséré 
 
 
 function nouveauTour() {
+  //Nouveau tour impossible si le solde de CP est négatif
+  if (tour.remainingCP < 0) {
+    alert('Nouveau tour impossible, la maison ne fait pas crédit');
+    return;
+  }
+
   let newTurn = cloneJSON(tour);
   newTurn.numTour++;
   document.getElementById("numTour").textContent = newTurn.numTour;
@@ -105,30 +127,43 @@ function nouveauTour() {
   newTurn.mineurCP = 0;
   newTurn.remainingCP = tour.colonieCP;
 
-  newTurn.constructionTotal.forEach((qte,i) => {
+  newTurn.constructionTotal.forEach((qte, i) => {
     //Les constructions du tour sont cumulées dans les constructions totales 
-    qte += tour.constructionTour[i];
+    newTurn.constructionTotal[i] += tour.constructionTour[i];
     // RAZ des construction du tour
-    newTurn.constructionTour = 0;
+    newTurn.constructionTour[i] = 0;
     // Calcul de la maintenance 
     newTurn.maintenance += qte * dataConstruction[i].maint
   })
-  maintenance = 
+
+
+  //Remise à zero des evolutions du tour de technologie
+  dataTechno.forEach(tech => {
+    if (tech.researched = 1) { // Si la techno a été rechechée sur le tour on refait apparaitre le bouton plus pour le nouveau tour
+      document.getElementById(tech.tech + '_plus').removeAttribute("class", "not-visible");
+      document.getElementById(tech.tech + '_moins').setAttribute("class", "not-visible");
+      tech.researched = 0;
+    }
+  })
+
+
   histoTour.splice(0, 0, tour);
+  tour = newTurn;
   calcul();
-  return newTurn;
+
 }
 
 for (let index = 0; index < dataConstruction.length; index++) {
-  constructionTour[index] = 0;
-  constructionTotal[index] = 0;
+  tour.constructionTour[index] = 0;
+  tour.constructionTotal[index] = 0;
 }
 
 //construction de départ
-constructionTotal[getIdConstruction('SY')] = 4;
-constructionTotal[getIdConstruction('CO')] = 3;
-constructionTotal[getIdConstruction('SC')] = 3;
-constructionTotal[getIdConstruction('Mi')] = 1;
+tour.constructionTotal[getIdConstruction('SY')] = 4;
+tour.constructionTotal[getIdConstruction('CO')] = 3;
+tour.constructionTotal[getIdConstruction('SC')] = 3;
+tour.constructionTotal[getIdConstruction('Mi')] = 1;
+tour.colonieCP = 20;
 
 // la méthode calcul() ici permet de mettre à jour tous les boutons du collapse avec les valeurs initialisées
 calcul();
@@ -281,14 +316,14 @@ function modifValeurNum(id, valeur) {
   switch (id) {
     case 'colonie': tour.colonieCP = tour.colonieCP + valeur;
       break;
-    case 'minerai' : tour.mineurCP =  tour.mineurCP + valeur;
-    break;
-    case 'maintenance' : tour.maintenance =  tour.maintenance + valeur;
-    break;
-    case 'pipeline' : tour.pipelineCP =  tour.pipelineCP + valeur;
-    break;
-    case 'init' : tour.bid =  tour.bid + valeur;
-    break;
+    case 'minerai': tour.mineurCP = tour.mineurCP + valeur;
+      break;
+    case 'maintenance': tour.maintenance = tour.maintenance + valeur;
+      break;
+    case 'pipeline': tour.pipelineCP = tour.pipelineCP + valeur;
+      break;
+    case 'init': tour.bid = tour.bid + valeur;
+      break;
   }
   let nbre = document.getElementById(id);
   nbre.value = parseInt(nbre.textContent) + valeur;
@@ -358,18 +393,18 @@ function modifConstruction(idNewLineConst, type) {
       alert("Capacité de construction dépassée (max : " + getHullCapacity() + ')');
       return
     }
-    constructionTour[tab[0]]++;
+    tour.constructionTour[tab[0]]++;
 
   } else {
-    constructionTour[tab[0]]--;
+    tour.constructionTour[tab[0]]--;
   }
 
   calcul();
 }
 
 function destruction(id) {
-  if (constructionTotal[id] > 0) {
-    constructionTotal[id]--;
+  if (tour.constructionTotal[id] > 0) {
+    tour.constructionTotal[id]--;
   }
   majTabMouvement();
 
@@ -428,7 +463,7 @@ function calculConstruction() {
   tour.futurMaintenance = 0;
 
   let stringBandeau = " ( "
-  constructionTour.forEach((qte, i) => {
+  tour.constructionTour.forEach((qte, i) => {
     if (qte > 0) {
       tour.coutConstruction += dataConstruction[i].cost * qte;
       stringBandeau += dataConstruction[i].construction + ":" + qte + ' - ';
@@ -503,7 +538,7 @@ function isConstructionPossible(idConstruct) {
  */
 function getHullCapacity() {
 
-  let resultat = constructionTotal[getIdConstruction('SY')];
+  let resultat = tour.constructionTotal[getIdConstruction('SY')];
   switch (getNiveauTech('SY')) {
     case 3:
       resultat = resultat * 2;
@@ -522,7 +557,7 @@ function getHullCapacity() {
  */
 function getHullConstructTurn() {
   result = 0;
-  constructionTour.forEach((qte, i) => {
+  tour.constructionTour.forEach((qte, i) => {
     result += dataConstruction[i].hull * qte;
   })
   return result;
@@ -558,7 +593,7 @@ function majConstrucDispo() {
 
       button = createButton(el.construction + "_moins", "bt-moins", "fa fa-minus");
       button.addEventListener('click', function () { modifConstruction(idNewLineConstruct, 'moins') });
-      if (constructionTour[i] == 0) {
+      if (tour.constructionTour[i] == 0) {
         button.setAttribute("disabled", true);
       }
       newLineConstruct.appendChild(button);
@@ -566,19 +601,19 @@ function majConstrucDispo() {
 
       button = createButton(el.construction + "_plus", "bt-plus", "fa fa-plus");
       button.addEventListener('click', function () { modifConstruction(idNewLineConstruct, 'plus') });
-      if (constructionTour[i] + constructionTotal[i] == el.maxUnit && el.maxUnit != 0) {
+      if (tour.constructionTour[i] + tour.constructionTotal[i] == el.maxUnit && el.maxUnit != 0) {
         button.setAttribute("disabled", true);
       }
       newLineConstruct.appendChild(button);
 
       label = document.createElement("label");
-      label.textContent = constructionTour[i];
+      label.textContent = tour.constructionTour[i];
       label.setAttribute("id", el.construction + "_enCours_" + i);
       label.setAttribute("class", "qte-courante");
       newLineConstruct.appendChild(label);
 
       label = document.createElement("label");
-      label.textContent = '( ' + constructionTotal[i] + ' )';
+      label.textContent = '( ' + tour.constructionTotal[i] + ' )';
       label.setAttribute("id", el.construction + "_total_" + i);
       label.setAttribute("class", "qte-totale");
       newLineConstruct.appendChild(label);
@@ -586,7 +621,7 @@ function majConstrucDispo() {
       newBodyConstruction.appendChild(newLineConstruct);
     } else {
       //si on a pas le droit de construire on remet à 0 la qte construite ce tour ci (cas où finalement on annule une recherche pour faire autre chose)
-      constructionTour[i] = 0;
+      tour.constructionTour[i] = 0;
     }
   })
 
@@ -595,7 +630,7 @@ function majTabMouvement() {
   let temp = document.getElementById("tab-mouvement");
   let tabMouvement = temp.cloneNode(false);
   temp.parentElement.replaceChild(tabMouvement, temp);
-  constructionTotal.forEach((c, i) => {
+  tour.constructionTotal.forEach((c, i) => {
     if (c > 0) {
       let label = document.createElement("label");
       label.textContent = dataConstruction[i].libelle;
@@ -642,21 +677,21 @@ function createButton(id, classes, icon) {
 
 function cloneJSON(obj) {
   // basic type deep copy
-  if (obj === null || obj === undefined || typeof obj !== 'object')  {
-      return obj
+  if (obj === null || obj === undefined || typeof obj !== 'object') {
+    return obj
   }
   // array deep copy
   if (obj instanceof Array) {
-      var cloneA = [];
-      for (var i = 0; i < obj.length; ++i) {
-          cloneA[i] = cloneJSON(obj[i]);
-      }              
-      return cloneA;
-  }                  
+    var cloneA = [];
+    for (var i = 0; i < obj.length; ++i) {
+      cloneA[i] = cloneJSON(obj[i]);
+    }
+    return cloneA;
+  }
   // object deep copy
-  var cloneO = {};   
+  var cloneO = {};
   for (var i in obj) {
-      cloneO[i] = cloneJSON(obj[i]);
-  }                  
+    cloneO[i] = cloneJSON(obj[i]);
+  }
   return cloneO;
 }
