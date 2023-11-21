@@ -119,6 +119,7 @@ tour.constructionTotal[getIdConstruction('CO')] = 3;
 tour.constructionTotal[getIdConstruction('SC')] = 3;
 tour.constructionTotal[getIdConstruction('Mi')] = 1;
 tour.colonieCP = 20;
+calculMaintenance();
 
 // la méthode calcul() ici permet de mettre à jour tous les boutons du collapse avec les valeurs initialisées
 calcul();
@@ -366,6 +367,8 @@ function destruction(id) {
   if (tour.constructionTotal[id] > 0) {
     tour.constructionTotal[id]--;
   }
+  calculMaintenance();
+  calculEconomie();
   majTabMouvement();
   majConstrucDispo();
 }
@@ -671,6 +674,13 @@ function cloneJSON(obj) {
   return cloneO;
 }
 
+function calculMaintenance(){
+  tour.maintenance = 0;
+  tour.constructionTotal.forEach((qte,i) =>{
+    tour.maintenance += qte * dataConstruction[i].maint;
+  })
+}
+
 /**
  * Méthode qui créer un nouveau tour, historise l'ancien et mets à jour tout l'affichage
  * @returns rien du tout, juste pas de création de nouveau tour si le solde de CP est négatif
@@ -702,7 +712,7 @@ function nouveauTour() {
     // RAZ des construction du tour
     newTurn.constructionTour[i] = 0;
     // Calcul de la maintenance 
-    newTurn.maintenance += qte * dataConstruction[i].maint
+    newTurn.maintenance += newTurn.constructionTotal[i] * dataConstruction[i].maint
   })
 
 
