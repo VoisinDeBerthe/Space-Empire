@@ -106,52 +106,7 @@ var tour = { //Mon objet JSon tour qui fait tout, même le café. Après j'ai ja
 var histoTour = [];//Comme son nom l'indique contient l'historique de tous les tours de France le [0] étant toujours le dernier inséré 
 
 
-function nouveauTour() {
-  //Nouveau tour impossible si le solde de CP est négatif
-  if (tour.remainingCP < 0) {
-    alert('Nouveau tour impossible, la maison ne fait pas crédit');
-    return;
-  }
 
-  let newTurn = cloneJSON(tour);
-  newTurn.numTour++;
-  document.getElementById("numTour").textContent = newTurn.numTour;
-  newTurn.coutConstruction = 0;
-  newTurn.coutTechno = 0;
-  newTurn.futurMaintenance = 0;
-  newTurn.maintenance = 0;
-  newTurn.reportCP = tour.remainingCP;
-  if (newTurn.reportCP > REPORT_MAX_CP) {
-    newTurn.reportCP = REPORT_MAX_CP;
-  }
-  newTurn.mineurCP = 0;
-  newTurn.remainingCP = tour.colonieCP;
-
-  newTurn.constructionTotal.forEach((qte, i) => {
-    //Les constructions du tour sont cumulées dans les constructions totales 
-    newTurn.constructionTotal[i] += tour.constructionTour[i];
-    // RAZ des construction du tour
-    newTurn.constructionTour[i] = 0;
-    // Calcul de la maintenance 
-    newTurn.maintenance += qte * dataConstruction[i].maint
-  })
-
-
-  //Remise à zero des evolutions du tour de technologie
-  dataTechno.forEach(tech => {
-    if (tech.researched = 1) { // Si la techno a été rechechée sur le tour on refait apparaitre le bouton plus pour le nouveau tour
-      document.getElementById(tech.tech + '_plus').removeAttribute("class", "not-visible");
-      document.getElementById(tech.tech + '_moins').setAttribute("class", "not-visible");
-      tech.researched = 0;
-    }
-  })
-
-
-  histoTour.splice(0, 0, tour);
-  tour = newTurn;
-  calcul();
-
-}
 
 for (let index = 0; index < dataConstruction.length; index++) {
   tour.constructionTour[index] = 0;
@@ -382,7 +337,9 @@ function gestionNivMax(id) {
   boutonWreck.setAttribute('disabled', true);
 }
 
-//est appelé par tous les boutons du bloc construction
+/**
+ * est appelé par tous les boutons du bloc construction
+ * */
 function modifConstruction(idNewLineConst, type) {
 
   let tab = idNewLineConst.split('_');
@@ -394,23 +351,31 @@ function modifConstruction(idNewLineConst, type) {
       return
     }
     tour.constructionTour[tab[0]]++;
-
   } else {
     tour.constructionTour[tab[0]]--;
   }
-
   calcul();
 }
 
+/**
+ * Permet de détruire une construction, met à jour l'onglet Mouvement et le collapse Construction dans l'onglet Production.
+ * Impacte également la maintenance du tour.
+ * @param {number} id index du tableau construction total dans lequel on détruit une construction
+ */
 function destruction(id) {
   if (tour.constructionTotal[id] > 0) {
     tour.constructionTotal[id]--;
   }
   majTabMouvement();
-
+  majConstrucDispo();
 }
 
-//Mets àjour l'affichage sur tous les bandeaux avec les valeurs actuelles en mémoires
+/**
+ * Mets à jour TOUT l'affichage avec les valeurs actuelles en mémoires, c'est barbare je sais... Oui c'est appelé à chaque petite modif...
+ * j'ai honte de faire du sale comme ça ... mais ... mais ... trop la flemme de faire du propre quand le sale
+ * marche si bien ! 
+ * Promis si un jour j'ai des problèmes de performances j'acheterai un téléphone plus puissant !
+ * */
 function calcul() {
   calculTechnologie();
   calculConstruction();
@@ -419,6 +384,9 @@ function calcul() {
   majTabMouvement();
 }
 
+/**
+ * Calcul tout ce qu'il faut sur la production de CP et met à jour tout l'affichage du collapse Economie dans l'onglet Production
+ */
 function calculEconomie() {
   document.getElementById("report").textContent = tour.reportCP;
   document.getElementById("colonie").textContent = tour.colonieCP;
@@ -432,6 +400,9 @@ function calculEconomie() {
 
 }
 
+/**
+ * recalcul le coût des recherches technologiques du tour et met à jour l'information dans le bouton du collapse Technologie
+ */
 function calculTechnologie() {
   tour.coutTechno = 0;
   let stringBandeau = " ( "
@@ -439,11 +410,6 @@ function calculTechnologie() {
     if (el.researched) {
       tour.coutTechno += el.grid[el.level][1];
       stringBandeau += el.tech + ":" + (el.level + el.grid[0][0]) + ' - ';
-      if (dataTechno.length > i) {
-
-      } else {
-
-      }
     }
   })
 
@@ -458,21 +424,19 @@ function calculTechnologie() {
 
 }
 
+/**
+ * recalcul tous les coûts liés aux construction en cours (cout de construction, futur maintenance supplémentaire)
+ * et met à jour les infos du bouton collapse Construction
+ */
 function calculConstruction() {
   tour.coutConstruction = 0;
   tour.futurMaintenance = 0;
-
   let stringBandeau = " ( "
   tour.constructionTour.forEach((qte, i) => {
     if (qte > 0) {
       tour.coutConstruction += dataConstruction[i].cost * qte;
       stringBandeau += dataConstruction[i].construction + ":" + qte + ' - ';
       tour.futurMaintenance += dataConstruction[i].maint * qte;
-      if (dataTechno.length > i) {
-
-      } else {
-
-      }
     }
   })
 
@@ -483,11 +447,12 @@ function calculConstruction() {
     stringBandeau += ' )';
   }
   document.getElementById('bt_construction').innerHTML = "Construction <br>CP : - " + tour.coutConstruction + stringBandeau + ' +maint:' + tour.futurMaintenance;
-
 }
 
 
-/**Renvoie le niveau d'une technologie donnée en paramètre. renvoie -1 si la techno n'est pas dans connue */
+/**
+ * Renvoie le niveau d'une technologie donnée en paramètre. renvoie -1 si la techno n'est pas dans connue 
+ * */
 function getNiveauTech(tech) {
   let resultat = -1;
 
@@ -501,7 +466,8 @@ function getNiveauTech(tech) {
   return resultat;
 }
 
-/**Retourne l'index d'une construction dans le tableau dataConstruction */
+/**
+ * Retourne l'index d'une construction dans le tableau dataConstruction */
 function getIdConstruction(construction) {
   let resultat = 0;
   dataConstruction.forEach(el => {
@@ -533,7 +499,7 @@ function isConstructionPossible(idConstruct) {
 
 /**
  * Renvoie la capacité de construction de point de coque totale en tenant compte 
- * du nombre de chantier et de leurs niveau technologique
+ * du nombre de chantier et du niveau technologique
  * @returns 
  */
 function getHullCapacity() {
@@ -553,6 +519,8 @@ function getHullCapacity() {
 
 /**
  * Renvoie le nombre de point de coque construit pendant ce tour
+ * Pour des raisons de facilités les bases, les chantiers, les decoy ont 0 points de coques dans les data
+ * ça évite un attribut supplémentaire pour gérer les unités ne nécessitant pas de chantier pour être construites
  * @returns 
  */
 function getHullConstructTurn() {
@@ -565,7 +533,9 @@ function getHullConstructTurn() {
 
 
 
-/**On clone le body des constructions mais sans aucune ligne puis on reconstruit tout avec les data
+/**
+ * Met à jour l'affichage du collapse Construction dans l'onglet Production
+ * On clone le body des constructions mais sans aucune ligne puis on reconstruit tout avec les data
  * en fonction du niveau de ShipSize
  */
 function majConstrucDispo() {
@@ -624,8 +594,11 @@ function majConstrucDispo() {
       tour.constructionTour[i] = 0;
     }
   })
-
 }
+
+/**
+ * Met à jour l'affichage de l'onglet mouvement
+ */
 function majTabMouvement() {
   let temp = document.getElementById("tab-mouvement");
   let tabMouvement = temp.cloneNode(false);
@@ -647,13 +620,11 @@ function majTabMouvement() {
       label.textContent = "(1x1, 4x2) 9 CP";
       label.setAttribute("class", "col4-mvt");
       tabMouvement.appendChild(label);
-
-
-
     }
-
   })
 }
+
+
 /**
  * 
  * @param {String} id : identifiant du bouton
@@ -674,7 +645,11 @@ function createButton(id, classes, icon) {
   return b;
 }
 
-
+/**
+ * Méthode récursive permettant de cloner réellement un JSON 
+ * @param {JSON} obj 
+ * @returns un clone de obj
+ */
 function cloneJSON(obj) {
   // basic type deep copy
   if (obj === null || obj === undefined || typeof obj !== 'object') {
@@ -694,4 +669,55 @@ function cloneJSON(obj) {
     cloneO[i] = cloneJSON(obj[i]);
   }
   return cloneO;
+}
+
+/**
+ * Méthode qui créer un nouveau tour, historise l'ancien et mets à jour tout l'affichage
+ * @returns rien du tout, juste pas de création de nouveau tour si le solde de CP est négatif
+ */
+function nouveauTour() {
+  //Nouveau tour impossible si le solde de CP est négatif
+  if (tour.remainingCP < 0) {
+    alert('Nouveau tour impossible, la maison ne fait pas crédit');
+    return;
+  }
+
+  let newTurn = cloneJSON(tour);
+  newTurn.numTour++;
+  document.getElementById("numTour").textContent = newTurn.numTour;
+  newTurn.coutConstruction = 0;
+  newTurn.coutTechno = 0;
+  newTurn.futurMaintenance = 0;
+  newTurn.maintenance = 0;
+  newTurn.reportCP = tour.remainingCP;
+  if (newTurn.reportCP > REPORT_MAX_CP) {
+    newTurn.reportCP = REPORT_MAX_CP;
+  }
+  newTurn.mineurCP = 0;
+  newTurn.remainingCP = tour.colonieCP;
+
+  newTurn.constructionTotal.forEach((qte, i) => {
+    //Les constructions du tour sont cumulées dans les constructions totales 
+    newTurn.constructionTotal[i] += tour.constructionTour[i];
+    // RAZ des construction du tour
+    newTurn.constructionTour[i] = 0;
+    // Calcul de la maintenance 
+    newTurn.maintenance += qte * dataConstruction[i].maint
+  })
+
+
+  //Remise à zero des evolutions du tour de technologie
+  dataTechno.forEach(tech => {
+    if (tech.researched = 1) { // Si la techno a été rechechée sur le tour on refait apparaitre le bouton plus pour le nouveau tour
+      document.getElementById(tech.tech + '_plus').removeAttribute("class", "not-visible");
+      document.getElementById(tech.tech + '_moins').setAttribute("class", "not-visible");
+      tech.researched = 0;
+    }
+  })
+
+
+  histoTour.splice(0, 0, tour);
+  tour = newTurn;
+  calcul();
+
 }
