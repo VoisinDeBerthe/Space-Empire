@@ -158,10 +158,17 @@ CSS l'accordeon panel
   font-size: 1rem;
   display: grid;
   column-gap: 10px;
-  grid-template-columns: 50% 20% 30%;
+  grid-template-columns: 55% 10% 35%;
   grid-template-rows: auto;
   grid-template-areas:
     "col1-eco col2-eco col3-eco";
+
+}
+
+.col2-eco{
+  display: block;
+  text-align: center;
+  width: 100%;
 
 }
 
