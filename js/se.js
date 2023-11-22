@@ -612,7 +612,7 @@ function majTabMouvement() {
   tour.constructionTotal.forEach((c, i) => {
     if (c > 0) {
       let label = document.createElement("label");
-      label.textContent = dataConstruction[i].libelle;
+      label.textContent = dataConstruction[i].construction + ' - ' +dataConstruction[i].libelle;
       label.setAttribute("class", "col1-mvt");
       tabMouvement.appendChild(label);
       label = document.createElement("label");
@@ -743,7 +743,7 @@ function nouveauTour() {
   histoTour.splice(0, 0, tour);
   tour = newTurn;
   calcul();
-  
+
 //pour revenir sur l'onglet mouvement pour le début du nouveau tour
   document.getElementById("bt-tab-mouvement").click();
 }
@@ -765,7 +765,7 @@ function majSelectUpgrade() {
     if (qte > 0 && dataConstruction[i].upgradable == 1) {
       let option = document.createElement("option");
       option.setAttribute('value', i);
-      let optionText = document.createTextNode(dataConstruction[i].libelle);
+      let optionText = document.createTextNode(dataConstruction[i].construction);
       option.appendChild(optionText);
       dropDown.appendChild(option);
     }
