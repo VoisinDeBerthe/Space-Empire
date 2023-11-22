@@ -33,12 +33,38 @@
     </div>
     <div class="tabs">
       <div class="tab-registers">
-        <button class="active-tab">Mouvement</button>
-        <button >Production</button>     
+        <button id="bt-tab-mouvement" class="active-tab">Mouvement</button>
+        <button>Production</button>
         <button>Historique</button>
       </div>
       <div class="tab-bodies">
-        <div class="tab" >
+        <div class="tab">
+          <div id="div-upgrade" style="display:flex;">
+
+            <label id="upgrade-reportCP"></label>
+            <div>
+              <select id="select-upgrade">
+                <option>toto</option>
+              </select>
+              <select id="qte-upgrade">
+                <option>toto</option>
+              </select>
+            </div>
+            <div>
+              <input type="radio" id="upgrade-1CP" name="prix-upgrade" value="1" checked />
+              <label for="upgrade-1CP">1 CP</label>
+            </div>
+
+            <div>
+              <input type="radio" id="upgrade-2CP" name="prix-upgrade" value="2" />
+              <label for="upgrade-2CP">2 CP</label>
+            </div>
+
+            <div>
+              <button onclick="upgrade();">Upgrade</button>
+            </div>
+
+          </div>
           <div class="mouvement" id="tab-mouvement">
 
           </div>
@@ -51,10 +77,10 @@
 
               <div class="body-accordeon-row economie">
                 <div class="col1-eco">
-                  <label >Report</label>
+                  <label>Report</label>
                 </div>
                 <div class="col2-eco">
-                  <label id="report" ></label>
+                  <label id="report"></label>
                 </div>
               </div>
               <div class="body-accordeon-row economie">
@@ -66,7 +92,7 @@
                   </div>
                 </div>
                 <div class="col2-eco">
-                  <label id="colonie" ></label>
+                  <label id="colonie"></label>
                 </div>
                 <div class="col3-eco">
                   <button class="none" onclick="modifValeurNum('colonie',1)">+1</button>
@@ -85,7 +111,7 @@
                   </div>
                 </div>
                 <div class="col2-eco">
-                  <label id="minerai" ></label>
+                  <label id="minerai"></label>
                 </div>
                 <div class="col3-eco">
                   <button class="none" onclick="modifValeurNum('minerai',5)">+5</button>
@@ -99,7 +125,7 @@
                   <button class="none" onclick="modifValeurNum('pipeline',-1)">-1</button>
                 </div>
                 <div class="col2-eco">
-                  <label id="pipeline" ></label>
+                  <label id="pipeline"></label>
                 </div>
                 <div class="col3-eco">
                   <button class="none" onclick="modifValeurNum('pipeline',1)">+1</button>
@@ -112,7 +138,7 @@
                   <button class="none" onclick="modifValeurNum('maintenance',-1)">-1</button>
                 </div>
                 <div class="col2-eco">
-                  <label id="maintenance" ></label>
+                  <label id="maintenance"></label>
                 </div>
                 <div class="col3-eco">
                   <button class="none" onclick="modifValeurNum('maintenance',1)">+1</button>
@@ -124,7 +150,7 @@
                   <button class="none" onclick="modifValeurNum('init',-1)">-1</button>
                 </div>
                 <div class="col2-eco">
-                  <label id="init" ></label>
+                  <label id="init"></label>
                 </div>
                 <div class="col3-eco">
                   <button class="none" onclick="modifValeurNum('init',1)">+1</button>
@@ -153,7 +179,7 @@
             </div>
           </div>
         </div>
-        
+
         <div style="display:none;">
           Contenu Tab 3
         </div>

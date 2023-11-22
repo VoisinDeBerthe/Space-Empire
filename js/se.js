@@ -129,8 +129,84 @@ calcul();
 /************************************************************************************************************/
 
 //Aller on le tente avec les technologies. Franchement j'y crois pas trop mais si ça marche ben... ça marche quoi.
-initTechnologie();
 
+let template = document.getElementById("tech-template");
+
+dataTechno.forEach((el, i) => {
+  let newLineTech = template.cloneNode(true);
+  let idNewLineTech = el.id + '_' + el.tech;
+  newLineTech.setAttribute("id", idNewLineTech);
+  newLineTech.setAttribute("class", "technology");
+  let label = document.createElement("label");
+  label.textContent = el.tech;
+  label.title = el.libelle;
+  label.setAttribute("class", "libelle");
+  newLineTech.appendChild(label);
+
+  //création d'une div pour regrouper les boutons plus et moins dans la deuxième colonne de la ligne de techno
+  let div = document.createElement('div');
+  div.setAttribute('class', 'tab-techno');
+
+  let button = createButton(el.tech + "_plus", "bt", "fa fa-plus");
+  button.addEventListener('click', function () { modifNivTech(idNewLineTech, 'plus') });
+  if (el.researched == 1) {
+    button.setAttribute("class", "not-visible");
+  }
+  div.appendChild(button);
+
+  button = createButton(el.tech + "_moins", "bt", "fa fa-minus");
+  button.addEventListener('click', function () { modifNivTech(idNewLineTech, 'moins') });
+  if (el.researched == 0) {
+    button.setAttribute("class", "not-visible");
+  }
+  div.appendChild(button);
+
+  //on ajoute la div avec les deux boutons à la ligne de tech en cours
+  newLineTech.appendChild(div);
+
+  button = document.createElement("button");
+  button.textContent = 'Wreck';
+  button.setAttribute("id", el.tech + "_wreck");
+  button.addEventListener('click', function () { modifNivTech(idNewLineTech, 'wreck') });
+  button.setAttribute("class", "wreck");
+  newLineTech.appendChild(button);
+
+
+  //on crré une div qui regroupera tous les <p> des level de techno dans la 4ème colonne
+  div = document.createElement('div');
+  div.setAttribute('class', 'tab-techno');
+  el.grid.forEach((nivTech, j) => {
+    /* on créé un paragraphe pour afficher le niveau de la techno */
+    let nivTechno = document.createElement("p");
+    nivTechno.textContent = nivTech[0];
+    nivTechno.setAttribute("id", el.tech + '_' + j);
+    if (j == el.level) {
+      /* Si le niveau de la techno correspond au niveau de recherche actuelle de l'utilisateur 
+      alors on applique la class de mise en valeur du niveau*/
+      nivTechno.setAttribute("class", "label-tech");
+    }
+
+    /*On rajoute le prix du niveau de technologie en indice du niveau
+    Pour ça il faut rajouter un span à l'intérireur du paragraphe  */
+    let prixTechno = document.createElement("span");
+    prixTechno.setAttribute("class", "indice");
+    prixTechno.textContent = nivTech[1];
+    nivTechno.appendChild(prixTechno);
+
+    /**Puis on finit par ajouter le niveau à la suite dans la div de la 4ème colonne */
+    div.appendChild(nivTechno);
+
+  })
+  //on ajoute la la div avec tous les niveau de la techno dans la ligne en cours (4eme colonne) 
+  newLineTech.appendChild(div);
+  /**On ajoute la ligne complète au parent de la ligne initial(c'est la div body-accordeon) 
+   * Les nouvelles lignes sont placées à la suite après la ligne de template
+  */
+  template.parentNode.appendChild(newLineTech);
+})
+
+//Suppression du template vide
+template.remove();
 
 //Bon ben puisque ça marche on passe aux constructions... même combat
 
@@ -458,87 +534,7 @@ function getHullConstructTurn() {
   return result;
 }
 
-/**
- * Permet de créer complétement dynamiquement le collapse des technologies dans l'onglet Prodution
- */
-function initTechnologie() {
-  let template = document.getElementById("tech-template");
-  dataTechno.forEach((el, i) => {
-    let newLineTech = template.cloneNode(true);
-    let idNewLineTech = el.id + '_' + el.tech;
-    newLineTech.setAttribute("id", idNewLineTech);
-    newLineTech.setAttribute("class", "technology");
-    let label = document.createElement("label");
-    label.textContent = el.tech;
-    label.title = el.libelle;
-    label.setAttribute("class", "libelle");
-    newLineTech.appendChild(label);
 
-    //création d'une div pour regrouper les boutons plus et moins dans la deuxième colonne de la ligne de techno
-    let div = document.createElement('div');
-    div.setAttribute('class', 'tab-techno');
-
-    let button = createButton(el.tech + "_plus", "bt", "fa fa-plus");
-    button.addEventListener('click', function () { modifNivTech(idNewLineTech, 'plus') });
-    if (el.researched == 1) {
-      button.setAttribute("class", "not-visible");
-    }
-    div.appendChild(button);
-
-    button = createButton(el.tech + "_moins", "bt", "fa fa-minus");
-    button.addEventListener('click', function () { modifNivTech(idNewLineTech, 'moins') });
-    if (el.researched == 0) {
-      button.setAttribute("class", "not-visible");
-    }
-    div.appendChild(button);
-
-    //on ajoute la div avec les deux boutons à la ligne de tech en cours
-    newLineTech.appendChild(div);
-
-    button = document.createElement("button");
-    button.textContent = 'Wreck';
-    button.setAttribute("id", el.tech + "_wreck");
-    button.addEventListener('click', function () { modifNivTech(idNewLineTech, 'wreck') });
-    button.setAttribute("class", "wreck");
-    newLineTech.appendChild(button);
-
-
-    //on crré une div qui regroupera tous les <p> des level de techno dans la 4ème colonne
-    div = document.createElement('div');
-    div.setAttribute('class', 'tab-techno');
-    el.grid.forEach((nivTech, j) => {
-      /* on créé un paragraphe pour afficher le niveau de la techno */
-      let nivTechno = document.createElement("p");
-      nivTechno.textContent = nivTech[0];
-      nivTechno.setAttribute("id", el.tech + '_' + j);
-      if (j == el.level) {
-        /* Si le niveau de la techno correspond au niveau de recherche actuelle de l'utilisateur 
-        alors on applique la class de mise en valeur du niveau*/
-        nivTechno.setAttribute("class", "label-tech");
-      }
-
-      /*On rajoute le prix du niveau de technologie en indice du niveau
-      Pour ça il faut rajouter un span à l'intérireur du paragraphe  */
-      let prixTechno = document.createElement("span");
-      prixTechno.setAttribute("class", "indice");
-      prixTechno.textContent = nivTech[1];
-      nivTechno.appendChild(prixTechno);
-
-      /**Puis on finit par ajouter le niveau à la suite dans la div de la 4ème colonne */
-      div.appendChild(nivTechno);
-
-    })
-    //on ajoute la la div avec tous les niveau de la techno dans la ligne en cours (4eme colonne) 
-    newLineTech.appendChild(div);
-    /**On ajoute la ligne complète au parent de la ligne initial(c'est la div body-accordeon) 
-     * Les nouvelles lignes sont placées à la suite après la ligne de template
-    */
-    template.parentNode.appendChild(newLineTech);
-  })
-
-  //Suppression du template vide
-  template.remove();
-}
 
 /**
  * Met à jour l'affichage du collapse Construction dans l'onglet Production
@@ -607,6 +603,9 @@ function majConstrucDispo() {
  * Met à jour l'affichage de l'onglet mouvement
  */
 function majTabMouvement() {
+
+  document.getElementById("upgrade-reportCP").textContent = tour.reportCP;
+
   let temp = document.getElementById("tab-mouvement");
   let tabMouvement = temp.cloneNode(false);
   temp.parentElement.replaceChild(tabMouvement, temp);
@@ -624,11 +623,15 @@ function majTabMouvement() {
       button.addEventListener('click', function () { destruction(i) });
       tabMouvement.appendChild(button);
       label = document.createElement("label");
-      label.textContent = "(1x1, 4x2) 9 CP";
+      if (dataConstruction[i].upgradable == 1) {
+        label.textContent = calculUpgrade(i);
+      }
       label.setAttribute("class", "col4-mvt");
       tabMouvement.appendChild(label);
     }
   })
+
+  majSelectUpgrade();
 }
 
 
@@ -695,6 +698,12 @@ function nouveauTour() {
     alert('Nouveau tour impossible, la maison ne fait pas crédit');
     return;
   }
+  if (tour.remainingCP > REPORT_MAX_CP) {
+    if (!confirm('Attention report max de CP : ' + REPORT_MAX_CP + '\n\nTu veux vraiment perdre tes ressources ?')) {
+      return;
+    };
+
+  }
 
   let newTurn = cloneJSON(tour);
   newTurn.numTour++;
@@ -703,6 +712,7 @@ function nouveauTour() {
   newTurn.coutTechno = 0;
   newTurn.futurMaintenance = 0;
   newTurn.maintenance = 0;
+  newTurn.upgrade = [];
   newTurn.reportCP = tour.remainingCP;
   if (newTurn.reportCP > REPORT_MAX_CP) {
     newTurn.reportCP = REPORT_MAX_CP;
@@ -733,5 +743,98 @@ function nouveauTour() {
   histoTour.splice(0, 0, tour);
   tour = newTurn;
   calcul();
+  
+//pour revenir sur l'onglet mouvement pour le début du nouveau tour
+  document.getElementById("bt-tab-mouvement").click();
+}
+
+/**
+ * Permet de mettre à jour la dropdown dans l'onglet mouvement des vaisseau upgradables durant cette phase de mouvement
+ * Attache un listener sur l'event onchange pour mettre à jour la dropdown quantité
+ */
+function majSelectUpgrade() {
+
+  let old = document.getElementById("select-upgrade");
+  let dropDown = document.createElement("Select");
+  //papa.replaceChild(dropDown, document.getElementById("select-upgrade"));
+  dropDown.setAttribute("id", "select-upgrade");
+  old.parentNode.replaceChild(dropDown, old);
+
+
+  tour.constructionTotal.forEach((qte, i) => {
+    if (qte > 0 && dataConstruction[i].upgradable == 1) {
+      let option = document.createElement("option");
+      option.setAttribute('value', i);
+      let optionText = document.createTextNode(dataConstruction[i].libelle);
+      option.appendChild(optionText);
+      dropDown.appendChild(option);
+    }
+  });
+
+  dropDown.addEventListener("change", function () {
+    majQteUpgrade(dropDown.value);
+  });
+
+
+  majQteUpgrade(dropDown.value);
+}
+
+/**
+ * Permet de mettre à jour la dropdown dans l'onglet mouvement représentant la quantité de vaisseau à upgrade
+ * @param {number} id : index du tableau correspondant à la construction concernée
+ */
+function majQteUpgrade(id) {
+  let old = document.getElementById("qte-upgrade");
+  let dropDown = document.createElement("Select");
+  dropDown.setAttribute("id", "qte-upgrade")
+  old.parentNode.replaceChild(dropDown, old);
+  for (let index = 0; index < tour.constructionTotal[id]; index++) {
+    let option = document.createElement("option");
+    option.setAttribute('value', index + 1);
+    let optionText = document.createTextNode(index + 1);
+    option.appendChild(optionText);
+    dropDown.appendChild(option);
+  }
+}
+
+/**
+ * créé un upgrade pour les valeurs sélectionnées dans l'onglet mouvement
+ */
+function upgrade() {
+
+  let idConstruct = parseInt(document.getElementById('select-upgrade').value);
+  let qte = parseInt(document.getElementById('qte-upgrade').value);
+  let prix = 1;
+
+  if (document.getElementById('upgrade-2CP').checked) {
+    prix = 2;
+  }
+  let total = qte * prix * dataConstruction[idConstruct].hull;
+  if (total <= tour.reportCP) {
+    let up = { id: idConstruct, qte: qte, prix: prix }
+    tour.upgrade.push(up);
+    tour.reportCP -= total;
+    calcul();
+  } else {
+    alert("Pas assez de report de CP du tour précédant pour payer ce(s) upgrade(s)");
+  }
+}
+
+
+function calculUpgrade(id) {
+  let qte1 = 0;
+  let qte2 = 0;
+
+  tour.upgrade.forEach(up => {
+    if (up.id == id) {
+      if (up.prix == 1) {
+        qte1 += up.qte;
+      } else {
+        qte2 += up.qte;
+      }
+    }
+  });
+  let total = (qte1 + qte2 * 2) * dataConstruction[id].hull;
+  return "(" + qte1 + "x1, " + qte2 + "x2) " + total + " CP";
 
 }
