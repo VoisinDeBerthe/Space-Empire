@@ -1,3 +1,5 @@
+
+
 /************************************************************************************************************/
 /* Variables contenant toutes les données de référence du jeu
 /************************************************************************************************************/
@@ -105,7 +107,7 @@ var tour = { //Mon objet JSon tour qui fait tout, même le café. Après j'ai ja
 
 var histoTour = [];//Comme son nom l'indique contient l'historique de tous les tours de France le [0] étant toujours le dernier inséré 
 
-
+var partie = { histoTour: histoTour, config: { type: '', option: [] }, nom: 'Test' }
 
 
 for (let index = 0; index < dataConstruction.length; index++) {
@@ -385,6 +387,7 @@ function calcul() {
   majConstrucDispo();
   calculEconomie();
   majTabMouvement();
+
 }
 
 /**
@@ -612,7 +615,7 @@ function majTabMouvement() {
   tour.constructionTotal.forEach((c, i) => {
     if (c > 0) {
       let label = document.createElement("label");
-      label.textContent = dataConstruction[i].construction + ' - ' +dataConstruction[i].libelle;
+      label.textContent = dataConstruction[i].construction + ' - ' + dataConstruction[i].libelle;
       label.setAttribute("class", "col1-mvt");
       tabMouvement.appendChild(label);
       label = document.createElement("label");
@@ -628,6 +631,14 @@ function majTabMouvement() {
       }
       label.setAttribute("class", "col4-mvt");
       tabMouvement.appendChild(label);
+
+      button = createButton("", "col5-mvt", "fa fa-trash");
+      button.addEventListener('click', function () { eraseUpgrade(i) });
+      if (dataConstruction[i].upgradable == 1) {
+        //button.setAttribute("style","display:none;")
+      }
+
+      tabMouvement.appendChild(button);
     }
   })
 
@@ -744,7 +755,7 @@ function nouveauTour() {
   tour = newTurn;
   calcul();
 
-//pour revenir sur l'onglet mouvement pour le début du nouveau tour
+  //pour revenir sur l'onglet mouvement pour le début du nouveau tour
   document.getElementById("bt-tab-mouvement").click();
 }
 
@@ -836,5 +847,24 @@ function calculUpgrade(id) {
   });
   let total = (qte1 + qte2 * 2) * dataConstruction[id].hull;
   return "(" + qte1 + "x1, " + qte2 + "x2) " + total + " CP";
-
 }
+
+function eraseUpgrade(id) {
+
+
+  for (let index = 0; index < tour.upgrade.length; index++) {
+    if (tour.upgrade[index].id == id) {
+      tour.reportCP += dataConstruction[id].hull * tour.upgrade[index].qte * tour.upgrade[index].prix;
+      tour.upgrade.splice(index, 1);
+      index--;
+
+    }
+  }
+  calcul();
+}
+
+
+
+
+
+

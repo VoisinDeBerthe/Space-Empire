@@ -177,11 +177,11 @@ CSS l'accordeon panel
   align-items: center;
   font-size: 0.9rem;
   display: grid;
-  column-gap: 10px;
-  grid-template-columns: 35% 10% 10% 45%;
+  column-gap: 5px;
+  grid-template-columns: 35% 6% 7% 38% 7%;
   grid-template-rows: auto;
   grid-template-areas:
-    "col1-mvt col2-mvt col3-mvt col4-mvt";
+    "col1-mvt col2-mvt col3-mvt col4-mvt col5-mvt";
 
 }
 
