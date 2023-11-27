@@ -1,5 +1,6 @@
 
 
+
 /************************************************************************************************************/
 /* Variables contenant toutes les données de référence du jeu
 /************************************************************************************************************/
@@ -88,6 +89,7 @@ var dataTechno = dataTechnoBase.slice();
 
 
 var tour = { //Mon objet JSon tour qui fait tout, même le café. Après j'ai jamais dit qui le faisait bien...
+  nomPartie: 'test',
   numTour: 1, //N° de tour
   reportCP: 0, // CP reportés du tour précédant
   totalCP: 0, // total des CP gagné durant ce tour de production
@@ -107,7 +109,7 @@ var tour = { //Mon objet JSon tour qui fait tout, même le café. Après j'ai ja
 
 var histoTour = [];//Comme son nom l'indique contient l'historique de tous les tours de France le [0] étant toujours le dernier inséré 
 
-var partie = { histoTour: histoTour, config: { type: '', option: [] }, nom: 'Test' }
+var partie = { histoTour: histoTour, config: { type: '', option: [] }, nomPartie: 'Test' }
 
 
 for (let index = 0; index < dataConstruction.length; index++) {
@@ -123,8 +125,54 @@ tour.constructionTotal[getIdConstruction('Mi')] = 1;
 tour.colonieCP = 20;
 calculMaintenance();
 
+const dbName = "se";
+
+//ouverture de la base avec un numéro de version, si la version en paramètre est supperieur à celle existante dans le navigateur
+//ou si il n'y a pas de base alors création
+const request = indexedDB.open(dbName, 4);
+
+request.onerror = (event) => {
+  // Handle errors.
+};
+
+//onupgradeneeded est appelé lors d'une création ou d'une mise à jour si nouvelle version
+request.onupgradeneeded = (event) => {
+  db = event.target.result;
+
+  //Création de la base de données
+  const objectStore = db.createObjectStore("partie", { keyPath: "nomPartie" });
+
+
+  // Use transaction oncomplete to make sure the objectStore creation is
+  // finished before adding data into it.
+  objectStore.transaction.oncomplete = (event) => {
+    // Store values in the newly created objectStore.
+    const customerObjectStore = db
+      .transaction("partie", "readwrite")
+      .objectStore("partie");
+
+      customerObjectStore.add(partie);
+
+  };
+};
+
+function enregistrerPartie(){
+  indexedDB.open(dbName, 2).onsuccess = (event) => {
+    db = event.target.result;
+    const transaction = db.transaction(["partie"], "readwrite");
+    const objectStore = transaction.objectStore("partie");
+    const requestUpdate = objectStore.put(partie);
+    requestUpdate.onerror = (event) => {
+      console.log('echec enregistrement');
+    };
+    requestUpdate.onsuccess = (event) => {
+      console.log('enregistrement');
+    };
+  };
+};
+
 // la méthode calcul() ici permet de mettre à jour tous les boutons du collapse avec les valeurs initialisées
-calcul();
+
 
 /************************************************************************************************************/
 /* Modification du DOM en fonction de l'initialisation
@@ -132,104 +180,10 @@ calcul();
 
 //Aller on le tente avec les technologies. Franchement j'y crois pas trop mais si ça marche ben... ça marche quoi.
 
-function pressingDown(e) {
-  e.preventDefault();
-  let div = document.getElementById("hold-div");
-  div.style.display = "block";
-  let p = document.getElementById("hold-p");
-  p.textContent = e.target.title;
-}
-
-function notPressingDown(e) {
- 
-  let div = document.getElementById("hold-div");
-  div.style.display = "none";
-}
-let template = document.getElementById("tech-template");
-
-dataTechno.forEach((el, i) => {
-  let newLineTech = template.cloneNode(true);
-  let idNewLineTech = el.id + '_' + el.tech;
-  newLineTech.setAttribute("id", idNewLineTech);
-  newLineTech.setAttribute("class", "technology");
-  let label = document.createElement("label");
-  label.textContent = el.tech;
-  label.title = el.libelle;
-  label.setAttribute("class", "libelle");
-  label.addEventListener("touchstart", pressingDown, false);
-  label.addEventListener("touchend", notPressingDown, false);
-  
-  newLineTech.appendChild(label);
-
-  //création d'une div pour regrouper les boutons plus et moins dans la deuxième colonne de la ligne de techno
-  let div = document.createElement('div');
-  div.setAttribute('class', 'tab-techno');
-
-  let button = createButton(el.tech + "_plus", "bt", "fa fa-plus");
-  button.addEventListener('click', function () { modifNivTech(idNewLineTech, 'plus') });
-  if (el.researched == 1) {
-    button.setAttribute("class", "not-visible");
-  }
-  div.appendChild(button);
-
-  button = createButton(el.tech + "_moins", "bt", "fa fa-minus");
-  button.addEventListener('click', function () { modifNivTech(idNewLineTech, 'moins') });
-  if (el.researched == 0) {
-    button.setAttribute("class", "not-visible");
-  }
-  div.appendChild(button);
-
-  //on ajoute la div avec les deux boutons à la ligne de tech en cours
-  newLineTech.appendChild(div);
-
-  button = document.createElement("button");
-  button.textContent = 'Wreck';
-  button.setAttribute("id", el.tech + "_wreck");
-  button.addEventListener('click', function () { modifNivTech(idNewLineTech, 'wreck') });
-  button.setAttribute("class", "wreck");
-  newLineTech.appendChild(button);
-
-
-  //on crré une div qui regroupera tous les <p> des level de techno dans la 4ème colonne
-  div = document.createElement('div');
-  div.setAttribute('class', 'tab-techno');
-  el.grid.forEach((nivTech, j) => {
-    /* on créé un paragraphe pour afficher le niveau de la techno */
-    let nivTechno = document.createElement("p");
-    nivTechno.textContent = nivTech[0];
-    nivTechno.setAttribute("id", el.tech + '_' + j);
-    if (j == el.level) {
-      /* Si le niveau de la techno correspond au niveau de recherche actuelle de l'utilisateur 
-      alors on applique la class de mise en valeur du niveau*/
-      nivTechno.setAttribute("class", "label-tech");
-    }
-
-    /*On rajoute le prix du niveau de technologie en indice du niveau
-    Pour ça il faut rajouter un span à l'intérireur du paragraphe  */
-    let prixTechno = document.createElement("span");
-    prixTechno.setAttribute("class", "indice");
-    prixTechno.textContent = nivTech[1];
-    nivTechno.appendChild(prixTechno);
-
-    /**Puis on finit par ajouter le niveau à la suite dans la div de la 4ème colonne */
-    div.appendChild(nivTechno);
-
-  })
-  //on ajoute la la div avec tous les niveau de la techno dans la ligne en cours (4eme colonne) 
-  newLineTech.appendChild(div);
-  /**On ajoute la ligne complète au parent de la ligne initial(c'est la div body-accordeon) 
-   * Les nouvelles lignes sont placées à la suite après la ligne de template
-  */
-  template.parentNode.appendChild(newLineTech);
-})
-
-//Suppression du template vide
-template.remove();
-
 //Bon ben puisque ça marche on passe aux constructions... même combat
-
+majTechno();
 majConstrucDispo();
-
+calcul();
 
 /*************************************************************************************************************/
 /* Gestion des onglets
@@ -403,7 +357,7 @@ function calcul() {
   majConstrucDispo();
   calculEconomie();
   majTabMouvement();
-
+  enregistrerPartie();
 }
 
 /**
@@ -551,6 +505,92 @@ function getHullConstructTurn() {
     result += dataConstruction[i].hull * qte;
   })
   return result;
+}
+
+/**
+ * Met à jour l'affichage du collapse Technologie dans l'onglet Production
+ */
+function majTechno() {
+  let template = document.getElementById("tech-template");
+
+  dataTechno.forEach((el, i) => {
+    let newLineTech = template.cloneNode(true);
+    let idNewLineTech = el.id + '_' + el.tech;
+    newLineTech.setAttribute("id", idNewLineTech);
+    newLineTech.setAttribute("class", "technology");
+    let label = document.createElement("label");
+    label.textContent = el.tech;
+    label.title = el.libelle;
+    label.setAttribute("class", "libelle");
+    label.addEventListener("touchstart", pressingDown, false);
+    label.addEventListener("touchend", notPressingDown, false);
+
+    newLineTech.appendChild(label);
+
+    //création d'une div pour regrouper les boutons plus et moins dans la deuxième colonne de la ligne de techno
+    let div = document.createElement('div');
+    div.setAttribute('class', 'tab-techno');
+
+    let button = createButton(el.tech + "_plus", "bt", "fa fa-plus");
+    button.addEventListener('click', function () { modifNivTech(idNewLineTech, 'plus') });
+    if (el.researched == 1) {
+      button.setAttribute("class", "not-visible");
+    }
+    div.appendChild(button);
+
+    button = createButton(el.tech + "_moins", "bt", "fa fa-minus");
+    button.addEventListener('click', function () { modifNivTech(idNewLineTech, 'moins') });
+    if (el.researched == 0) {
+      button.setAttribute("class", "not-visible");
+    }
+    div.appendChild(button);
+
+    //on ajoute la div avec les deux boutons à la ligne de tech en cours
+    newLineTech.appendChild(div);
+
+    button = document.createElement("button");
+    button.textContent = 'Wreck';
+    button.setAttribute("id", el.tech + "_wreck");
+    button.addEventListener('click', function () { modifNivTech(idNewLineTech, 'wreck') });
+    button.setAttribute("class", "wreck");
+    newLineTech.appendChild(button);
+
+
+    //on crré une div qui regroupera tous les <p> des level de techno dans la 4ème colonne
+    div = document.createElement('div');
+    div.setAttribute('class', 'tab-techno');
+    el.grid.forEach((nivTech, j) => {
+      /* on créé un paragraphe pour afficher le niveau de la techno */
+      let nivTechno = document.createElement("p");
+      nivTechno.textContent = nivTech[0];
+      nivTechno.setAttribute("id", el.tech + '_' + j);
+      if (j == el.level) {
+        /* Si le niveau de la techno correspond au niveau de recherche actuelle de l'utilisateur 
+        alors on applique la class de mise en valeur du niveau*/
+        nivTechno.setAttribute("class", "label-tech");
+      }
+
+      /*On rajoute le prix du niveau de technologie en indice du niveau
+      Pour ça il faut rajouter un span à l'intérireur du paragraphe  */
+      let prixTechno = document.createElement("span");
+      prixTechno.setAttribute("class", "indice");
+      prixTechno.textContent = nivTech[1];
+      nivTechno.appendChild(prixTechno);
+
+      /**Puis on finit par ajouter le niveau à la suite dans la div de la 4ème colonne */
+      div.appendChild(nivTechno);
+
+    })
+    //on ajoute la la div avec tous les niveau de la techno dans la ligne en cours (4eme colonne) 
+    newLineTech.appendChild(div);
+    /**On ajoute la ligne complète au parent de la ligne initial(c'est la div body-accordeon) 
+     * Les nouvelles lignes sont placées à la suite après la ligne de template
+    */
+    template.parentNode.appendChild(newLineTech);
+  })
+
+  //Suppression du template vide
+  template.remove();
 }
 
 
@@ -879,6 +919,58 @@ function eraseUpgrade(id) {
   calcul();
 }
 
+
+const entries = performance.getEntriesByType("navigation");
+entries.forEach((entry) => {
+  if (entry.type === "reload") {
+    afficherMenu();
+  }
+});
+
+function afficherMenu(e) {
+  let div = document.getElementById("menu-div");
+  initListePartie()
+  div.style.display = "block";
+}
+
+function initListePartie() {
+  let old = document.getElementById("liste-partie");
+  let select = old.cloneNode(false);
+  old.parentElement.replaceChild(select, old);
+
+  let option = document.createElement("option");
+  option.textContent = "Samedi";
+  option.value = "Samedi";
+  select.appendChild(option);
+
+  option = document.createElement("option");
+  option.textContent = "Yéyé";
+  option.value = "Yéyé";
+  select.appendChild(option);
+}
+
+function chargerPartie() {
+  let div = document.getElementById("menu-div");
+  div.style.display = "none";
+}
+
+function nouvellePartie() {
+  let div = document.getElementById("menu-div");
+  div.style.display = "none";
+}
+
+function pressingDown(e) {
+  e.preventDefault();
+  let div = document.getElementById("hold-div");
+  div.style.display = "block";
+  let p = document.getElementById("hold-p");
+  p.textContent = e.target.title;
+}
+
+function notPressingDown(e) {
+  let div = document.getElementById("hold-div");
+  div.style.display = "none";
+}
 
 
 

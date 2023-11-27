@@ -204,7 +204,7 @@ CSS l'accordeon panel
   display: none; /* Hidden by default */
   position: fixed; /* Stay in place */
   z-index: 1; /* Sit on top */
-  padding: 70% 35%; /* Location of the box */
+  padding: 10px; /* Location of the box */
   left: 0;
   top: 0;
   width: 100%; /* Full width */
@@ -215,6 +215,18 @@ CSS l'accordeon panel
   
 }
 
+.modal .modal-menu {
+  background-color: white;
+  width : 95%;
+  height : 96%;
+  display:flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 25px;
+ 
+  
+}
+
 .modal .modal-body{
   background-color: white;
   width : 30%;
@@ -222,5 +234,5 @@ CSS l'accordeon panel
   display:flex;
   align-items: center;
   justify-content: center;
-  border-radius: 8%;
+  border-radius: 25px;
 }
