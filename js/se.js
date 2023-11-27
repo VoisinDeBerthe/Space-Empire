@@ -138,14 +138,12 @@ function pressingDown(e) {
   div.style.display = "block";
   let p = document.getElementById("hold-p");
   p.textContent = e.target.title;
-  console.log("Pressing!");
 }
 
 function notPressingDown(e) {
  
   let div = document.getElementById("hold-div");
   div.style.display = "none";
-  console.log("Not pressing!");
 }
 let template = document.getElementById("tech-template");
 
