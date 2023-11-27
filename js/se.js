@@ -132,6 +132,21 @@ calcul();
 
 //Aller on le tente avec les technologies. Franchement j'y crois pas trop mais si ça marche ben... ça marche quoi.
 
+function pressingDown(e) {
+  e.preventDefault();
+  let div = document.getElementById("hold-div");
+  div.style.display = "block";
+  let p = document.getElementById("hold-p");
+  p.textContent = e.target.title;
+  console.log("Pressing!");
+}
+
+function notPressingDown(e) {
+ 
+  let div = document.getElementById("hold-div");
+  div.style.display = "none";
+  console.log("Not pressing!");
+}
 let template = document.getElementById("tech-template");
 
 dataTechno.forEach((el, i) => {
@@ -143,6 +158,9 @@ dataTechno.forEach((el, i) => {
   label.textContent = el.tech;
   label.title = el.libelle;
   label.setAttribute("class", "libelle");
+  label.addEventListener("touchstart", pressingDown, false);
+  label.addEventListener("touchend", notPressingDown, false);
+  
   newLineTech.appendChild(label);
 
   //création d'une div pour regrouper les boutons plus et moins dans la deuxième colonne de la ligne de techno
