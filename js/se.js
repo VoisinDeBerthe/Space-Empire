@@ -107,7 +107,7 @@ var tour = { //Mon objet JSon tour qui fait tout, même le café. Après j'ai ja
   upgrade: [] // tableau d'historique des upgrades du tour pendant la phase de mouvement
 };
 
-var histoTour = [];//Comme son nom l'indique contient l'historique de tous les tours de France le [0] étant toujours le dernier inséré 
+var histoTour = [tour];//Comme son nom l'indique contient l'historique de tous les tours de France le [0] étant toujours le dernier inséré 
 
 var partie = { histoTour: histoTour, config: { type: '', option: [] }, nomPartie: 'Test' }
 
@@ -126,10 +126,11 @@ tour.colonieCP = 20;
 calculMaintenance();
 
 const dbName = "se";
+const dbVersion = 4;
 
 //ouverture de la base avec un numéro de version, si la version en paramètre est supperieur à celle existante dans le navigateur
 //ou si il n'y a pas de base alors création
-const request = indexedDB.open(dbName, 4);
+let request = indexedDB.open(dbName, dbVersion);
 
 request.onerror = (event) => {
   // Handle errors.
@@ -143,21 +144,12 @@ request.onupgradeneeded = (event) => {
   const objectStore = db.createObjectStore("partie", { keyPath: "nomPartie" });
 
 
-  // Use transaction oncomplete to make sure the objectStore creation is
-  // finished before adding data into it.
-  objectStore.transaction.oncomplete = (event) => {
-    // Store values in the newly created objectStore.
-    const customerObjectStore = db
-      .transaction("partie", "readwrite")
-      .objectStore("partie");
-
-      customerObjectStore.add(partie);
-
-  };
 };
 
 function enregistrerPartie(){
-  indexedDB.open(dbName, 2).onsuccess = (event) => {
+  request = indexedDB.open(dbName, dbVersion  );
+  
+  request.onsuccess = (event) => {
     db = event.target.result;
     const transaction = db.transaction(["partie"], "readwrite");
     const objectStore = transaction.objectStore("partie");
@@ -169,7 +161,15 @@ function enregistrerPartie(){
       console.log('enregistrement');
     };
   };
+
+  request.onerror = (event) => {
+    console.log('echec ouverture base');
+  }
 };
+
+function chargerPartie(nomPartie){
+
+}
 
 // la méthode calcul() ici permet de mettre à jour tous les boutons du collapse avec les valeurs initialisées
 
@@ -807,7 +807,7 @@ function nouveauTour() {
   })
 
 
-  histoTour.splice(0, 0, tour);
+  histoTour.splice(0, 0, newTurn);
   tour = newTurn;
   calcul();
 
