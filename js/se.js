@@ -162,14 +162,59 @@ function enregistrerPartie(){
     };
   };
 
+  requestUpdate .onerror = (event) => {
+    console.log('Enregistrement - Echec ouverture BDD');
+  }
+};
+
+function chargerPartie(nomPartie){
+  request = indexedDB.open(dbName, dbVersion  );
+  
+  request.onsuccess = (event) => {
+    db = event.target.result;
+    const transaction = db.transaction(["partie"], "readonly");
+    const objectStore = transaction.objectStore("partie");
+    const requestUpdate = objectStore.get(partie);
+    requestUpdate.onerror = (event) => {
+      console.log('echec lors du chargement de la partie : ' + nomPartie);
+    };
+    requestUpdate.onsuccess = (event) => {
+      console.log('Chargement de la partie :' + nomPartie);
+      partie =event.target.result;
+      histoTour = partie.histoTour;
+      tour= histoTour[0];
+    };
+  };
+
   request.onerror = (event) => {
     console.log('echec ouverture base');
   }
 };
 
-function chargerPartie(nomPartie){
+function getListePartie(){
+  request = indexedDB.open(dbName, dbVersion  );
+  
+  request.onsuccess = (event) => {
+    db = event.target.result;
+    const transaction = db.transaction(["partie"], "readonly");
+    const objectStore = transaction.objectStore("partie");
+    const requestUpdate = objectStore.getAllKeys();
+    requestUpdate.onerror = (event) => {
+      console.log('echec lors du chargement des noms des parties enregistrées');
+    };
+    requestUpdate.onsuccess = (event) => {
+      console.log('Récupération des noms des parties enregistrées');
+      return event.target.result;
 
-}
+    };
+  };
+
+  request.onerror = (event) => {
+    console.log('echec ouverture base');
+  }
+};
+
+
 
 // la méthode calcul() ici permet de mettre à jour tous les boutons du collapse avec les valeurs initialisées
 
