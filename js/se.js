@@ -90,7 +90,7 @@ var dataTechno = dataTechnoBase.slice();
 
 var tour = { //Mon objet JSon tour qui fait tout, même le café. Après j'ai jamais dit qui le faisait bien...
   nomPartie: 'test',
-  numTour: 1, //N° de tour
+  numTour: 0, //N° de tour
   reportCP: 0, // CP reportés du tour précédant
   totalCP: 0, // total des CP gagné durant ce tour de production
   colonieCP: 0, // CP gagnés grâce aux colonies et à la planète mère
@@ -142,47 +142,69 @@ request.onupgradeneeded = (event) => {
 
   //Création de la base de données
   const objectStore = db.createObjectStore("partie", { keyPath: "nomPartie" });
-
-
 };
 
-function enregistrerPartie(){
-  request = indexedDB.open(dbName, dbVersion  );
-  
-  request.onsuccess = (event) => {
-    db = event.target.result;
-    const transaction = db.transaction(["partie"], "readwrite");
-    const objectStore = transaction.objectStore("partie");
-    const requestUpdate = objectStore.put(partie);
-    requestUpdate.onerror = (event) => {
-      console.log('echec enregistrement');
-    };
-    requestUpdate.onsuccess = (event) => {
-      console.log('enregistrement');
-    };
-  };
+function enregistrerPartie() {
+  if (partie.histoTour[0].numTour > 0) {
+    request = indexedDB.open(dbName, dbVersion);
 
-  requestUpdate .onerror = (event) => {
-    console.log('Enregistrement - Echec ouverture BDD');
+    request.onsuccess = (event) => {
+      db = event.target.result;
+      const transaction = db.transaction(["partie"], "readwrite");
+      const objectStore = transaction.objectStore("partie");
+      const requestUpdate = objectStore.put(partie);
+      requestUpdate.onerror = (event) => {
+        console.log('echec enregistrement');
+      };
+      requestUpdate.onsuccess = (event) => {
+        console.log('enregistrement');
+      };
+    };
+
+    request.onerror = (event) => {
+      console.log('Enregistrement - Echec ouverture BDD');
+    }
   }
+
 };
 
-function chargerPartie(nomPartie){
-  request = indexedDB.open(dbName, dbVersion  );
-  
+function effacerPartie() {
+  const nomPartie = document.getElementById('liste-partie').value;
+  if (confirm("Tu veux vraiment supprimer la partie " + nomPartie + " ?")) {
+    if (confirm("Vraiment sûr ???")) {
+      indexedDB.open(dbName, dbVersion).onsuccess = (event) => {
+        db = event.target.result;
+        const transaction = db.transaction(["partie"], "readwrite");
+        const objectStore = transaction.objectStore("partie");
+        const requestUpdate = objectStore.delete(nomPartie);
+        afficherMenu();
+      };
+    }
+  }
+}
+
+
+function chargerPartie() {
+  const nomPartie = document.getElementById('liste-partie').value;
+  request = indexedDB.open(dbName, dbVersion);
+
   request.onsuccess = (event) => {
     db = event.target.result;
     const transaction = db.transaction(["partie"], "readonly");
     const objectStore = transaction.objectStore("partie");
-    const requestUpdate = objectStore.get(partie);
+    const requestUpdate = objectStore.get(nomPartie);
     requestUpdate.onerror = (event) => {
       console.log('echec lors du chargement de la partie : ' + nomPartie);
     };
     requestUpdate.onsuccess = (event) => {
       console.log('Chargement de la partie :' + nomPartie);
-      partie =event.target.result;
+      partie = event.target.result;
       histoTour = partie.histoTour;
-      tour= histoTour[0];
+      tour = histoTour[0];
+      document.getElementById("numTour").textContent = tour.numTour;
+      let div = document.getElementById("menu-div");
+      div.style.display = "none";
+      calcul();
     };
   };
 
@@ -191,27 +213,31 @@ function chargerPartie(nomPartie){
   }
 };
 
-function getListePartie(){
-  request = indexedDB.open(dbName, dbVersion  );
-  
-  request.onsuccess = (event) => {
-    db = event.target.result;
-    const transaction = db.transaction(["partie"], "readonly");
-    const objectStore = transaction.objectStore("partie");
-    const requestUpdate = objectStore.getAllKeys();
-    requestUpdate.onerror = (event) => {
-      console.log('echec lors du chargement des noms des parties enregistrées');
-    };
-    requestUpdate.onsuccess = (event) => {
-      console.log('Récupération des noms des parties enregistrées');
-      return event.target.result;
+function getListePartie() {
+  return new Promise((resolve, reject) => {
+    request = indexedDB.open(dbName, dbVersion);
 
-    };
-  };
+    request.onsuccess = (event) => {
+      db = event.target.result;
+      const transaction = db.transaction(["partie"], "readonly");
+      const objectStore = transaction.objectStore("partie");
+      const requestUpdate = objectStore.getAllKeys();
+      requestUpdate.onerror = (event) => {
+        console.log('echec lors du chargement des noms des parties enregistrées');
+      };
+      requestUpdate.onsuccess = (event) => {
+        console.log('Récupération des noms des parties enregistrées');
+        resolve(event.target.result);
 
-  request.onerror = (event) => {
-    console.log('echec ouverture base');
-  }
+      };
+    };
+
+    request.onerror = (event) => {
+      console.log('echec ouverture base');
+      reject();
+    }
+  })
+
 };
 
 
@@ -976,32 +1002,36 @@ function afficherMenu(e) {
   let div = document.getElementById("menu-div");
   initListePartie()
   div.style.display = "block";
+  document.getElementById('nomNewPartie').value = "";
 }
 
-function initListePartie() {
+async function initListePartie() {
   let old = document.getElementById("liste-partie");
   let select = old.cloneNode(false);
   old.parentElement.replaceChild(select, old);
 
-  let option = document.createElement("option");
-  option.textContent = "Samedi";
-  option.value = "Samedi";
-  select.appendChild(option);
 
-  option = document.createElement("option");
-  option.textContent = "Yéyé";
-  option.value = "Yéyé";
-  select.appendChild(option);
+  const tab = await getListePartie();
+  tab.forEach(nom => {
+    let option = document.createElement("option");
+    option.textContent = nom;
+    option.value = nom;
+    select.appendChild(option);
+  });
 }
 
-function chargerPartie() {
-  let div = document.getElementById("menu-div");
-  div.style.display = "none";
-}
 
 function nouvellePartie() {
-  let div = document.getElementById("menu-div");
-  div.style.display = "none";
+  const nom = document.getElementById('nomNewPartie').value;
+  if (nom != "") {
+    let div = document.getElementById("menu-div");
+    div.style.display = "none";
+    tour.numTour = 1;
+    partie.nomPartie = nom;
+  } else {
+    alert("C'est mieux avec un nom de partie...");
+  }
+
 }
 
 function pressingDown(e) {
