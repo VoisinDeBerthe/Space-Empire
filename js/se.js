@@ -9,7 +9,7 @@
 //Jeu de base V1.X
 /////////////////////////////////////////
 const dataTechnoBase = [
-  { id: 0, tech: "SS", researched: 0, libelle: "Ship Size", level: 3, grid: [[1,], [2, 10], [3, 15], [4, 20], [5, 20], [6, 20]] },
+  { id: 0, tech: "SS", researched: 0, libelle: "Ship Size", level: 0, grid: [[1,], [2, 10], [3, 15], [4, 20], [5, 20], [6, 20]] },
   { id: 1, tech: "A", researched: 0, libelle: "Attack", level: 0, grid: [[0,], [1, 20], [2, 30], [3, 25]] },
   { id: 2, tech: "D", researched: 0, libelle: "Defense", level: 0, grid: [[0,], [1, 20], [2, 30], [3, 25]] },
   { id: 3, tech: "Ta", researched: 0, libelle: "Tactic", level: 0, grid: [[0,], [1, 15], [2, 15]] },
@@ -85,7 +85,7 @@ const REPORT_MAX_RP = 30;
  * Variables globales
  */
 var dataConstruction = dataConstructionBase.slice();
-var dataTechno = dataTechnoBase.slice();
+
 
 
 var tour = { //Mon objet JSon tour qui fait tout, même le café. Après j'ai jamais dit qui le faisait bien...
@@ -104,7 +104,8 @@ var tour = { //Mon objet JSon tour qui fait tout, même le café. Après j'ai ja
   futurMaintenance: 0, // le surcout de maintenance au prochain tour en prévision
   constructionTotal: new Array(dataConstruction.length), // tableau qui contient la quantité total de chaque construction (même index que dataConstrucion)
   constructionTour: new Array(dataConstruction.length), // tableau qui contient les nouvelles constructions du tour(aditionnées à constructionTotal à chaque nouveau tour)
-  upgrade: [] // tableau d'historique des upgrades du tour pendant la phase de mouvement
+  upgrade: [], // tableau d'historique des upgrades du tour pendant la phase de mouvement
+  dataTechno: dataTechnoBase.slice()
 };
 
 var histoTour = [tour];//Comme son nom l'indique contient l'historique de tous les tours de France le [0] étant toujours le dernier inséré 
@@ -201,9 +202,11 @@ function chargerPartie() {
       partie = event.target.result;
       histoTour = partie.histoTour;
       tour = histoTour[0];
-      document.getElementById("numTour").textContent = tour.numTour;
+      document.getElementById("numTour").textContent = "Tour : " + tour.numTour;
+      document.getElementById("nomPartie").textContent = partie.nomPartie;
       let div = document.getElementById("menu-div");
       div.style.display = "none";
+      majTechno();
       calcul();
     };
   };
@@ -334,35 +337,25 @@ function modifNivTech(idNewLineTech, type) {
   let tab = idNewLineTech.split('_');
   let boutonPlus = document.getElementById(tab[1] + '_plus');
   let boutonMoins = document.getElementById(tab[1] + '_moins');
-  let level = dataTechno[tab[0]].level;
+  let level = tour.dataTechno[tab[0]].level;
 
   switch (type) {
     case 'plus':
-      boutonPlus.setAttribute("class", "not-visible");
-      boutonMoins.removeAttribute("class", "not-visible");
-      dataTechno[tab[0]].level = level + 1;
-      dataTechno[tab[0]].researched = 1;
-      document.getElementById(dataTechno[tab[0]].tech + '_' + (level + 1)).setAttribute("class", "label-tech");
-      document.getElementById(dataTechno[tab[0]].tech + '_' + level).removeAttribute("class", "label-tech");
+      chgNivTech(tab[0], false, boutonPlus, boutonMoins, 1);
 
       break;
     case 'moins':
-      boutonMoins.setAttribute("class", "not-visible");
-      boutonPlus.removeAttribute("class", "not-visible");
-      dataTechno[tab[0]].level = level - 1;
-      dataTechno[tab[0]].researched = 0;
-      document.getElementById(dataTechno[tab[0]].tech + '_' + (level - 1)).setAttribute("class", "label-tech");
-      document.getElementById(dataTechno[tab[0]].tech + '_' + level).removeAttribute("class", "label-tech");
+      chgNivTech(tab[0], false, boutonMoins, boutonPlus, -1);
 
       break;
     default: /* wreck*/
-      if (confirm("Gagner un niveau en " + dataTechno[tab[0]].libelle + " grâce au remorquage d'une épave ?")) {
-        dataTechno[tab[0]].level = level + 1;
-        document.getElementById(dataTechno[tab[0]].tech + '_' + (level + 1)).setAttribute("class", "label-tech");
-        document.getElementById(dataTechno[tab[0]].tech + '_' + level).removeAttribute("class", "label-tech");
-        console.log(dataTechno[tab[0]].grid.length);
-        console.log(level + 1);
-        if (dataTechno[tab[0]].grid.length == level + 2) {
+      if (confirm("Gagner un niveau en " + tour.dataTechno[tab[0]].libelle + " grâce au remorquage d'une épave ?")) {
+        if (tour.dataTechno[tab[0]].researched == 1) {
+          chgNivTech(tab[0], false, boutonMoins, boutonPlus, -1);
+        }
+        chgNivTech(tab[0], true, null, null, 1);
+
+        if (tour.dataTechno[tab[0]].grid.length == tour.dataTechno[tab[0]].level + 1) {
           gestionNivMax(tab[1]);
         }
       }
@@ -371,13 +364,34 @@ function modifNivTech(idNewLineTech, type) {
   calcul();
 }
 
+function chgNivTech(index, isWreck, boutonAcacher, boutonAafficher, valeur) {
+  let level = tour.dataTechno[index].level;
+  tour.dataTechno[index].level = level + valeur;
+  if (!isWreck) {
+    boutonAcacher.setAttribute("class", "not-visible");
+    boutonAafficher.removeAttribute("class", "not-visible");
+    if (valeur == 1) {
+      tour.dataTechno[index].researched = 1;
+    } else {
+      tour.dataTechno[index].researched = 0;
+    }
+  }
+
+  document.getElementById(tour.dataTechno[index].tech + '_' + (level + valeur)).setAttribute("class", "label-tech");
+  document.getElementById(tour.dataTechno[index].tech + '_' + level).removeAttribute("class", "label-tech");
+}
+
 //Permet de désactiver les boutons d'une technologie lorsqu'elle est niveau max
 function gestionNivMax(id) {
+  console.log(id)
   let boutonPlus = document.getElementById(id + '_plus');
   let boutonMoins = document.getElementById(id + '_moins');
   let boutonWreck = document.getElementById(id + '_wreck');
+  if(boutonPlus != null)
   boutonPlus.setAttribute('disabled', true);
+  if(boutonMoins != null)
   boutonMoins.setAttribute('disabled', true);
+  if(boutonWreck != null)
   boutonWreck.setAttribute('disabled', true);
 }
 
@@ -453,7 +467,7 @@ function calculEconomie() {
 function calculTechnologie() {
   tour.coutTechno = 0;
   let stringBandeau = " ( "
-  dataTechno.forEach((el, i) => {
+  tour.dataTechno.forEach((el, i) => {
     if (el.researched) {
       tour.coutTechno += el.grid[el.level][1];
       stringBandeau += el.tech + ":" + (el.level + el.grid[0][0]) + ' - ';
@@ -503,7 +517,7 @@ function calculConstruction() {
 function getNiveauTech(tech) {
   let resultat = -1;
 
-  dataTechno.forEach(el => {
+  tour.dataTechno.forEach(el => {
     //parfois le niveau de départ est 0, parfois 1 dans le tableau (grid), l'attribut level fais toujours référence 
     //au premier niveau avec 0 comme valeur, c'est pourquoi on y ajoute le premier élément de la grille (soit 0, soit 1) 
     if (el.tech == tech) {
@@ -534,7 +548,7 @@ function getIdConstruction(construction) {
 function isConstructionPossible(idConstruct) {
   let resultat = true;
   dataConstruction[idConstruct].requiredTech.forEach(req => {
-    if (dataTechno[req[0]].level + parseInt(dataTechno[req[0]].grid[0]) >= req[1]) {
+    if (tour.dataTechno[req[0]].level + parseInt(tour.dataTechno[req[0]].grid[0]) >= req[1]) {
       resultat = resultat & true;
     } else {
       resultat = false;
@@ -582,13 +596,17 @@ function getHullConstructTurn() {
  * Met à jour l'affichage du collapse Technologie dans l'onglet Production
  */
 function majTechno() {
-  let template = document.getElementById("tech-template");
+  let tab = document.getElementById("tab-techno");
 
-  dataTechno.forEach((el, i) => {
-    let newLineTech = template.cloneNode(true);
+  while (tab.firstChild) {
+    tab.removeChild(tab.lastChild);
+  }
+
+  tour.dataTechno.forEach((el, i) => {
+    let newLineTech = document.createElement("div");
     let idNewLineTech = el.id + '_' + el.tech;
     newLineTech.setAttribute("id", idNewLineTech);
-    newLineTech.setAttribute("class", "technology");
+    newLineTech.setAttribute("class", "body-accordeon-row technology");
     let label = document.createElement("label");
     label.textContent = el.tech;
     label.title = el.libelle;
@@ -652,16 +670,21 @@ function majTechno() {
       div.appendChild(nivTechno);
 
     })
+
+    
     //on ajoute la la div avec tous les niveau de la techno dans la ligne en cours (4eme colonne) 
     newLineTech.appendChild(div);
     /**On ajoute la ligne complète au parent de la ligne initial(c'est la div body-accordeon) 
      * Les nouvelles lignes sont placées à la suite après la ligne de template
     */
-    template.parentNode.appendChild(newLineTech);
+    tab.appendChild(newLineTech);
+    if (el.level + 1 == el.grid.length && el.researched == 0) {
+
+      gestionNivMax(el.tech);
+
+    }
   })
 
-  //Suppression du template vide
-  template.remove();
 }
 
 
@@ -845,7 +868,7 @@ function nouveauTour() {
 
   let newTurn = cloneJSON(tour);
   newTurn.numTour++;
-  document.getElementById("numTour").textContent = newTurn.numTour;
+  document.getElementById("numTour").textContent = "Tour : " + tour.numTour;
   newTurn.coutConstruction = 0;
   newTurn.coutTechno = 0;
   newTurn.futurMaintenance = 0;
@@ -869,12 +892,13 @@ function nouveauTour() {
 
 
   //Remise à zero des evolutions du tour de technologie
-  dataTechno.forEach(tech => {
+  tour.dataTechno.forEach(tech => {
     if (tech.researched = 1) { // Si la techno a été rechechée sur le tour on refait apparaitre le bouton plus pour le nouveau tour
       document.getElementById(tech.tech + '_plus').removeAttribute("class", "not-visible");
       document.getElementById(tech.tech + '_moins').setAttribute("class", "not-visible");
       tech.researched = 0;
     }
+
   })
 
 
@@ -1026,8 +1050,67 @@ function nouvellePartie() {
   if (nom != "") {
     let div = document.getElementById("menu-div");
     div.style.display = "none";
-    tour.numTour = 1;
-    partie.nomPartie = nom;
+    tour = { //Mon objet JSon tour qui fait tout, même le café. Après j'ai jamais dit qui le faisait bien...
+      numTour: 1, //N° de tour
+      reportCP: 0, // CP reportés du tour précédant
+      totalCP: 0, // total des CP gagné durant ce tour de production
+      colonieCP: 20, // CP gagnés grâce aux colonies et à la planète mère
+      mineurCP: 0, // CP gagnés grâce au vaisseaux mineur (minerai et exploitation de nébuleuse)
+      pipelineCP: 0, // CP gagnés grâce aux routes commerciales des MS pipeline
+      remainingCP: 0, // CP qui restent au fr et à mesure des dépenses du tour (deviendra le reportCP au prochain tour)
+      maintenance: 0, // Maintenance à payer ce tour ci de production (ne tient pas compte des nouvelles constructions)
+      bid: 0, // montant parié pour l'initiative
+      coutTechno: 0, // cout total en CP des technologies ce tour ci
+      coutConstruction: 0, // cout total des constructions ce tour ci
+      futurMaintenance: 0, // le surcout de maintenance au prochain tour en prévision
+      constructionTotal: new Array(dataConstruction.length), // tableau qui contient la quantité total de chaque construction (même index que dataConstrucion)
+      constructionTour: new Array(dataConstruction.length), // tableau qui contient les nouvelles constructions du tour(aditionnées à constructionTotal à chaque nouveau tour)
+      upgrade: [], // tableau d'historique des upgrades du tour pendant la phase de mouvement
+      dataTechno: dataTechnoBase.slice()
+    };
+
+    histoTour = [tour];//Comme son nom l'indique contient l'historique de tous les tours de France le [0] étant toujours le dernier inséré 
+
+    partie = { histoTour: histoTour, config: { type: '', option: [] }, nomPartie: nom };
+    for (let index = 0; index < dataConstruction.length; index++) {
+      tour.constructionTour[index] = 0;
+      tour.constructionTotal[index] = 0;
+    }
+
+    //construction de départ
+    tour.constructionTotal[getIdConstruction('SY')] = 4;
+    tour.constructionTotal[getIdConstruction('CO')] = 3;
+    tour.constructionTotal[getIdConstruction('SC')] = 3;
+    tour.constructionTotal[getIdConstruction('Mi')] = 1;
+
+    request = indexedDB.open(dbName, dbVersion);
+
+    request.onsuccess = (event) => {
+      db = event.target.result;
+      const transaction = db.transaction(["partie"], "readwrite");
+      const objectStore = transaction.objectStore("partie");
+      const requestUpdate = objectStore.add(partie);
+      requestUpdate.onerror = (event) => {
+        console.log('echec creation partie');
+      };
+      requestUpdate.onsuccess = (event) => {
+        console.log('Création partie');
+        majTechno();
+        majConstrucDispo();
+
+        calcul();
+
+        document.getElementById("numTour").textContent = "Tour : " + tour.numTour;
+        document.getElementById("nomPartie").textContent = partie.nomPartie;
+      };
+    };
+
+    request.onerror = (event) => {
+      console.log('Création - Echec ouverture BDD');
+    }
+
+
+
   } else {
     alert("C'est mieux avec un nom de partie...");
   }

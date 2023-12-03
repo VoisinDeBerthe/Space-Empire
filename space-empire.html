@@ -35,7 +35,7 @@
 
   <div class="container">
     <div class="top_bar">
-      <label>Space Empire 4X V0.1</label>
+      <label id="nomPartie">Space Empire 4X V0.1</label>
       <label id="numTour">1</label>
       <button onclick="nouveauTour();">Nouveau Tour
         <svg xmlns="http://www.w3.org/2000/svg" height="1em"
@@ -177,8 +177,8 @@
           </div>
           <button class="accordion" id="bt_technologie">Technologie</button>
           <div class="panel">
-            <div class="body-accordeon">
-              <div class="body-accordeon-row" id="tech-template">
+            <div class="body-accordeon" id="tab-techno">
+              <div class="body-accordeon-row" >
                 <!-- Les technologies sont ajoutées dynamiquement en js en remplaçant cette div "template" qui 
                       ne sert juste que de point d'ancrage initial-->
               </div>
