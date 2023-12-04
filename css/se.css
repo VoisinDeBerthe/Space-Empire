@@ -185,7 +185,8 @@ CSS l'accordeon panel
 
 .mouvement-entete {
   padding: 10px 0;
-  justify-self: center;
+  justify-items: center;
+  align-items: center;
   font-size: 0.9rem;
   display: grid;
   column-gap: 0px;
@@ -259,4 +260,16 @@ CSS l'accordeon panel
   align-items: center;
   justify-content: center;
   border-radius: 25px;
+}
+
+
+input[type="radio"].prix-upgrade {
+  display: none;
+}
+input[type="radio"].prix-upgrade + label {
+  padding: 0.3rem 0.5rem;
+  border: 1px dashed #ccc;
+}
+input[type="radio"].prix-upgrade:checked + label {
+  border: 1px solid #000;
 }
