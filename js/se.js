@@ -171,17 +171,20 @@ function enregistrerPartie() {
 
 function effacerPartie() {
   const nomPartie = document.getElementById('liste-partie').value;
-  if (confirm("Tu veux vraiment supprimer la partie " + nomPartie + " ?")) {
-    if (confirm("Vraiment sûr ???")) {
-      indexedDB.open(dbName, dbVersion).onsuccess = (event) => {
-        db = event.target.result;
-        const transaction = db.transaction(["partie"], "readwrite");
-        const objectStore = transaction.objectStore("partie");
-        const requestUpdate = objectStore.delete(nomPartie);
-        afficherMenu();
-      };
+  if (nomPartie != "" && nomPartie != null) {
+    if (confirm("Tu veux vraiment supprimer la partie " + nomPartie + " ?")) {
+      if (confirm("Vraiment sûr ???")) {
+        indexedDB.open(dbName, dbVersion).onsuccess = (event) => {
+          db = event.target.result;
+          const transaction = db.transaction(["partie"], "readwrite");
+          const objectStore = transaction.objectStore("partie");
+          const requestUpdate = objectStore.delete(nomPartie);
+          afficherMenu();
+        };
+      }
     }
   }
+
 }
 
 
@@ -387,12 +390,12 @@ function gestionNivMax(id) {
   let boutonPlus = document.getElementById(id + '_plus');
   let boutonMoins = document.getElementById(id + '_moins');
   let boutonWreck = document.getElementById(id + '_wreck');
-  if(boutonPlus != null)
-  boutonPlus.setAttribute('disabled', true);
-  if(boutonMoins != null)
-  boutonMoins.setAttribute('disabled', true);
-  if(boutonWreck != null)
-  boutonWreck.setAttribute('disabled', true);
+  if (boutonPlus != null)
+    boutonPlus.setAttribute('disabled', true);
+  if (boutonMoins != null)
+    boutonMoins.setAttribute('disabled', true);
+  if (boutonWreck != null)
+    boutonWreck.setAttribute('disabled', true);
 }
 
 /**
@@ -671,7 +674,7 @@ function majTechno() {
 
     })
 
-    
+
     //on ajoute la la div avec tous les niveau de la techno dans la ligne en cours (4eme colonne) 
     newLineTech.appendChild(div);
     /**On ajoute la ligne complète au parent de la ligne initial(c'est la div body-accordeon) 
