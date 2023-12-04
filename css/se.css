@@ -172,8 +172,33 @@ CSS l'accordeon panel
 
 }
 
+.report-mvt-up { grid-area: report-mvt-up; }
+.mvt-upconst { grid-area: mvt-upconst; }
+.qte-mvt-up { grid-area: qte-mvt-up; }
+.cout-mvt-up { grid-area: cout-mvt-up; }
+.report-mvt-down { grid-area: report-mvt-down; }
+.const-mvt-down { grid-area: const-mvt-down; }
+.qte-mvt-down { grid-area: qte-mvt-down; }
+.cout-mvt-down { grid-area: cout-mvt-down; }
+.upgrade-mvt { grid-area: upgrade-mvt; }
+
+
+.mouvement-entete {
+  padding: 10px 0;
+  justify-self: center;
+  font-size: 0.9rem;
+  display: grid;
+  column-gap: 0px;
+  width:100%;
+  /*grid-template-columns: 20% 35% 10% 30% 15%;*/
+
+  grid-template-areas:
+    'report-mvt-up -mvt-upconst qte-mvt-up cout-mvt-up .'
+    'report-mvt-down const-mvt-down qte-mvt-down cout-mvt-down upgrade-mvt';
+
+}
 .mouvement {
-  padding: 0;
+  padding: 10px 0;
   align-items: center;
   font-size: 0.9rem;
   display: grid;
@@ -182,7 +207,6 @@ CSS l'accordeon panel
   grid-template-rows: auto;
   grid-template-areas:
     "col1-mvt col2-mvt col3-mvt col4-mvt col5-mvt";
-
 }
 
 .right{

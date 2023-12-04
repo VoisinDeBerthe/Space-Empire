@@ -767,23 +767,25 @@ function majTabMouvement() {
   temp.parentElement.replaceChild(tabMouvement, temp);
   tour.constructionTotal.forEach((c, i) => {
     if (c > 0) {
+      let div = document.createElement("div");
+      div.setAttribute("class", "mouvement");
       let label = document.createElement("label");
       label.textContent = dataConstruction[i].construction + ' - ' + dataConstruction[i].libelle;
       label.setAttribute("class", "col1-mvt");
-      tabMouvement.appendChild(label);
+      div.appendChild(label);
       label = document.createElement("label");
       label.textContent = c;
       label.setAttribute("class", "col2-mvt");
-      tabMouvement.appendChild(label);
+      div.appendChild(label);
       let button = createButton("", "col3-mvt", "fa fa-minus");
       button.addEventListener('click', function () { destruction(i) });
-      tabMouvement.appendChild(button);
+      div.appendChild(button);
       label = document.createElement("label");
       if (dataConstruction[i].upgradable == 1) {
         label.textContent = calculUpgrade(i);
       }
       label.setAttribute("class", "col4-mvt");
-      tabMouvement.appendChild(label);
+      div.appendChild(label);
 
       button = createButton("", "col5-mvt", "fa fa-trash");
       button.addEventListener('click', function () { eraseUpgrade(i) });
@@ -791,7 +793,8 @@ function majTabMouvement() {
         //button.setAttribute("style","display:none;")
       }
 
-      tabMouvement.appendChild(button);
+      div.appendChild(button);
+      tabMouvement.appendChild(div);
     }
   })
 
@@ -923,6 +926,7 @@ function majSelectUpgrade() {
   let dropDown = document.createElement("Select");
   //papa.replaceChild(dropDown, document.getElementById("select-upgrade"));
   dropDown.setAttribute("id", "select-upgrade");
+  dropDown.setAttribute("class", "const-mvt-down");
   old.parentNode.replaceChild(dropDown, old);
 
 
@@ -951,7 +955,8 @@ function majSelectUpgrade() {
 function majQteUpgrade(id) {
   let old = document.getElementById("qte-upgrade");
   let dropDown = document.createElement("Select");
-  dropDown.setAttribute("id", "qte-upgrade")
+  dropDown.setAttribute("id", "qte-upgrade");
+  dropDown.setAttribute("class","qte-mvt-down")
   old.parentNode.replaceChild(dropDown, old);
   for (let index = 0; index < tour.constructionTotal[id]; index++) {
     let option = document.createElement("option");
