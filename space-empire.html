@@ -24,12 +24,12 @@
   <div class="modal" id="menu-div">
     <div class="modal-menu">
       <select id="liste-partie">
-        
+
       </select>
       <button onclick="chargerPartie()">Charger Partie</button>
       <button onclick="effacerPartie()">Effacer Partie</button>
       <button onclick="nouvellePartie()">Nouvelle Partie</button>
-      <input type="text" id="nomNewPartie" >
+      <input type="text" id="nomNewPartie">
     </div>
   </div>
 
@@ -55,33 +55,31 @@
       </div>
       <div class="tab-bodies">
         <div class="tab">
-          <div id="div-upgrade" style="display:flex;">
-
-            <label id="upgrade-reportCP"></label>
-            <div>
-              <select id="select-upgrade">
-                <option>toto</option>
-              </select>
-              <select id="qte-upgrade">
-                <option>toto</option>
-              </select>
-            </div>
-            <div>
+          <div id="div-upgrade" class="mouvement-entete">
+            <label class="report-mvt-up">Report CP</label>
+            <label id="upgrade-reportCP" class="report-mvt-down"></label>
+            <label class="const-mvt-up">Const.</label>
+            <select id="select-upgrade" class="const-mvt-down">
+              <option>toto</option>
+            </select>
+            <label class="qte-mvt-up">Qte</label>
+            <select id="qte-upgrade" class="qte-mvt-down">
+              <option>toto</option>
+            </select>
+            <label class="cout-mvt-up">Coût CP</label>
+            <div style="display: flex;" class="cout-mvt-down">
               <input type="radio" id="upgrade-1CP" name="prix-upgrade" value="1" checked />
               <label for="upgrade-1CP">1 CP</label>
-            </div>
-
-            <div>
               <input type="radio" id="upgrade-2CP" name="prix-upgrade" value="2" />
               <label for="upgrade-2CP">2 CP</label>
             </div>
 
-            <div>
-              <button onclick="upgrade();">Upgrade</button>
-            </div>
+
+            <button onclick="upgrade();" class="upgrade-mvt">Upgrade</button>
+
 
           </div>
-          <div class="mouvement" id="tab-mouvement">
+          <div id="tab-mouvement">
 
           </div>
         </div>
@@ -178,7 +176,7 @@
           <button class="accordion" id="bt_technologie">Technologie</button>
           <div class="panel">
             <div class="body-accordeon" id="tab-techno">
-              <div class="body-accordeon-row" >
+              <div class="body-accordeon-row">
                 <!-- Les technologies sont ajoutées dynamiquement en js en remplaçant cette div "template" qui 
                       ne sert juste que de point d'ancrage initial-->
               </div>
@@ -202,7 +200,14 @@
 
       </div>
     </div>
-
+    <div class="grid-container">
+      <div class="item5">Footer</div>
+        <div class="item1">Header</div>
+        <div class="item2">Menu</div>
+        <div class="item3">Main</div>  
+        <div class="item4">Right</div>
+        
+      </div>
 
     <script src="js/se.js"></script>
 </body>
