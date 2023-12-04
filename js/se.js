@@ -39,36 +39,21 @@ const dataConstructionBase = [
 //Jeu de base règles avancées V1.X
 /////////////////////////////////////////
 
-const dataTechnoAvance = [
-  { id: 0, tech: "SS", researched: 0, libelle: "Ship Size", level: 3, grid: [[1,], [2, 10], [3, 15], [4, 20], [5, 20], [6, 20]] },
-  { id: 1, tech: "A", researched: 0, libelle: "Attack", level: 0, grid: [[0,], [1, 20], [2, 30], [3, 25]] },
-  { id: 2, tech: "D", researched: 0, libelle: "Defense", level: 0, grid: [[0,], [1, 20], [2, 30], [3, 25]] },
-  { id: 3, tech: "Ta", researched: 0, libelle: "Tactic", level: 0, grid: [[0,], [1, 15], [2, 15]] },
-  { id: 4, tech: "M", researched: 0, libelle: "Move", level: 0, grid: [[1,], [2, 20], [3, 25], [4, 25], [5, 25], [6, 20], [7, 20]] },
-  { id: 5, tech: "SY", researched: 0, libelle: "Ship Yard", level: 0, grid: [[1,], [2, 20], [3, 25]] },
-  { id: 6, tech: "Te", researched: 0, libelle: "Move", level: 0, grid: [[0,], [1, 20]] },
-  { id: 7, tech: "E", researched: 0, libelle: "Exploration", level: 0, grid: [[0,], [1, 15]] }
-]
-  ;
 
-const dataConstructionAvance = [
-  { id: 0, construction: "SC", requiredTech: [[0, 1]], libelle: "Scout", hull: 1, cost: 6, maint: 1, maxUnit: 36, upgradable: 1 },
-  { id: 1, construction: "DD", requiredTech: [[0, 2]], libelle: "Destroyer", hull: 1, cost: 9, maint: 1, maxUnit: 36, upgradable: 1 },
-  { id: 2, construction: "CA", requiredTech: [[0, 3]], libelle: "Cruiser", hull: 2, cost: 12, maint: 2, maxUnit: 36, upgradable: 1 },
-  { id: 3, construction: "BC", requiredTech: [[0, 4]], libelle: "Battle Cruiser", hull: 2, cost: 15, maint: 2, maxUnit: 36, upgradable: 1 },
-  { id: 4, construction: "BB", requiredTech: [[0, 5]], libelle: "BattleShip", hull: 3, cost: 20, maint: 3, maxUnit: 36, upgradable: 1 },
-  { id: 5, construction: "DN", requiredTech: [[0, 6]], libelle: "Dreadnaught", hull: 3, cost: 24, maint: 3, maxUnit: 36, upgradable: 1 },
-  { id: 6, construction: "CO", requiredTech: [[0, 1]], libelle: "Colony Ship", hull: 1, cost: 12, maint: 0, maxUnit: 0, upgradable: 0 },
-  { id: 7, construction: "Ba", requiredTech: [[0, 1]], libelle: "Base", hull: 0, cost: 12, maint: 0, maxUnit: 4, upgradable: 0 },
-  { id: 8, construction: "Mi", requiredTech: [[0, 1]], libelle: "Miner", hull: 1, cost: 5, maint: 0, maxUnit: 0, upgradable: 0 },
-  { id: 9, construction: "De", requiredTech: [[0, 1]], libelle: "Decoy", hull: 0, cost: 1, maint: 0, maxUnit: 4, upgradable: 0 },
-  { id: 10, construction: "SY", requiredTech: [[0, 1]], libelle: "Ship Yard", hull: 0, cost: 6, maint: 0, maxUnit: 36, upgradable: 0 }
-]
-  ;
+//option Ms Pipeline
+const dataConstPipeline = [
+  { id: 0, construction: "Ms", requiredTech: [[0, 1]], libelle: "MS Pipeline", hull: 1, cost: 3, maint: 0, maxUnit: 0, upgradable: 0 }]
+//option Mine
+const dataConstMine = [
+  { id: 0, construction: "Mine", requiredTech: [[0, 1]], libelle: "Mine", hull: 1, cost: 5, maint: 0, maxUnit: 0, upgradable: 0 }]
+const dataTechnoMine = [
+  { id: 0, tech: "Mine", researched: 0, libelle: "Mine", level: 0, grid: [[0,], [1, 30]] }]
+const dataConstMineSw = [
+  { id: 0, construction: "MSw", requiredTech: [[0, 1]], libelle: "Mine Sweeper", hull: 1, cost: 6, maint: 1, maxUnit: 6, upgradable: 1 }]
+const dataTechnoMineSw = [
+  { id: 0, tech: "MSw", researched: 0, libelle: "Mine Sweeper", level: 0, grid: [[0,], [1, 10], [2, 15]] }]
 
-
-
-
+// option raider / cloaking
 
 
 /************************************************************************************************************/
@@ -102,18 +87,18 @@ var tour = { //Mon objet JSon tour qui fait tout, même le café. Après j'ai ja
   coutTechno: 0, // cout total en CP des technologies ce tour ci
   coutConstruction: 0, // cout total des constructions ce tour ci
   futurMaintenance: 0, // le surcout de maintenance au prochain tour en prévision
-  constructionTotal: new Array(dataConstruction.length), // tableau qui contient la quantité total de chaque construction (même index que dataConstrucion)
-  constructionTour: new Array(dataConstruction.length), // tableau qui contient les nouvelles constructions du tour(aditionnées à constructionTotal à chaque nouveau tour)
+  constructionTotal: new Array(), // tableau qui contient la quantité total de chaque construction (même index que dataConstrucion)
+  constructionTour: new Array(), // tableau qui contient les nouvelles constructions du tour(aditionnées à constructionTotal à chaque nouveau tour)
   upgrade: [], // tableau d'historique des upgrades du tour pendant la phase de mouvement
   dataTechno: dataTechnoBase.slice()
 };
 
 var histoTour = [tour];//Comme son nom l'indique contient l'historique de tous les tours de France le [0] étant toujours le dernier inséré 
 
-var partie = { histoTour: histoTour, config: { type: '', option: [] }, nomPartie: 'Test' }
+var partie = { histoTour: histoTour, dataConstruction: dataConstructionBase.slice(), nomPartie: 'Test' }
 
 
-for (let index = 0; index < dataConstruction.length; index++) {
+for (let index = 0; index < partie.dataConstruction.length; index++) {
   tour.constructionTour[index] = 0;
   tour.constructionTotal[index] = 0;
 }
@@ -407,7 +392,7 @@ function modifConstruction(idNewLineConst, type) {
   let boutonPlus = document.getElementById(tab[1] + '_plus');
   let boutonMoins = document.getElementById(tab[1] + '_moins');
   if (type == 'plus') {
-    if (getHullConstructTurn() + dataConstruction[tab[0]].hull > getHullCapacity()) {
+    if (getHullConstructTurn() + partie.dataConstruction[tab[0]].hull > getHullCapacity()) {
       alert("Capacité de construction dépassée (max : " + getHullCapacity() + ')');
       return
     }
@@ -498,9 +483,9 @@ function calculConstruction() {
   let stringBandeau = " ( "
   tour.constructionTour.forEach((qte, i) => {
     if (qte > 0) {
-      tour.coutConstruction += dataConstruction[i].cost * qte;
-      stringBandeau += dataConstruction[i].construction + ":" + qte + ' - ';
-      tour.futurMaintenance += dataConstruction[i].maint * qte;
+      tour.coutConstruction += partie.dataConstruction[i].cost * qte;
+      stringBandeau += partie.dataConstruction[i].construction + ":" + qte + ' - ';
+      tour.futurMaintenance += partie.dataConstruction[i].maint * qte;
     }
   })
 
@@ -534,7 +519,7 @@ function getNiveauTech(tech) {
  * Retourne l'index d'une construction dans le tableau dataConstruction */
 function getIdConstruction(construction) {
   let resultat = 0;
-  dataConstruction.forEach(el => {
+  partie.dataConstruction.forEach(el => {
     if (el.construction == construction) {
       resultat = el.id;
     }
@@ -550,7 +535,7 @@ function getIdConstruction(construction) {
  */
 function isConstructionPossible(idConstruct) {
   let resultat = true;
-  dataConstruction[idConstruct].requiredTech.forEach(req => {
+  partie.dataConstruction[idConstruct].requiredTech.forEach(req => {
     if (tour.dataTechno[req[0]].level + parseInt(tour.dataTechno[req[0]].grid[0]) >= req[1]) {
       resultat = resultat & true;
     } else {
@@ -590,7 +575,7 @@ function getHullCapacity() {
 function getHullConstructTurn() {
   result = 0;
   tour.constructionTour.forEach((qte, i) => {
-    result += dataConstruction[i].hull * qte;
+    result += partie.dataConstruction[i].hull * qte;
   })
   return result;
 }
@@ -703,7 +688,7 @@ function majConstrucDispo() {
   let newBodyConstruction = template.cloneNode(false);
   template.parentNode.replaceChild(newBodyConstruction, template);
 
-  dataConstruction.forEach((el, i) => {
+  partie.dataConstruction.forEach((el, i) => {
     if (isConstructionPossible(i)) {
       let newLineConstruct = document.createElement("div");
       newLineConstruct.setAttribute("class", "body-accordeon-row, construction");
@@ -770,7 +755,7 @@ function majTabMouvement() {
       let div = document.createElement("div");
       div.setAttribute("class", "mouvement");
       let label = document.createElement("label");
-      label.textContent = dataConstruction[i].construction + ' - ' + dataConstruction[i].libelle;
+      label.textContent = partie.dataConstruction[i].construction + ' - ' + partie.dataConstruction[i].libelle;
       label.setAttribute("class", "col1-mvt");
       div.appendChild(label);
       label = document.createElement("label");
@@ -781,7 +766,7 @@ function majTabMouvement() {
       button.addEventListener('click', function () { destruction(i) });
       div.appendChild(button);
       label = document.createElement("label");
-      if (dataConstruction[i].upgradable == 1) {
+      if (partie.dataConstruction[i].upgradable == 1) {
         label.textContent = calculUpgrade(i);
       }
       label.setAttribute("class", "col4-mvt");
@@ -789,7 +774,7 @@ function majTabMouvement() {
 
       button = createButton("", "col5-mvt", "fa fa-trash");
       button.addEventListener('click', function () { eraseUpgrade(i) });
-      if (dataConstruction[i].upgradable == 1) {
+      if (partie.dataConstruction[i].upgradable == 1) {
         //button.setAttribute("style","display:none;")
       }
 
@@ -851,7 +836,7 @@ function cloneJSON(obj) {
 function calculMaintenance() {
   tour.maintenance = 0;
   tour.constructionTotal.forEach((qte, i) => {
-    tour.maintenance += qte * dataConstruction[i].maint;
+    tour.maintenance += qte * partie.dataConstruction[i].maint;
   })
 }
 
@@ -893,7 +878,7 @@ function nouveauTour() {
     // RAZ des construction du tour
     newTurn.constructionTour[i] = 0;
     // Calcul de la maintenance 
-    newTurn.maintenance += newTurn.constructionTotal[i] * dataConstruction[i].maint
+    newTurn.maintenance += newTurn.constructionTotal[i] * partie.dataConstruction[i].maint
   })
 
 
@@ -931,10 +916,10 @@ function majSelectUpgrade() {
 
 
   tour.constructionTotal.forEach((qte, i) => {
-    if (qte > 0 && dataConstruction[i].upgradable == 1) {
+    if (qte > 0 && partie.dataConstruction[i].upgradable == 1) {
       let option = document.createElement("option");
       option.setAttribute('value', i);
-      let optionText = document.createTextNode(dataConstruction[i].construction);
+      let optionText = document.createTextNode(partie.dataConstruction[i].construction);
       option.appendChild(optionText);
       dropDown.appendChild(option);
     }
@@ -956,7 +941,7 @@ function majQteUpgrade(id) {
   let old = document.getElementById("qte-upgrade");
   let dropDown = document.createElement("Select");
   dropDown.setAttribute("id", "qte-upgrade");
-  dropDown.setAttribute("class","qte-mvt-down")
+  dropDown.setAttribute("class", "qte-mvt-down")
   old.parentNode.replaceChild(dropDown, old);
   for (let index = 0; index < tour.constructionTotal[id]; index++) {
     let option = document.createElement("option");
@@ -979,7 +964,7 @@ function upgrade() {
   if (document.getElementById('upgrade-2CP').checked) {
     prix = 2;
   }
-  let total = qte * prix * dataConstruction[idConstruct].hull;
+  let total = qte * prix * partie.dataConstruction[idConstruct].hull;
   if (total <= tour.reportCP) {
     let up = { id: idConstruct, qte: qte, prix: prix }
     tour.upgrade.push(up);
@@ -1004,7 +989,7 @@ function calculUpgrade(id) {
       }
     }
   });
-  let total = (qte1 + qte2 * 2) * dataConstruction[id].hull;
+  let total = (qte1 + qte2 * 2) * partie.dataConstruction[id].hull;
   return "(" + qte1 + "x1, " + qte2 + "x2) " + total + " CP";
 }
 
@@ -1013,7 +998,7 @@ function eraseUpgrade(id) {
 
   for (let index = 0; index < tour.upgrade.length; index++) {
     if (tour.upgrade[index].id == id) {
-      tour.reportCP += dataConstruction[id].hull * tour.upgrade[index].qte * tour.upgrade[index].prix;
+      tour.reportCP += partie.dataConstruction[id].hull * tour.upgrade[index].qte * tour.upgrade[index].prix;
       tour.upgrade.splice(index, 1);
       index--;
 
@@ -1071,16 +1056,57 @@ function nouvellePartie() {
       coutTechno: 0, // cout total en CP des technologies ce tour ci
       coutConstruction: 0, // cout total des constructions ce tour ci
       futurMaintenance: 0, // le surcout de maintenance au prochain tour en prévision
-      constructionTotal: new Array(dataConstruction.length), // tableau qui contient la quantité total de chaque construction (même index que dataConstrucion)
-      constructionTour: new Array(dataConstruction.length), // tableau qui contient les nouvelles constructions du tour(aditionnées à constructionTotal à chaque nouveau tour)
+      constructionTotal: new Array(), // tableau qui contient la quantité total de chaque construction (même index que dataConstrucion)
+      constructionTour: new Array(), // tableau qui contient les nouvelles constructions du tour(aditionnées à constructionTotal à chaque nouveau tour)
       upgrade: [], // tableau d'historique des upgrades du tour pendant la phase de mouvement
       dataTechno: dataTechnoBase.slice()
     };
 
     histoTour = [tour];//Comme son nom l'indique contient l'historique de tous les tours de France le [0] étant toujours le dernier inséré 
 
-    partie = { histoTour: histoTour, config: { type: '', option: [] }, nomPartie: nom };
-    for (let index = 0; index < dataConstruction.length; index++) {
+    partie = {
+      histoTour: histoTour,
+      dataConstruction: dataConstructionBase.slice(),
+      nomPartie: nom
+    };
+
+
+
+
+
+
+
+
+    //parametrage de la partie avec les options avec les checkbox
+    if (document.getElementById("ms-pipeline").checked) {
+      let taille = partie.dataConstruction.length;
+      partie.dataConstruction[taille] = dataConstPipeline.slice()[0];
+      partie.dataConstruction[taille].id = taille;
+    }
+
+    if (document.getElementById("mine").checked) {
+
+      let tailleTech = tour.dataTechno.length;
+      tour.dataTechno[tailleTech] = dataTechnoMine.slice()[0];
+      tour.dataTechno[tailleTech].id = tailleTech;
+
+      let tailleConst = partie.dataConstruction.length;
+      partie.dataConstruction[tailleConst] = dataConstMine.slice()[0];
+      partie.dataConstruction[tailleConst].id = tailleConst;
+      partie.dataConstruction[tailleConst].requiredTech[0][0] = tailleTech;
+
+      tailleTech = tour.dataTechno.length;
+      tour.dataTechno[tailleTech] = dataTechnoMineSw.slice()[0];
+      tour.dataTechno[tailleTech].id = tailleTech;
+
+      tailleConst = partie.dataConstruction.length;
+      partie.dataConstruction[tailleConst] = dataConstMineSw.slice()[0];
+      partie.dataConstruction[tailleConst].id = tailleConst;
+      partie.dataConstruction[tailleConst].requiredTech[0][0] = tailleTech;
+    }
+
+
+    for (let index = 0; index < partie.dataConstruction.length; index++) {
       tour.constructionTour[index] = 0;
       tour.constructionTotal[index] = 0;
     }
