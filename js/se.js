@@ -54,6 +54,23 @@ const dataTechnoMineSw = [
   { id: 0, tech: "MSw", researched: 0, libelle: "Mine Sweeper", level: 0, grid: [[0,], [1, 10], [2, 15]] }]
 
 // option raider / cloaking
+const dataConstRaider = [
+  { id: 0, construction: "R", requiredTech: [[0, 1]], libelle: "Raider", hull: 2, cost: 12, maint: 2, maxUnit: 36, upgradable: 1 }]
+const dataTechnoCloaking = [
+  { id: 0, tech: "Cl", researched: 0, libelle: "Cloaking", level: 0, grid: [[0,], [1, 30],[2, 30]] }]
+const dataTechnoScanner = [
+  { id: 0, tech: "Sc", researched: 0, libelle: "Mine Scanner", level: 0, grid: [[0,], [1, 20], [2, 20]] }]
+
+
+  // option fighter 
+const dataConstCarrier = [
+  { id: 0, construction: "CV", requiredTech: [[0, 1]], libelle: "Carrier", hull: 1, cost: 12, maint: 1, maxUnit: 36, upgradable: 1 }]
+  const dataConstFighter = [
+    { id: 0, construction: "F", requiredTech: [[0, 1]], libelle: "Fighter", hull: 1, cost: 5, maint: 1, maxUnit: 36, upgradable: 1 }]
+const dataTechnoFighter = [
+  { id: 0, tech: "Fi", researched: 0, libelle: "Fighter", level: 0, grid: [[0,], [1, 25],[2, 25],[3, 25]] }]
+const dataTechnoDefense = [
+  { id: 0, tech: "PD", researched: 0, libelle: "Defense", level: 0, grid: [[0,], [1, 20],[2, 20],[3, 20]] }]
 
 
 /************************************************************************************************************/
@@ -1075,34 +1092,32 @@ function nouvellePartie() {
 
 
 
-
+    let tailleTech =null;
 
     //parametrage de la partie avec les options avec les checkbox
     if (document.getElementById("ms-pipeline").checked) {
-      let taille = partie.dataConstruction.length;
-      partie.dataConstruction[taille] = dataConstPipeline.slice()[0];
-      partie.dataConstruction[taille].id = taille;
+      ajoutConst(dataConstPipeline,tailleTech);
     }
-
     if (document.getElementById("mine").checked) {
 
-      let tailleTech = tour.dataTechno.length;
-      tour.dataTechno[tailleTech] = dataTechnoMine.slice()[0];
-      tour.dataTechno[tailleTech].id = tailleTech;
+      tailleTech = ajoutTech(dataTechnoMine);
+      ajoutConst(dataConstMine,tailleTech);
 
-      let tailleConst = partie.dataConstruction.length;
-      partie.dataConstruction[tailleConst] = dataConstMine.slice()[0];
-      partie.dataConstruction[tailleConst].id = tailleConst;
-      partie.dataConstruction[tailleConst].requiredTech[0][0] = tailleTech;
+      tailleTech = ajoutTech(dataTechnoMineSw);
+      ajoutConst(dataConstMineSw,tailleTech); 
+    }
+    if (document.getElementById("raider").checked) {
+      tailleTech = ajoutTech(dataTechnoCloaking);
+      ajoutConst(dataConstRaider,tailleTech);
 
-      tailleTech = tour.dataTechno.length;
-      tour.dataTechno[tailleTech] = dataTechnoMineSw.slice()[0];
-      tour.dataTechno[tailleTech].id = tailleTech;
+      tailleTech = ajoutTech(dataTechnoScanner);
+    }
+    if (document.getElementById("raider").checked) {
+      tailleTech = ajoutTech(dataTechnoFighter);
+      ajoutConst(dataConstCarrier,tailleTech);
+      ajoutConst(dataConstFighter,tailleTech);
 
-      tailleConst = partie.dataConstruction.length;
-      partie.dataConstruction[tailleConst] = dataConstMineSw.slice()[0];
-      partie.dataConstruction[tailleConst].id = tailleConst;
-      partie.dataConstruction[tailleConst].requiredTech[0][0] = tailleTech;
+      tailleTech = ajoutTech(dataTechnoDefense);
     }
 
 
@@ -1148,6 +1163,26 @@ function nouvellePartie() {
   } else {
     alert("C'est mieux avec un nom de partie...");
   }
+
+}
+
+function ajoutTech(dataTech){
+  let tailleTech = tour.dataTechno.length;
+  if(dataTech != null){
+    tour.dataTechno[tailleTech] = dataTech.slice()[0];
+    tour.dataTechno[tailleTech].id = tailleTech;
+  }
+  return tailleTech
+}
+
+function ajoutConst(dataConst, indexReqTech){
+  let tailleConst = partie.dataConstruction.length;
+  partie.dataConstruction[tailleConst] = dataConst.slice()[0];
+  partie.dataConstruction[tailleConst].id = tailleConst;
+  if(indexReqTech != null){
+    partie.dataConstruction[tailleConst].requiredTech[0][0] = indexReqTech;
+  }
+  
 
 }
 
