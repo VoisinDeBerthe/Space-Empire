@@ -70,7 +70,7 @@ const dataConstCarrier = [
 const dataTechnoFighter = [
   { id: 0, tech: "Fi", researched: 0, libelle: "Fighter", level: 0, grid: [[0,], [1, 25],[2, 25],[3, 25]] }]
 const dataTechnoDefense = [
-  { id: 0, tech: "PD", researched: 0, libelle: "Defense", level: 0, grid: [[0,], [1, 20],[2, 20],[3, 20]] }]
+  { id: 0, tech: "PD", researched: 0, libelle: "Point Defense", level: 0, grid: [[0,], [1, 20],[2, 20],[3, 20]] }]
 
 
 /************************************************************************************************************/
