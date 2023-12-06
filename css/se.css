@@ -301,3 +301,40 @@ input[type="radio"].prix-upgrade + label {
 input[type="radio"].prix-upgrade:checked + label {
   border: 1px solid #000;
 }
+
+
+
+.grid {
+  display: flex;  /* <--- required */
+  width:2000px;
+  font-size: 0.7rem;
+}
+
+.column {
+  flex: 1;  /* <--------- required (makes each column with the same width) */
+  max-width: 50px;
+}
+
+.grid>.column:first-child {
+
+  position: -webkit-sticky; /* for Safari */
+  position: sticky;
+  left: 0;
+  max-width: 120px !important;
+  justify-items: flex-start;
+}
+.grid>.column:first-child > .cell{
+background: white;
+}
+
+.cell {
+  margin: 2px;
+  background: gold;
+  text-align: center;
+}
+
+.cell-highlight{
+  margin: 2px;
+  background: orange;
+  text-align: center;
+}

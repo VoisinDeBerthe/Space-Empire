@@ -57,20 +57,20 @@ const dataTechnoMineSw = [
 const dataConstRaider = [
   { id: 0, construction: "R", requiredTech: [[0, 1]], libelle: "Raider", hull: 2, cost: 12, maint: 2, maxUnit: 36, upgradable: 1 }]
 const dataTechnoCloaking = [
-  { id: 0, tech: "Cl", researched: 0, libelle: "Cloaking", level: 0, grid: [[0,], [1, 30],[2, 30]] }]
+  { id: 0, tech: "Cl", researched: 0, libelle: "Cloaking", level: 0, grid: [[0,], [1, 30], [2, 30]] }]
 const dataTechnoScanner = [
   { id: 0, tech: "Sc", researched: 0, libelle: "Mine Scanner", level: 0, grid: [[0,], [1, 20], [2, 20]] }]
 
 
-  // option fighter 
+// option fighter 
 const dataConstCarrier = [
   { id: 0, construction: "CV", requiredTech: [[0, 1]], libelle: "Carrier", hull: 1, cost: 12, maint: 1, maxUnit: 36, upgradable: 1 }]
-  const dataConstFighter = [
-    { id: 0, construction: "F", requiredTech: [[0, 1]], libelle: "Fighter", hull: 1, cost: 5, maint: 1, maxUnit: 36, upgradable: 1 }]
+const dataConstFighter = [
+  { id: 0, construction: "F", requiredTech: [[0, 1]], libelle: "Fighter", hull: 1, cost: 5, maint: 1, maxUnit: 36, upgradable: 1 }]
 const dataTechnoFighter = [
-  { id: 0, tech: "Fi", researched: 0, libelle: "Fighter", level: 0, grid: [[0,], [1, 25],[2, 25],[3, 25]] }]
+  { id: 0, tech: "Fi", researched: 0, libelle: "Fighter", level: 0, grid: [[0,], [1, 25], [2, 25], [3, 25]] }]
 const dataTechnoDefense = [
-  { id: 0, tech: "PD", researched: 0, libelle: "Point Defense", level: 0, grid: [[0,], [1, 20],[2, 20],[3, 20]] }]
+  { id: 0, tech: "PD", researched: 0, libelle: "Point Defense", level: 0, grid: [[0,], [1, 20], [2, 20], [3, 20]] }]
 
 
 /************************************************************************************************************/
@@ -1092,30 +1092,30 @@ function nouvellePartie() {
 
 
 
-    let tailleTech =null;
+    let tailleTech = null;
 
     //parametrage de la partie avec les options avec les checkbox
     if (document.getElementById("ms-pipeline").checked) {
-      ajoutConst(dataConstPipeline,tailleTech);
+      ajoutConst(dataConstPipeline, tailleTech);
     }
     if (document.getElementById("mine").checked) {
 
       tailleTech = ajoutTech(dataTechnoMine);
-      ajoutConst(dataConstMine,tailleTech);
+      ajoutConst(dataConstMine, tailleTech);
 
       tailleTech = ajoutTech(dataTechnoMineSw);
-      ajoutConst(dataConstMineSw,tailleTech); 
+      ajoutConst(dataConstMineSw, tailleTech);
     }
     if (document.getElementById("raider").checked) {
       tailleTech = ajoutTech(dataTechnoCloaking);
-      ajoutConst(dataConstRaider,tailleTech);
+      ajoutConst(dataConstRaider, tailleTech);
 
       tailleTech = ajoutTech(dataTechnoScanner);
     }
     if (document.getElementById("raider").checked) {
       tailleTech = ajoutTech(dataTechnoFighter);
-      ajoutConst(dataConstCarrier,tailleTech);
-      ajoutConst(dataConstFighter,tailleTech);
+      ajoutConst(dataConstCarrier, tailleTech);
+      ajoutConst(dataConstFighter, tailleTech);
 
       tailleTech = ajoutTech(dataTechnoDefense);
     }
@@ -1166,23 +1166,23 @@ function nouvellePartie() {
 
 }
 
-function ajoutTech(dataTech){
+function ajoutTech(dataTech) {
   let tailleTech = tour.dataTechno.length;
-  if(dataTech != null){
+  if (dataTech != null) {
     tour.dataTechno[tailleTech] = dataTech.slice()[0];
     tour.dataTechno[tailleTech].id = tailleTech;
   }
   return tailleTech
 }
 
-function ajoutConst(dataConst, indexReqTech){
+function ajoutConst(dataConst, indexReqTech) {
   let tailleConst = partie.dataConstruction.length;
   partie.dataConstruction[tailleConst] = dataConst.slice()[0];
   partie.dataConstruction[tailleConst].id = tailleConst;
-  if(indexReqTech != null){
+  if (indexReqTech != null) {
     partie.dataConstruction[tailleConst].requiredTech[0][0] = indexReqTech;
   }
-  
+
 
 }
 
@@ -1200,6 +1200,94 @@ function notPressingDown(e) {
 }
 
 
+function createHistorique() {
+  let columns = partie.histoTour.length;
+  let olddivHisto = document.getElementById("tab-historique");
+  let divHisto = olddivHisto.cloneNode(false);
+  olddivHisto.parentElement.replaceChild(divHisto, olddivHisto);
+  let column = document.createElement('div');
+  column.className = 'column';
+  column.append(createHistoCell('Tour',false));
+  column.append(createHistoCell('Economie',true));
+  column.append(createHistoCell('Report',false));
+  column.append(createHistoCell('Colonie CP',false));
+  column.append(createHistoCell('Minerai',false));
+  column.append(createHistoCell('MS Pipeline',false));
+  column.append(createHistoCell('Maintenance',false));
+  column.append(createHistoCell('Initiative',false));
+  column.append(createHistoCell('Technologie',true));
+  tour.dataTechno.forEach(tech => {
+    column.append(createHistoCell(tech.libelle,false));
+  });
+  column.append(createHistoCell('Construction',true));
+  partie.dataConstruction.forEach(construct => {
+    column.append(createHistoCell(construct.libelle,false));
+  });
+  divHisto.append(column);
 
+
+  for (let i = 0; i < columns; i++) {
+
+    column = document.createElement('div');
+
+    column.className = 'column';
+
+    column.append(createHistoCell(partie.histoTour[i].numTour,false));
+
+    column.append(createHistoCell(partie.histoTour[i].remainingCP + "(" + partie.histoTour[i].totalCP + ")",true));
+
+    column.append(createHistoCell(partie.histoTour[i].reportCP,false));
+
+    column.append(createHistoCell(partie.histoTour[i].colonieCP,false));
+
+    column.append(createHistoCell(partie.histoTour[i].mineurCP,false));
+
+    column.append(createHistoCell(partie.histoTour[i].pipelineCP,false));
+
+    column.append(createHistoCell(partie.histoTour[i].maintenance,false));
+
+    column.append(createHistoCell(partie.histoTour[i].bid,false));
+
+    column.append(createHistoCell(partie.histoTour[i].coutTechno,true));
+
+    for (let j = 0; j < partie.histoTour[i].dataTechno.length; j++) {
+      let tech = partie.histoTour[i].dataTechno[j];
+      let techMoinsUn = partie.histoTour[i].dataTechno[j - 1];
+      let texte = tech.level + tech.grid[0][0];
+      if (j > 0) {
+        if (tech.researched) {
+          texte += "(" + tech.grid[tech.level][1] + ")";
+          if (tech.level - techMoinsUn.level > 1) {
+            texte += "w";
+          }
+        } else if (tech.level - techMoinsUn.level > 0) {
+          texte += "w";
+        }
+      }
+      column.append(createHistoCell(texte,false));
+    }
+
+    column.append(createHistoCell(partie.histoTour[i].coutConstruction,true));
+
+
+    for (let j = 0; j < partie.histoTour[i].constructionTotal.length; j++) {
+      let texte = partie.histoTour[i].constructionTour[j]+"("+partie.histoTour[i].constructionTotal[j]+")";
+      column.append(createHistoCell(texte,false));
+    }
+
+    divHisto.append(column);
+  }
+}
+
+function createHistoCell(texte, highlight) {
+  let cell = document.createElement('div');
+  cell.textContent = texte
+  if(highlight){
+    cell.className = 'cell-highlight';
+  }else{
+    cell.className = 'cell';
+  }  
+  return cell;
+}
 
 
