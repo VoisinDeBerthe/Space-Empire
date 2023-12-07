@@ -1258,7 +1258,7 @@ function createHistorique() {
 
       let texte = tech.level + tech.grid[0][0];
       let className = 'cell';
-      if (i < columns-1) {
+      if (i < columns - 1) {
         //on traite toutes les colonnes sauf la dernière qui correspond au premier tour
         let techMoinsUn = partie.histoTour[i + 1].dataTechno[j];
         if (tech.researched) {
@@ -1271,10 +1271,10 @@ function createHistorique() {
           className = 'gold';
           texte += "w";
         }
-      }else{
+      } else {
         // dernière colonne, donc premier tour, on ne peut pas comparer avec le tour d'avant
         // dpremier tour donc sufiit de tester level et researched
-        if(tech.level>0){
+        if (tech.level > 0) {
           //on considere qu'il n'y a pas de wreck possible au premier tour
           texte += " (" + tech.grid[tech.level][1] + ")";
           className = 'gold';
@@ -1287,13 +1287,14 @@ function createHistorique() {
 
 
     for (let j = 0; j < partie.histoTour[i].constructionTotal.length; j++) {
-      let texte = partie.histoTour[i].constructionTour[j] + " ( " + partie.histoTour[i].constructionTotal[j] + " )";
-      if(partie.histoTour[i].constructionTour[j] > 0 || partie.histoTour[i].constructionTotal[j] > 0){
+
+      if (partie.histoTour[i].constructionTour[j] > 0 || partie.histoTour[i].constructionTotal[j] > 0) {
+        let texte = partie.histoTour[i].constructionTour[j] + " ( " + partie.histoTour[i].constructionTotal[j] + " )";
         column.append(createHistoCell(texte, 'gold'));
-      }else{
-        column.append(createHistoCell(texte, 'cell'));
+      } else {
+        column.append(createHistoCell('-', 'cell'));
       }
-      
+
     }
 
     divHisto.append(column);
