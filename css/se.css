@@ -320,7 +320,7 @@ input[type="radio"].prix-upgrade:checked + label {
   position: -webkit-sticky; /* for Safari */
   position: sticky;
   left: 0;
-  max-width: 120px !important;
+  max-width: 110px !important;
   justify-items: flex-start;
 }
 .grid>.column:first-child > .cell{
@@ -328,19 +328,19 @@ background: white;
 }
 
 .cell {
-  margin: 2px;
+  margin: 1px;
   background: rgb(248, 233, 147);
   text-align: center;
 }
 
 .gold {
-  margin: 2px;
+  margin: 1px;
   background: gold;
   text-align: center;
 }
 
 .cell-highlight{
-  margin: 2px;
+  margin: 1px;
   background: orange;
   text-align: center;
 }
