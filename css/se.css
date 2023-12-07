@@ -329,6 +329,12 @@ background: white;
 
 .cell {
   margin: 2px;
+  background: rgb(248, 233, 147);
+  text-align: center;
+}
+
+.gold {
+  margin: 2px;
   background: gold;
   text-align: center;
 }
