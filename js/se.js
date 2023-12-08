@@ -426,6 +426,10 @@ function modifConstruction(idNewLineConst, type) {
  * @param {number} id index du tableau construction total dans lequel on détruit une construction
  */
 function destruction(id) {
+
+  if(! confirm("Détruire un " + partie.dataConstruction[id].libelle + "?")){
+    return
+  }
   if (tour.constructionTotal[id] > 0) {
     tour.constructionTotal[id]--;
   }
@@ -791,8 +795,8 @@ function majTabMouvement() {
 
       button = createButton("", "col5-mvt", "fa fa-trash");
       button.addEventListener('click', function () { eraseUpgrade(i) });
-      if (partie.dataConstruction[i].upgradable == 1) {
-        //button.setAttribute("style","display:none;")
+      if (partie.dataConstruction[i].upgradable == 0) {
+        button.setAttribute("style","display:none;")
       }
 
       div.appendChild(button);
