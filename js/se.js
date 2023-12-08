@@ -57,20 +57,20 @@ const dataTechnoMineSw = [
 const dataConstRaider = [
   { id: 0, construction: "R", requiredTech: [[0, 1]], libelle: "Raider", hull: 2, cost: 12, maint: 2, maxUnit: 36, upgradable: 1 }]
 const dataTechnoCloaking = [
-  { id: 0, tech: "Cl", researched: 0, libelle: "Cloaking", level: 0, grid: [[0,], [1, 30],[2, 30]] }]
+  { id: 0, tech: "Cl", researched: 0, libelle: "Cloaking", level: 0, grid: [[0,], [1, 30], [2, 30]] }]
 const dataTechnoScanner = [
-  { id: 0, tech: "Sc", researched: 0, libelle: "Mine Scanner", level: 0, grid: [[0,], [1, 20], [2, 20]] }]
+  { id: 0, tech: "Sc", researched: 0, libelle: "Scanner", level: 0, grid: [[0,], [1, 20], [2, 20]] }]
 
 
-  // option fighter 
+// option fighter 
 const dataConstCarrier = [
   { id: 0, construction: "CV", requiredTech: [[0, 1]], libelle: "Carrier", hull: 1, cost: 12, maint: 1, maxUnit: 36, upgradable: 1 }]
-  const dataConstFighter = [
-    { id: 0, construction: "F", requiredTech: [[0, 1]], libelle: "Fighter", hull: 1, cost: 5, maint: 1, maxUnit: 36, upgradable: 1 }]
+const dataConstFighter = [
+  { id: 0, construction: "F", requiredTech: [[0, 1]], libelle: "Fighter", hull: 1, cost: 5, maint: 1, maxUnit: 36, upgradable: 1 }]
 const dataTechnoFighter = [
-  { id: 0, tech: "Fi", researched: 0, libelle: "Fighter", level: 0, grid: [[0,], [1, 25],[2, 25],[3, 25]] }]
+  { id: 0, tech: "Fi", researched: 0, libelle: "Fighter", level: 0, grid: [[0,], [1, 25], [2, 25], [3, 25]] }]
 const dataTechnoDefense = [
-  { id: 0, tech: "PD", researched: 0, libelle: "Point Defense", level: 0, grid: [[0,], [1, 20],[2, 20],[3, 20]] }]
+  { id: 0, tech: "PD", researched: 0, libelle: "Point Defense", level: 0, grid: [[0,], [1, 20], [2, 20], [3, 20]] }]
 
 
 /************************************************************************************************************/
@@ -86,7 +86,7 @@ const REPORT_MAX_RP = 30;
 /**
  * Variables globales
  */
-var dataConstruction = dataConstructionBase.slice();
+var dataConstruction = [].concat(dataConstructionBase);
 
 
 
@@ -107,12 +107,12 @@ var tour = { //Mon objet JSon tour qui fait tout, même le café. Après j'ai ja
   constructionTotal: new Array(), // tableau qui contient la quantité total de chaque construction (même index que dataConstrucion)
   constructionTour: new Array(), // tableau qui contient les nouvelles constructions du tour(aditionnées à constructionTotal à chaque nouveau tour)
   upgrade: [], // tableau d'historique des upgrades du tour pendant la phase de mouvement
-  dataTechno: dataTechnoBase.slice()
+  dataTechno: [].concat(dataTechnoBase)
 };
 
 var histoTour = [tour];//Comme son nom l'indique contient l'historique de tous les tours de France le [0] étant toujours le dernier inséré 
 
-var partie = { histoTour: histoTour, dataConstruction: dataConstructionBase.slice(), nomPartie: 'Test' }
+var partie = { histoTour: histoTour, dataConstruction: [].concat(dataConstructionBase), nomPartie: 'Test' }
 
 
 for (let index = 0; index < partie.dataConstruction.length; index++) {
@@ -876,7 +876,7 @@ function nouveauTour() {
 
   let newTurn = cloneJSON(tour);
   newTurn.numTour++;
-  document.getElementById("numTour").textContent = "Tour : " + tour.numTour;
+  document.getElementById("numTour").textContent = "Tour : " + newTurn.numTour;
   newTurn.coutConstruction = 0;
   newTurn.coutTechno = 0;
   newTurn.futurMaintenance = 0;
@@ -900,8 +900,8 @@ function nouveauTour() {
 
 
   //Remise à zero des evolutions du tour de technologie
-  tour.dataTechno.forEach(tech => {
-    if (tech.researched = 1) { // Si la techno a été rechechée sur le tour on refait apparaitre le bouton plus pour le nouveau tour
+  newTurn.dataTechno.forEach(tech => {
+    if (tech.researched == 1) { // Si la techno a été rechechée sur le tour on refait apparaitre le bouton plus pour le nouveau tour
       document.getElementById(tech.tech + '_plus').removeAttribute("class", "not-visible");
       document.getElementById(tech.tech + '_moins').setAttribute("class", "not-visible");
       tech.researched = 0;
@@ -1056,6 +1056,9 @@ async function initListePartie() {
 
 
 function nouvellePartie() {
+  //pour revenir sur l'onglet mouvement pour le début du nouveau tour
+  document.getElementById("bt-tab-mouvement").click();
+
   const nom = document.getElementById('nomNewPartie').value;
   if (nom != "") {
     let div = document.getElementById("menu-div");
@@ -1076,14 +1079,14 @@ function nouvellePartie() {
       constructionTotal: new Array(), // tableau qui contient la quantité total de chaque construction (même index que dataConstrucion)
       constructionTour: new Array(), // tableau qui contient les nouvelles constructions du tour(aditionnées à constructionTotal à chaque nouveau tour)
       upgrade: [], // tableau d'historique des upgrades du tour pendant la phase de mouvement
-      dataTechno: dataTechnoBase.slice()
+      dataTechno: [].concat(dataTechnoBase)
     };
 
     histoTour = [tour];//Comme son nom l'indique contient l'historique de tous les tours de France le [0] étant toujours le dernier inséré 
 
     partie = {
       histoTour: histoTour,
-      dataConstruction: dataConstructionBase.slice(),
+      dataConstruction: [].concat(dataConstructionBase),
       nomPartie: nom
     };
 
@@ -1092,30 +1095,30 @@ function nouvellePartie() {
 
 
 
-    let tailleTech =null;
+    let tailleTech = null;
 
     //parametrage de la partie avec les options avec les checkbox
     if (document.getElementById("ms-pipeline").checked) {
-      ajoutConst(dataConstPipeline,tailleTech);
+      ajoutConst(dataConstPipeline, tailleTech);
     }
     if (document.getElementById("mine").checked) {
 
       tailleTech = ajoutTech(dataTechnoMine);
-      ajoutConst(dataConstMine,tailleTech);
+      ajoutConst(dataConstMine, tailleTech);
 
       tailleTech = ajoutTech(dataTechnoMineSw);
-      ajoutConst(dataConstMineSw,tailleTech); 
+      ajoutConst(dataConstMineSw, tailleTech);
     }
     if (document.getElementById("raider").checked) {
       tailleTech = ajoutTech(dataTechnoCloaking);
-      ajoutConst(dataConstRaider,tailleTech);
+      ajoutConst(dataConstRaider, tailleTech);
 
       tailleTech = ajoutTech(dataTechnoScanner);
     }
     if (document.getElementById("raider").checked) {
       tailleTech = ajoutTech(dataTechnoFighter);
-      ajoutConst(dataConstCarrier,tailleTech);
-      ajoutConst(dataConstFighter,tailleTech);
+      ajoutConst(dataConstCarrier, tailleTech);
+      ajoutConst(dataConstFighter, tailleTech);
 
       tailleTech = ajoutTech(dataTechnoDefense);
     }
@@ -1166,23 +1169,23 @@ function nouvellePartie() {
 
 }
 
-function ajoutTech(dataTech){
+function ajoutTech(dataTech) {
   let tailleTech = tour.dataTechno.length;
-  if(dataTech != null){
-    tour.dataTechno[tailleTech] = dataTech.slice()[0];
+  if (dataTech != null) {
+    tour.dataTechno[tailleTech] = [].concat(dataTech)[0];
     tour.dataTechno[tailleTech].id = tailleTech;
   }
   return tailleTech
 }
 
-function ajoutConst(dataConst, indexReqTech){
+function ajoutConst(dataConst, indexReqTech) {
   let tailleConst = partie.dataConstruction.length;
-  partie.dataConstruction[tailleConst] = dataConst.slice()[0];
+  partie.dataConstruction[tailleConst] = [].concat(dataConst)[0];
   partie.dataConstruction[tailleConst].id = tailleConst;
-  if(indexReqTech != null){
+  if (indexReqTech != null) {
     partie.dataConstruction[tailleConst].requiredTech[0][0] = indexReqTech;
   }
-  
+
 
 }
 
@@ -1200,6 +1203,110 @@ function notPressingDown(e) {
 }
 
 
+function createHistorique() {
+  let columns = partie.histoTour.length;
+  let olddivHisto = document.getElementById("tab-historique");
+  let divHisto = olddivHisto.cloneNode(false);
+  olddivHisto.parentElement.replaceChild(divHisto, olddivHisto);
+  let column = document.createElement('div');
+  column.className = 'column';
+  column.append(createHistoCell('Tour', 'cell'));
+  column.append(createHistoCell('Economie', 'cell-highlight'));
+  column.append(createHistoCell('Report', 'cell'));
+  column.append(createHistoCell('Colonie CP', 'cell'));
+  column.append(createHistoCell('Minerai', 'cell'));
+  column.append(createHistoCell('MS Pipeline', 'cell'));
+  column.append(createHistoCell('Maintenance', 'cell'));
+  column.append(createHistoCell('Initiative', 'cell'));
+  column.append(createHistoCell('Technologie', 'cell-highlight'));
+  tour.dataTechno.forEach(tech => {
+    column.append(createHistoCell(tech.libelle, 'cell'));
+  });
+  column.append(createHistoCell('Construction', 'cell-highlight'));
+  partie.dataConstruction.forEach(construct => {
+    column.append(createHistoCell(construct.libelle, 'cell'));
+  });
+  divHisto.append(column);
 
+
+  for (let i = 0; i < columns; i++) {
+
+    column = document.createElement('div');
+
+    column.className = 'column';
+
+    column.append(createHistoCell(partie.histoTour[i].numTour, 'cell'));
+
+    column.append(createHistoCell(partie.histoTour[i].remainingCP + "(" + partie.histoTour[i].totalCP + ")", 'cell-highlight'));
+
+    column.append(createHistoCell(partie.histoTour[i].reportCP, 'cell'));
+
+    column.append(createHistoCell(partie.histoTour[i].colonieCP, 'cell'));
+
+    column.append(createHistoCell(partie.histoTour[i].mineurCP, 'cell'));
+
+    column.append(createHistoCell(partie.histoTour[i].pipelineCP, 'cell'));
+
+    column.append(createHistoCell(partie.histoTour[i].maintenance + "(" + partie.histoTour[i].futurMaintenance + ")", 'cell'));
+
+    column.append(createHistoCell(partie.histoTour[i].bid, 'cell'));
+
+    column.append(createHistoCell(partie.histoTour[i].coutTechno, 'cell-highlight'));
+
+    for (let j = 0; j < partie.histoTour[i].dataTechno.length; j++) {
+      let tech = partie.histoTour[i].dataTechno[j];
+
+      let texte = tech.level + tech.grid[0][0];
+      let className = 'cell';
+      if (i < columns - 1) {
+        //on traite toutes les colonnes sauf la dernière qui correspond au premier tour
+        let techMoinsUn = partie.histoTour[i + 1].dataTechno[j];
+        if (tech.researched) {
+          className = 'gold';
+          texte += " (" + tech.grid[tech.level][1] + ")";
+          if (tech.level - techMoinsUn.level > 1) {
+            texte += "w";
+          }
+        } else if (tech.level - techMoinsUn.level > 0) {
+          className = 'gold';
+          texte += "w";
+        }
+      } else {
+        // dernière colonne, donc premier tour, on ne peut pas comparer avec le tour d'avant
+        // dpremier tour donc sufiit de tester level et researched
+        if (tech.level > 0) {
+          //on considere qu'il n'y a pas de wreck possible au premier tour
+          texte += " (" + tech.grid[tech.level][1] + ")";
+          className = 'gold';
+        }
+      }
+      column.append(createHistoCell(texte, className));
+    }
+
+    column.append(createHistoCell(partie.histoTour[i].coutConstruction, 'cell-highlight'));
+
+
+    for (let j = 0; j < partie.histoTour[i].constructionTotal.length; j++) {
+
+      if (partie.histoTour[i].constructionTour[j] > 0 || partie.histoTour[i].constructionTotal[j] > 0) {
+        let texte = partie.histoTour[i].constructionTour[j] + " ( " + partie.histoTour[i].constructionTotal[j] + " )";
+        column.append(createHistoCell(texte, 'gold'));
+      } else {
+        column.append(createHistoCell('-', 'cell'));
+      }
+
+    }
+
+    divHisto.append(column);
+  }
+}
+
+function createHistoCell(texte, className) {
+  let cell = document.createElement('div');
+  cell.textContent = texte
+  cell.className = className;
+
+  return cell;
+}
 
 
