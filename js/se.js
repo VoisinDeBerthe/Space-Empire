@@ -791,8 +791,8 @@ function majTabMouvement() {
 
       button = createButton("", "col5-mvt", "fa fa-trash");
       button.addEventListener('click', function () { eraseUpgrade(i) });
-      if (partie.dataConstruction[i].upgradable == 1) {
-        //button.setAttribute("style","display:none;")
+      if (partie.dataConstruction[i].upgradable == 0) {
+        button.setAttribute("style","display:none;")
       }
 
       div.appendChild(button);
