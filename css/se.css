@@ -27,6 +27,7 @@ CSS pour les onglets
 
 .tabs .tab-registers {
   display: flex;
+  padding-top :10px;
   background-color: RGB(255, 255, 255);
 }
 
@@ -37,7 +38,8 @@ CSS pour les onglets
   border: none;
   font: inherit;
   border-radius: 7% 7% 0 0;
-  background-color: rgb(194, 239, 250);
+  color:white;
+  background-image: linear-gradient(to left, rgb(189, 187, 190) 0%, rgb(157, 158, 163) 100%), radial-gradient(88% 271%, rgba(255, 255, 255, 0.25) 0%, rgba(254, 254, 254, 0.25) 1%, rgba(0, 0, 0, 0.25) 100%), radial-gradient(50% 100%, rgba(255, 255, 255, 0.3) 0%, rgba(0, 0, 0, 0.3) 100%); background-blend-mode: normal, lighten, soft-light; left: -513px; top: -977px;
 }
 
 .tabs .tab-registers button:hover {
@@ -46,13 +48,15 @@ CSS pour les onglets
 
 .tabs .tab-bodies {
   padding: 0.5em 0;
-  background-color: rgb(114, 227, 255);
+  /*background-color: rgb(114, 227, 255);*/
+  background-image: linear-gradient(to top, rgb(196, 197, 199) 0%, rgb(220, 221, 223) 52%, rgb(235, 235, 235) 100%); left: -598px; top: -869px;
   flex-grow: 1;
   overflow-y: auto;
 }
 
 .tabs button.active-tab {
-  background-color: rgb(114, 227, 255);
+  color: white;
+  background:  linear-gradient(rgba(255, 255, 255, 0.15) 0%, rgba(0, 0, 0, 0.15) 100%), radial-gradient(at center top, rgba(255, 255, 255, 0.4) 0%, rgba(0, 0, 0, 0.4) 120%) rgb(152, 152, 152); background-blend-mode: multiply, multiply; left: -93px; top: -1122px;
 }
 
 
@@ -65,7 +69,7 @@ CSS l'accordeon panel
 
 .accordion {
   
-  background-color: rgb(114, 227, 255);
+  background-image: linear-gradient(to top, lightgrey 0%, lightgrey 1%, rgb(224, 224, 224) 26%, rgb(239, 239, 239) 48%, rgb(217, 217, 217) 75%, rgb(188, 188, 188) 100%); left: -47px; top: -641px;
   color: #444;
   cursor: pointer;
   padding: 18px;
@@ -81,14 +85,14 @@ CSS l'accordeon panel
 
 .active,
 .accordion:hover {
-  background-color: rgb(194, 239, 250);
+  background-color: gray;
 }
 
 .panel {
   padding: 0 10px;
   padding-bottom: 18px;
   display: none;
-  background-color: rgb(194, 239, 250);
+  background-image: linear-gradient(to top, rgb(196, 197, 199) 0%, rgb(220, 221, 223) 52%, rgb(235, 235, 235) 100%); left: -598px; top: -869px;
   overflow: hidden;
 }
 
@@ -341,6 +345,8 @@ background: white;
 
 .cell-highlight{
   margin: 1px;
-  background: orange;
+  background-color: #d63230;
+  background-image: linear-gradient(319deg, #d68e30 0%, #f39237 37%, #d2ee86 100%);
+
   text-align: center;
 }
