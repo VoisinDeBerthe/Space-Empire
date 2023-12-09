@@ -16,6 +16,7 @@
 </head>
 
 <body>
+
   <div id="hold-div" class="modal">
     <div class="modal-body">
       <p id="hold-p"></p>
@@ -23,63 +24,77 @@
   </div>
   <div class="modal" id="menu-div">
     <div class="modal-menu">
-      <select id="liste-partie">
+      <div class="modal-sousmenu">
+        <select id="liste-partie">
+        </select>
+        <button onclick="chargerPartie()" class="btn-grad"> <i class="fa-solid fa-upload"></i></button>
+        <button onclick="effacerPartie()" class="btn-grad"> <i class="fa-solid fa-trash"></i></button>
+      </div>
 
-      </select>
-      <button onclick="chargerPartie()">Charger Partie</button>
-      <button onclick="effacerPartie()">Effacer Partie</button>
-      <button onclick="nouvellePartie()">Nouvelle Partie</button>
-      <input type="text" id="nomNewPartie">
-      <div >
+
+      <div>
         <fieldset>
           <legend>Jeux de base - Règles avancées</legend>
-          <div  class="parametrage" >
-            <div class="droite"><input type="checkbox" id="ms-pipeline"  value="ms-pipeline" /></div>
+          <div class="parametrage">
+            <div class="droite"><input type="checkbox" id="ms-pipeline" value="ms-pipeline" /></div>
             <div class="gauche"><label for="ms-pipeline">MS pipeline</label></div>
-            <div class="droite"><input type="checkbox" id="mine"  value="mine" /></div>
+            <div class="droite"><input type="checkbox" id="mine" value="mine" /></div>
             <div class="gauche"><label for="mine">Mine / Mine Sweeper</label></div>
-            <div class="droite"><input type="checkbox" id="raider"  value="raider" /></div>
+            <div class="droite"><input type="checkbox" id="raider" value="raider" /></div>
             <div class="gauche"><label for="raider">Raider</label></div>
-            <div class="droite"><input type="checkbox" id="fighter"  value="fighter" /></div>
+            <div class="droite"><input type="checkbox" id="fighter" value="fighter" /></div>
             <div class="gauche"><label for="fighter">Fighter / Carrier</label></div>
           </div>
         </fieldset>
         <fieldset>
           <legend>Close Encounters</legend>
-          <div  class="parametrage" >
-            <div class="droite"><input type="checkbox" id="titan"  value="titan" /></div>
+          <div class="parametrage">
+            <div class="droite"><input type="checkbox" id="titan" value="titan" /></div>
             <div class="gauche"><label for="titan">Titan</label></div>
-            <div class="droite"><input type="checkbox" id="boarding"  value="boarding" /></div>
+            <div class="droite"><input type="checkbox" id="boarding" value="boarding" /></div>
             <div class="gauche"><label for="boarding">Boarding Ship</label></div>
-            <div class="droite"><input type="checkbox" id="infantry"  value="infantry" /></div>
+            <div class="droite"><input type="checkbox" id="infantry" value="infantry" /></div>
             <div class="gauche"><label for="infantry">Infantry & Co</label></div>
-            <div class="droite"><input type="checkbox" id="harvest-nebulae"  value="harvest-nebulae" /></div>
+            <div class="droite"><input type="checkbox" id="harvest-nebulae" value="harvest-nebulae" /></div>
             <div class="gauche"><label for="harvest-nebulae">Harvest Nebulae</label></div>
-            <div class="droite"><input type="checkbox" id="reaction-move"  value="reaction-move" /></div>
+            <div class="droite"><input type="checkbox" id="reaction-move" value="reaction-move" /></div>
             <div class="gauche"><label for="reaction-move">Reaction Move</label></div>
-            <div class="droite"><input type="checkbox" id="fast-bc"  value="fast-bc" /></div>
+            <div class="droite"><input type="checkbox" id="fast-bc" value="fast-bc" /></div>
             <div class="gauche"><label for="fast-bc">Fast BC</label></div>
-            <div class="droite"><input type="checkbox" id="research"  value="research" /></div>
+            <div class="droite"><input type="checkbox" id="research" value="research" /></div>
             <div class="gauche"><label for="research">Research & Industrial</label></div>
           </div>
         </fieldset>
-      
+        <fieldset>
+          <legend>Replicator</legend>
+          <div class="parametrage">
+            <div class="droite"><input type="checkbox" id="titan" value="titan" /></div>
+            <div class="gauche"><label for="titan">Titan</label></div>
+            <div class="droite"><input type="checkbox" id="boarding" value="boarding" /></div>
+            <div class="gauche"><label for="boarding">Boarding Ship</label></div>
+            <div class="droite"><input type="checkbox" id="infantry" value="infantry" /></div>
+            <div class="gauche"><label for="infantry">Infantry & Co</label></div>
+          </div>
+        </fieldset>
+
+      </div>
+      <div style="display:inline-flex; margin-top: 15px; gap:4px; align-content: center;">
+
+        <input type="text" id="nomNewPartie" style="width:80%" placeholder="Nom de partie">
+        <button onclick="nouvellePartie()" class="btn-grad"><i class="fa-solid fa-dice-d20"> </i></button>
       </div>
     </div>
+   
   </div>
 
   <div class="container">
     <div class="top_bar">
       <label id="nomPartie">Space Empire 4X V0.1</label>
       <label id="numTour">1</label>
-      <button onclick="nouveauTour();">Nouveau Tour
-        <svg xmlns="http://www.w3.org/2000/svg" height="1em"
-          viewBox="0 0 448 512"><!--! Font Awesome Free 6.4.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2023 Fonticons, Inc. -->
-          <path
-            d="M256 80c0-17.7-14.3-32-32-32s-32 14.3-32 32V224H48c-17.7 0-32 14.3-32 32s14.3 32 32 32H192V432c0 17.7 14.3 32 32 32s32-14.3 32-32V288H400c17.7 0 32-14.3 32-32s-14.3-32-32-32H256V80z" />
-        </svg>
+      <button onclick="nouveauTour();" class="btn-grad">Nouveau Tour
+        <i class="fa-solid fa-plus"></i>
       </button>
-      <button onclick="afficherMenu()">Menu</button>
+      <button onclick="afficherMenu()" class="btn-grad">Menu</button>
 
     </div>
     <div class="tabs">
@@ -92,32 +107,32 @@
         <div class="tab">
           <fieldset style="font-size :0.9rem;margin : 10px">
             <legend>Payer Upgrade</legend>
-          
-          <div id="div-upgrade" class="mouvement-entete">
-            <label class="report-mvt-up">Rep.CP</label>
-            <label id="upgrade-reportCP" class="report-mvt-down"></label>
-            <label class="const-mvt-up">Const.</label>
-            <select id="select-upgrade" class="const-mvt-down">
-              <option>toto</option>
-            </select>
-            <label class="qte-mvt-up">Qte</label>
-            <select id="qte-upgrade" class="qte-mvt-down">
-              <option>toto</option>
-            </select>
-            <label class="cout-mvt-up">CP/Hull</label>
-            <div style="display: flex;" class="cout-mvt-down">
-              <input type="radio" id="upgrade-1CP" name="prix-upgrade" class="prix-upgrade" value="1" checked />
-              <label for="upgrade-1CP">1 CP</label>
-              <input type="radio" id="upgrade-2CP" name="prix-upgrade" class="prix-upgrade" value="2" />
-              <label for="upgrade-2CP">2 CP</label>
+
+            <div id="div-upgrade" class="mouvement-entete">
+              <label class="report-mvt-up">CP</label>
+              <label id="upgrade-reportCP" class="report-mvt-down"></label>
+              <label class="const-mvt-up">Const.</label>
+              <select id="select-upgrade" class="const-mvt-down btn_small">
+                <option>toto</option>
+              </select>
+              <label class="qte-mvt-up">Qte</label>
+              <select id="qte-upgrade" class="qte-mvt-down brn-small">
+                <option>toto</option>
+              </select>
+              <label class="cout-mvt-up">CP/Hull</label>
+              <div style="display: flex;" class="cout-mvt-down">
+                <input type="radio" id="upgrade-1CP" name="prix-upgrade" class="prix-upgrade" value="1" checked />
+                <label for="upgrade-1CP">1 CP</label>
+                <input type="radio" id="upgrade-2CP" name="prix-upgrade" class="prix-upgrade" value="2" />
+                <label for="upgrade-2CP">2 CP</label>
+              </div>
+
+
+              <button onclick="upgrade();" class="upgrade-mvt btn-grad">Upgrade</button>
+
+
             </div>
-
-
-            <button onclick="upgrade();" class="upgrade-mvt">Upgrade</button>
-
-          
-          </div>
-        </fieldset>
+          </fieldset>
           <div id="tab-mouvement" style="padding: 0 10px">
 
           </div>
@@ -140,16 +155,16 @@
                 <div class="col1-eco right">
                   <label title="Revenus de toutes les colonies, planète mère incluse">CP</label>
                   <div>
-                    <button class="none" onclick="modifValeurNum('colonie',-5)">-5</button>
-                    <button class="none" onclick="modifValeurNum('colonie',-1)">-1</button>
+                    <button class="btn-small" onclick="modifValeurNum('colonie',-5)">-5</button>
+                    <button class="btn-small" onclick="modifValeurNum('colonie',-1)">-1</button>
                   </div>
                 </div>
                 <div class="col2-eco">
                   <label id="colonie"></label>
                 </div>
                 <div class="col3-eco">
-                  <button class="none" onclick="modifValeurNum('colonie',1)">+1</button>
-                  <button class="none" onclick="modifValeurNum('colonie',5)">+5</button>
+                  <button class="btn-small" onclick="modifValeurNum('colonie',1)">+1</button>
+                  <button class="btn-small" onclick="modifValeurNum('colonie',5)">+5</button>
                 </div>
               </div>
 
@@ -159,54 +174,54 @@
                 <div class="col1-eco right">
                   <label>Minerai</label>
                   <div>
-                    <button class="none" onclick="modifValeurNum('minerai',-10)">-10</button>
-                    <button class="none" onclick="modifValeurNum('minerai',-5)">-5</button>
+                    <button class="btn-small" onclick="modifValeurNum('minerai',-10)">-10</button>
+                    <button class="btn-small" onclick="modifValeurNum('minerai',-5)">-5</button>
                   </div>
                 </div>
                 <div class="col2-eco">
                   <label id="minerai"></label>
                 </div>
                 <div class="col3-eco">
-                  <button class="none" onclick="modifValeurNum('minerai',5)">+5</button>
-                  <button class="none" onclick="modifValeurNum('minerai',10)">+10</button>
+                  <button class="btn-small" onclick="modifValeurNum('minerai',5)">+5</button>
+                  <button class="btn-small" onclick="modifValeurNum('minerai',10)">+10</button>
                 </div>
               </div>
               <div class="body-accordeon-row economie">
                 <div class="col1-eco right">
                   <label>MS Pipeline</label>
 
-                  <button class="none" onclick="modifValeurNum('pipeline',-1)">-1</button>
+                  <button class="btn-small" onclick="modifValeurNum('pipeline',-1)">-1</button>
                 </div>
                 <div class="col2-eco">
                   <label id="pipeline"></label>
                 </div>
                 <div class="col3-eco">
-                  <button class="none" onclick="modifValeurNum('pipeline',1)">+1</button>
+                  <button class="btn-small" onclick="modifValeurNum('pipeline',1)">+1</button>
                 </div>
               </div>
               <div class="body-accordeon-row economie">
                 <div class="col1-eco right">
                   <label>Maintenance</label>
 
-                  <button class="none" onclick="modifValeurNum('maintenance',-1)">-1</button>
+                  <button class="btn-small" onclick="modifValeurNum('maintenance',-1)">-1</button>
                 </div>
                 <div class="col2-eco">
                   <label id="maintenance"></label>
                 </div>
                 <div class="col3-eco">
-                  <button class="none" onclick="modifValeurNum('maintenance',1)">+1</button>
+                  <button class="btn-small" onclick="modifValeurNum('maintenance',1)">+1</button>
                 </div>
               </div>
               <div class="body-accordeon-row economie">
                 <div class="col1-eco right">
                   <label>Initiative</label>
-                  <button class="none" onclick="modifValeurNum('init',-1)">-1</button>
+                  <button class="btn-small" onclick="modifValeurNum('init',-1)">-1</button>
                 </div>
                 <div class="col2-eco">
                   <label id="init"></label>
                 </div>
                 <div class="col3-eco">
-                  <button class="none" onclick="modifValeurNum('init',1)">+1</button>
+                  <button class="btn-small" onclick="modifValeurNum('init',1)">+1</button>
                 </div>
               </div>
             </div>
@@ -233,13 +248,13 @@
           </div>
         </div>
 
-        <div  style="display:none;">
+        <div style="display:none;">
           <div id="tab-historique" class="grid"></div>
         </div>
 
       </div>
     </div>
-
+    <script src="https://kit.fontawesome.com/49fa35a961.js" crossorigin="anonymous"></script>
     <script src="js/se.js"></script>
 </body>
 

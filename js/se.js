@@ -15,7 +15,7 @@ const dataTechnoBase = [
   { id: 3, tech: "Ta", researched: 0, libelle: "Tactic", level: 0, grid: [[0,], [1, 15], [2, 15]] },
   { id: 4, tech: "M", researched: 0, libelle: "Move", level: 0, grid: [[1,], [2, 20], [3, 25], [4, 25], [5, 25], [6, 20], [7, 20]] },
   { id: 5, tech: "SY", researched: 0, libelle: "Ship Yard", level: 0, grid: [[1,], [2, 20], [3, 25]] },
-  { id: 6, tech: "Te", researched: 0, libelle: "Move", level: 0, grid: [[0,], [1, 20]] },
+  { id: 6, tech: "Te", researched: 0, libelle: "Terraformation", level: 0, grid: [[0,], [1, 20]] },
   { id: 7, tech: "E", researched: 0, libelle: "Exploration", level: 0, grid: [[0,], [1, 15]] }
 ]
   ;
@@ -375,6 +375,7 @@ function chgNivTech(index, isWreck, boutonAcacher, boutonAafficher, valeur) {
   if (!isWreck) {
     boutonAcacher.setAttribute("class", "not-visible");
     boutonAafficher.removeAttribute("class", "not-visible");
+    boutonAafficher.setAttribute("class","btn-small");
     if (valeur == 1) {
       tour.dataTechno[index].researched = 1;
     } else {
@@ -624,15 +625,14 @@ function majTechno() {
     //création d'une div pour regrouper les boutons plus et moins dans la deuxième colonne de la ligne de techno
     let div = document.createElement('div');
     div.setAttribute('class', 'tab-techno');
-
-    let button = createButton(el.tech + "_plus", "bt", "fa fa-plus");
+    let button = createButton(el.tech + "_plus", "btn-small", "fa-solid fa-plus");
     button.addEventListener('click', function () { modifNivTech(idNewLineTech, 'plus') });
     if (el.researched == 1) {
       button.setAttribute("class", "not-visible");
     }
     div.appendChild(button);
 
-    button = createButton(el.tech + "_moins", "bt", "fa fa-minus");
+    button = createButton(el.tech + "_moins", "btn-small", "fa-solid fa-minus");
     button.addEventListener('click', function () { modifNivTech(idNewLineTech, 'moins') });
     if (el.researched == 0) {
       button.setAttribute("class", "not-visible");
@@ -646,7 +646,7 @@ function majTechno() {
     button.textContent = 'Wreck';
     button.setAttribute("id", el.tech + "_wreck");
     button.addEventListener('click', function () { modifNivTech(idNewLineTech, 'wreck') });
-    button.setAttribute("class", "wreck");
+    button.setAttribute("class", "wreck btn-small");
     newLineTech.appendChild(button);
 
 
@@ -722,7 +722,7 @@ function majConstrucDispo() {
       construct.setAttribute("class", "libelle");
       newLineConstruct.appendChild(construct);
 
-      button = createButton(el.construction + "_moins", "bt-moins", "fa fa-minus");
+      button = createButton(el.construction + "_moins", "bt-moins btn-small", "fa-solid fa-minus");
       button.addEventListener('click', function () { modifConstruction(idNewLineConstruct, 'moins') });
       if (tour.constructionTour[i] == 0) {
         button.setAttribute("disabled", true);
@@ -730,7 +730,7 @@ function majConstrucDispo() {
       newLineConstruct.appendChild(button);
 
 
-      button = createButton(el.construction + "_plus", "bt-plus", "fa fa-plus");
+      button = createButton(el.construction + "_plus", "bt-plus btn-small", "fa-solid fa-plus");
       button.addEventListener('click', function () { modifConstruction(idNewLineConstruct, 'plus') });
       if (tour.constructionTour[i] + tour.constructionTotal[i] == el.maxUnit && el.maxUnit != 0) {
         button.setAttribute("disabled", true);
@@ -779,7 +779,7 @@ function majTabMouvement() {
       label.textContent = c;
       label.setAttribute("class", "col2-mvt");
       div.appendChild(label);
-      let button = createButton("", "col3-mvt", "fa fa-minus");
+      let button = createButton("", "col3-mvt btn-small", "fa-solid fa-skull");
       button.addEventListener('click', function () { destruction(i) });
       div.appendChild(button);
       label = document.createElement("label");
@@ -787,9 +787,10 @@ function majTabMouvement() {
         label.textContent = calculUpgrade(i);
       }
       label.setAttribute("class", "col4-mvt");
+      label.style="padding-left:7px;"
       div.appendChild(label);
 
-      button = createButton("", "col5-mvt", "fa fa-trash");
+      button = createButton("", "col5-mvt btn-small", "fa-solid fa-trash");
       button.addEventListener('click', function () { eraseUpgrade(i) });
       if (partie.dataConstruction[i].upgradable == 0) {
         button.setAttribute("style","display:none;")
@@ -1007,7 +1008,7 @@ function calculUpgrade(id) {
     }
   });
   let total = (qte1 + qte2 * 2) * partie.dataConstruction[id].hull;
-  return "(" + qte1 + "x1, " + qte2 + "x2) " + total + " CP";
+  return " (" + qte1 + "x1, " + qte2 + "x2) " + total + " CP";
 }
 
 function eraseUpgrade(id) {

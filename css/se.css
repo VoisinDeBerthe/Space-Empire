@@ -171,7 +171,7 @@ p {
   align-items: center;
   font-size: 1rem;
   display: grid;
-  grid-template-columns: 13% 12% 15% 60%;
+  grid-template-columns: 10% 12% 15% 63%;
   grid-template-rows: auto;
   grid-template-areas:
     "libelle bt wreck tab-techno";
@@ -287,13 +287,39 @@ p {
 
   justify-content: space-between;
 }
+         
+.btn-grad {
+  background: #29c3aa;
+  margin: 0;
+  padding: 10px;
+  text-align: center;
+  background-size: 200% auto;            
+  box-shadow: 0 0 20px #eee;
+  border-radius: 10px;
+  display: block;
+}
 
+.btn-small{
+  background: #29c3aa;
+  padding: 2px 5px;
+  text-align: center;
+  width: fit-content;
+  background-size: 200% auto;            
+  box-shadow: 0 0 20px #eee;
+  border-radius: 10px;
+
+}
 
 
 .tab-techno {
   display: flex;
   gap: 5px;
   margin-left: 10px;
+}
+
+.tab-techno > p{
+  margin-left: 2px;
+  margin-right: 2px;
 }
 
 
@@ -330,8 +356,13 @@ p {
   align-items: center;
   justify-content: center;
   border-radius: 25px;
+}
 
-
+.modal .modal-sousmenu{
+display:grid;
+grid-template-columns: 50% 25% 25%;
+gap:4px;
+margin-bottom: 15px;
 }
 
 .modal .modal-body {
