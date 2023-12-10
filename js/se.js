@@ -73,6 +73,40 @@ const dataTechnoDefense = [
   { id: 0, tech: "PD", researched: 0, libelle: "Point Defense", level: 0, grid: [[0,], [1, 20], [2, 20], [3, 20]] }]
 
 
+/////////////////////////////////////////
+//Close encounters
+/////////////////////////////////////////
+
+//option titan
+const dataConstTitan = [
+  { id: 0, construction: "TN", requiredTech: [[0, 7]], libelle: "Titan", hull: 5, cost: 32, maint: 5, maxUnit: 24, upgradable: 1 }];
+
+// option boarding
+const dataConstBoarding = [
+  { id: 0, construction: "BD", requiredTech: [[0, 1]], libelle: "Boarding Ship ", hull: 2, cost: 12, maint: 2, maxUnit: 36, upgradable: 1 }]
+const dataTechnoBoarding = [
+  { id: 0, tech: "BoS", researched: 0, libelle: "Boarding Ship", level: 0, grid: [[0,], [1, 20], [2, 25]] }]
+
+// option fast BC
+const dataTechnofastBC = [
+  { id: 0, tech: "FBC", researched: 0, libelle: "Fast BC", level: 0, grid: [[0,], [1, 10], [2, 10]] }]
+
+//option infantry
+const dataConstInfantry = [
+  { id: 0, construction: "Tran", requiredTech: [[0, 1]], libelle: "Transport", hull: 1, cost: 6, maint: 1, maxUnit: 36, upgradable: 1 },
+  { id: 0, construction: "Inf", requiredTech: [[0, 1]], libelle: "Infantry", hull: 1, cost: 2, maint: 0, maxUnit: 36, upgradable: 1 },
+  { id: 0, construction: "Mar", requiredTech: [[0, 2]], libelle: "Space Marines", hull: 2, cost: 3, maint: 0, maxUnit: 36, upgradable: 1 },
+  { id: 0, construction: "HI", requiredTech: [[0, 2]], libelle: "Heavy Infantry", hull: 2, cost: 3, maint: 0, maxUnit: 36, upgradable: 1 },
+  { id: 0, construction: "Grav", requiredTech: [[0, 3]], libelle: "Grav Armor", hull: 2, cost: 4, maint: 0, maxUnit: 36, upgradable: 1 }
+];
+
+const dataTechnoGround = [
+  { id: 0, tech: "GC", researched: 0, libelle: "Ground Combat", level: 0, grid: [[1,], [2, 10], [3, 15]] }]
+
+const dataTechnoSecurity = [
+  { id: 0, tech: "SF", researched: 0, libelle: "Security Force", level: 0, grid: [[0,], [1, 15], [2, 15]] }]
+
+
 /************************************************************************************************************/
 /* Initialisation des données la partie en fonction des choix de l'utilisateur
 /************************************************************************************************************/
@@ -213,6 +247,8 @@ function chargerPartie() {
       div.style.display = "none";
       majTechno();
       calcul();
+      //pour revenir sur l'onglet mouvement pour le début du nouveau tour
+      document.getElementById("bt-tab-mouvement").click();
     };
   };
 
@@ -375,7 +411,7 @@ function chgNivTech(index, isWreck, boutonAcacher, boutonAafficher, valeur) {
   if (!isWreck) {
     boutonAcacher.setAttribute("class", "not-visible");
     boutonAafficher.removeAttribute("class", "not-visible");
-    boutonAafficher.setAttribute("class","btn-small");
+    boutonAafficher.setAttribute("class", "btn-small");
     if (valeur == 1) {
       tour.dataTechno[index].researched = 1;
     } else {
@@ -427,6 +463,9 @@ function modifConstruction(idNewLineConst, type) {
  * @param {number} id index du tableau construction total dans lequel on détruit une construction
  */
 function destruction(id) {
+  if (!confirm("Détruire un " + partie.dataConstruction[id].libelle + " ?")) {
+    return;
+  }
   if (tour.constructionTotal[id] > 0) {
     tour.constructionTotal[id]--;
   }
@@ -787,13 +826,13 @@ function majTabMouvement() {
         label.textContent = calculUpgrade(i);
       }
       label.setAttribute("class", "col4-mvt");
-      label.style="padding-left:7px;"
+      label.style = "padding-left:7px;"
       div.appendChild(label);
 
       button = createButton("", "col5-mvt btn-small", "fa-solid fa-trash");
       button.addEventListener('click', function () { eraseUpgrade(i) });
       if (partie.dataConstruction[i].upgradable == 0) {
-        button.setAttribute("style","display:none;")
+        button.setAttribute("style", "display:none;")
       }
 
       div.appendChild(button);
@@ -1102,6 +1141,26 @@ function nouvellePartie() {
     if (document.getElementById("ms-pipeline").checked) {
       ajoutConst(dataConstPipeline, tailleTech);
     }
+    
+
+    if (document.getElementById("boarding").checked) {
+      tailleTech = ajoutTech(dataTechnoBoarding);
+      ajoutConst(dataConstBoarding, tailleTech);
+    }
+    if (document.getElementById("raider").checked) {
+      tailleTech = ajoutTech(dataTechnoCloaking);
+      ajoutConst(dataConstRaider, tailleTech);
+
+      tailleTech = ajoutTech(dataTechnoScanner);
+    }
+    if (document.getElementById("fighter").checked) {
+      tailleTech = ajoutTech(dataTechnoFighter);
+      ajoutConst(dataConstCarrier, tailleTech);
+      ajoutConst(dataConstFighter, tailleTech);
+
+      tailleTech = ajoutTech(dataTechnoDefense);
+    }
+
     if (document.getElementById("mine").checked) {
 
       tailleTech = ajoutTech(dataTechnoMine);
@@ -1110,22 +1169,38 @@ function nouvellePartie() {
       tailleTech = ajoutTech(dataTechnoMineSw);
       ajoutConst(dataConstMineSw, tailleTech);
     }
-    if (document.getElementById("raider").checked) {
-      tailleTech = ajoutTech(dataTechnoCloaking);
-      ajoutConst(dataConstRaider, tailleTech);
 
-      tailleTech = ajoutTech(dataTechnoScanner);
+    if (document.getElementById("titan").checked) {
+      let id = getIdConstruction("DN");
+      partie.dataConstruction.splice(id + 1, 0, [].concat(dataConstTitan)[0]);
+
+      tour.dataTechno[0].grid.push([7, 30]);
     }
-    if (document.getElementById("raider").checked) {
-      tailleTech = ajoutTech(dataTechnoFighter);
-      ajoutConst(dataConstCarrier, tailleTech);
-      ajoutConst(dataConstFighter, tailleTech);
 
-      tailleTech = ajoutTech(dataTechnoDefense);
+    if (document.getElementById("harvest-nebulae").checked) {
+      tour.dataTechno[6].grid.push([2,25]);
+    }
+
+    if (document.getElementById("reaction-move").checked) {
+      tour.dataTechno[7].grid.push([2,15]);
+    }
+
+    if (document.getElementById("fast-bc").checked) {
+      ajoutTech(dataTechnofastBC);
+    }
+
+    if (document.getElementById("infantry").checked) {
+      tailleTech = ajoutTech(dataTechnoSecurity);
+      tailleTech = ajoutTech(dataTechnoGround);
+
+      dataConstInfantry.forEach(t =>{
+        ajoutConst(t,tailleTech);
+      })
     }
 
 
     for (let index = 0; index < partie.dataConstruction.length; index++) {
+      partie.dataConstruction[index].id = index;
       tour.constructionTour[index] = 0;
       tour.constructionTotal[index] = 0;
     }
@@ -1186,8 +1261,6 @@ function ajoutConst(dataConst, indexReqTech) {
   if (indexReqTech != null) {
     partie.dataConstruction[tailleConst].requiredTech[0][0] = indexReqTech;
   }
-
-
 }
 
 function pressingDown(e) {
@@ -1259,7 +1332,7 @@ function createHistorique() {
 
       let texte = tech.level + tech.grid[0][0];
       let className = 'cell';
-      if (i < columns-1) {
+      if (i < columns - 1) {
         //on traite toutes les colonnes sauf la dernière qui correspond au premier tour
         let techMoinsUn = partie.histoTour[i + 1].dataTechno[j];
         if (tech.researched) {
@@ -1272,10 +1345,10 @@ function createHistorique() {
           className = 'gold';
           texte += "w";
         }
-      }else{
+      } else {
         // dernière colonne, donc premier tour, on ne peut pas comparer avec le tour d'avant
         // dpremier tour donc sufiit de tester level et researched
-        if(tech.level>0){
+        if (tech.level > 0) {
           //on considere qu'il n'y a pas de wreck possible au premier tour
           texte += " (" + tech.grid[tech.level][1] + ")";
           className = 'gold';
@@ -1289,12 +1362,12 @@ function createHistorique() {
 
     for (let j = 0; j < partie.histoTour[i].constructionTotal.length; j++) {
       let texte = partie.histoTour[i].constructionTour[j] + " ( " + partie.histoTour[i].constructionTotal[j] + " )";
-      if(partie.histoTour[i].constructionTour[j] > 0 || partie.histoTour[i].constructionTotal[j] > 0){
+      if (partie.histoTour[i].constructionTour[j] > 0 || partie.histoTour[i].constructionTotal[j] > 0) {
         column.append(createHistoCell(texte, 'gold'));
-      }else{
+      } else {
         column.append(createHistoCell('-', 'cell'));
       }
-      
+
     }
 
     divHisto.append(column);

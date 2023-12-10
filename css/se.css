@@ -1,6 +1,6 @@
-.container {
+body {
   font-size: 1rem;
-
+  Font-family: Calibri, Candara, Segoe, Segoe UI, Optima, Arial, sans-serif;
 }
 
 input {
@@ -22,8 +22,8 @@ CSS pour le bandeau en haut de page
 CSS pour les onglets
 *************************************************************************************************************/
 .tabs {
-  font-family: 'Lucida Sans', sans-serif;
-  font-size: 1.2rem;
+  font-size: 1.1rem;
+  font-weight: 700;
 }
 
 .tabs .tab-registers {

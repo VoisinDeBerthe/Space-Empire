@@ -61,19 +61,20 @@
             <div class="gauche"><label for="reaction-move">Reaction Move</label></div>
             <div class="droite"><input type="checkbox" id="fast-bc" value="fast-bc" /></div>
             <div class="gauche"><label for="fast-bc">Fast BC</label></div>
-            <div class="droite"><input type="checkbox" id="research" value="research" /></div>
+            <div class="droite"><input type="checkbox" id="academy" value="academy" disabled/></div>
+            <div class="gauche"><label for="academy">Military Academy</label></div>
+            <div class="droite"><input type="checkbox" id="research" value="research" disabled/></div>
             <div class="gauche"><label for="research">Research & Industrial</label></div>
           </div>
         </fieldset>
         <fieldset>
           <legend>Replicator</legend>
           <div class="parametrage">
-            <div class="droite"><input type="checkbox" id="titan" value="titan" /></div>
-            <div class="gauche"><label for="titan">Titan</label></div>
-            <div class="droite"><input type="checkbox" id="boarding" value="boarding" /></div>
-            <div class="gauche"><label for="boarding">Boarding Ship</label></div>
-            <div class="droite"><input type="checkbox" id="infantry" value="infantry" /></div>
-            <div class="gauche"><label for="infantry">Infantry & Co</label></div>
+            <div class="droite"><input type="checkbox" id="const-avancees" value="const-avancees" disabled/></div>
+            <div class="gauche"><label for="const-avancees">Advanced Con.</label></div>
+
+            <div class="droite"><input type="checkbox" id="anti-replica" value="anti-replica" disabled /></div>
+            <div class="gauche"><label for="anti-replica">Anti-Replicator</label></div>
           </div>
         </fieldset>
 
@@ -99,9 +100,9 @@
     </div>
     <div class="tabs">
       <div class="tab-registers">
-        <button id="bt-tab-mouvement" class="active-tab">Mouvement</button>
-        <button>Production</button>
-        <button onclick="createHistorique()">Historique</button>
+        <button id="bt-tab-mouvement" class="active-tab">MOUVEMENT</button>
+        <button>PRODUCTION</button>
+        <button onclick="createHistorique()">HISTORIQUE</button>
       </div>
       <div class="tab-bodies">
         <div class="tab">
