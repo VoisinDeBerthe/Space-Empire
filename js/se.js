@@ -1267,8 +1267,14 @@ function pressingDown(e) {
   e.preventDefault();
   let div = document.getElementById("hold-div");
   div.style.display = "block";
-  let p = document.getElementById("hold-p");
-  p.textContent = e.target.title;
+  let old = document.getElementById("hold-tech");
+  let d = old.cloneNode(false);
+  old.parentElement.replaceChild(d,old);
+  tour.dataTechno.forEach(t=>{
+    let p = document.createElement("p");
+    p.innerHTML = t.tech + " - " + t.libelle
+    d.append(p);
+  })
 }
 
 function notPressingDown(e) {
