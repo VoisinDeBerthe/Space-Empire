@@ -823,7 +823,7 @@ function majTabMouvement() {
       div.appendChild(button);
       label = document.createElement("label");
       if (partie.dataConstruction[i].upgradable == 1) {
-        label.textContent = calculUpgrade(i);
+        label.textContent = calculUpgrade(i,0);
       }
       label.setAttribute("class", "col4-mvt");
       label.style = "padding-left:7px;"
@@ -1033,11 +1033,11 @@ function upgrade() {
 }
 
 
-function calculUpgrade(id) {
+function calculUpgrade(id,indexTour) {
   let qte1 = 0;
   let qte2 = 0;
 
-  tour.upgrade.forEach(up => {
+  partie.histoTour[indexTour].upgrade.forEach(up => {
     if (up.id == id) {
       if (up.prix == 1) {
         qte1 += up.qte;
@@ -1141,7 +1141,7 @@ function nouvellePartie() {
     if (document.getElementById("ms-pipeline").checked) {
       ajoutConst(dataConstPipeline, tailleTech);
     }
-    
+
 
     if (document.getElementById("boarding").checked) {
       tailleTech = ajoutTech(dataTechnoBoarding);
@@ -1178,11 +1178,11 @@ function nouvellePartie() {
     }
 
     if (document.getElementById("harvest-nebulae").checked) {
-      tour.dataTechno[6].grid.push([2,25]);
+      tour.dataTechno[6].grid.push([2, 25]);
     }
 
     if (document.getElementById("reaction-move").checked) {
-      tour.dataTechno[7].grid.push([2,15]);
+      tour.dataTechno[7].grid.push([2, 15]);
     }
 
     if (document.getElementById("fast-bc").checked) {
@@ -1193,8 +1193,8 @@ function nouvellePartie() {
       tailleTech = ajoutTech(dataTechnoSecurity);
       tailleTech = ajoutTech(dataTechnoGround);
 
-      dataConstInfantry.forEach(t =>{
-        ajoutConst(t,tailleTech);
+      dataConstInfantry.forEach(t => {
+        ajoutConst(t, tailleTech);
       })
     }
 
@@ -1269,8 +1269,8 @@ function pressingDown(e) {
   div.style.display = "block";
   let old = document.getElementById("hold-tech");
   let d = old.cloneNode(false);
-  old.parentElement.replaceChild(d,old);
-  tour.dataTechno.forEach(t=>{
+  old.parentElement.replaceChild(d, old);
+  tour.dataTechno.forEach(t => {
     let p = document.createElement("p");
     p.innerHTML = t.tech + " - " + t.libelle
     d.append(p);
@@ -1278,6 +1278,52 @@ function pressingDown(e) {
 }
 
 function notPressingDown(e) {
+  let div = document.getElementById("hold-div");
+  div.style.display = "none";
+}
+
+function pressingDownHisto(e) {
+  e.preventDefault();
+  let div = document.getElementById("hold-div");
+  div.style.display = "block";
+  let old = document.getElementById("hold-tech");
+  let d = old.cloneNode(false);
+  old.parentElement.replaceChild(d, old);
+  let index = partie.histoTour.length - parseInt(e.target.textContent);
+  partie.histoTour[index].constructionTotal.forEach((c, i) => {
+    if (c > 0 && partie.dataConstruction[i].upgradable == 1) {
+      let div = document.createElement("div");
+      div.setAttribute("class", "mouvement");
+      let label = document.createElement("label");
+      label.textContent = partie.dataConstruction[i].construction + ' - ' + partie.dataConstruction[i].libelle;
+      label.setAttribute("class", "col1-mvt");
+      div.appendChild(label);
+      label = document.createElement("label");
+      label.textContent = c;
+      label.setAttribute("class", "col2-mvt");
+      div.appendChild(label);
+      let button = createButton("", "col3-mvt btn-small", "fa-solid fa-skull");
+      div.appendChild(button);
+      label = document.createElement("label");
+      if (partie.dataConstruction[i].upgradable == 1) {
+        label.textContent = calculUpgrade(i,index);
+      }
+      label.setAttribute("class", "col4-mvt");
+      label.style = "padding-left:7px;"
+      div.appendChild(label);
+
+      button = createButton("", "col5-mvt btn-small", "fa-solid fa-trash");
+      if (partie.dataConstruction[i].upgradable == 0) {
+        button.setAttribute("style", "display:none;")
+      }
+
+      div.appendChild(button);
+      d.appendChild(div);
+    }
+  })
+}
+
+function notPressingDownHisto(e) {
   let div = document.getElementById("hold-div");
   div.style.display = "none";
 }
@@ -1290,7 +1336,9 @@ function createHistorique() {
   olddivHisto.parentElement.replaceChild(divHisto, olddivHisto);
   let column = document.createElement('div');
   column.className = 'column';
-  column.append(createHistoCell('Tour', 'cell'));
+  let cell = createHistoCell('Tour', 'cell');
+  cell.style = "font-size:large; padding:7px 0;";
+  column.append(cell);
   column.append(createHistoCell('Economie', 'cell-highlight'));
   column.append(createHistoCell('Report', 'cell'));
   column.append(createHistoCell('Colonie CP', 'cell'));
@@ -1315,7 +1363,13 @@ function createHistorique() {
 
     column.className = 'column';
 
-    column.append(createHistoCell(partie.histoTour[i].numTour, 'cell'));
+    let cell = document.createElement('div');
+    cell.className = 'cell';
+    cell.style = "font-size:large; padding:7px 0;";
+    cell.textContent = partie.histoTour[i].numTour
+    cell.addEventListener("touchstart", pressingDownHisto, false);
+    cell.addEventListener("touchend", notPressingDownHisto, false);
+    column.append(cell);
 
     column.append(createHistoCell(partie.histoTour[i].remainingCP + "(" + partie.histoTour[i].totalCP + ")", 'cell-highlight'));
 
@@ -1355,7 +1409,7 @@ function createHistorique() {
         // dernière colonne, donc premier tour, on ne peut pas comparer avec le tour d'avant
         // dpremier tour donc sufiit de tester level et researched
         if (tech.level > 0) {
-          //on considere qu'il n'y a pas de wreck possible au premier tour
+          //on considere qu'il n'y a pas de wreck possible au premier tour sinon c'est triché
           texte += " (" + tech.grid[tech.level][1] + ")";
           className = 'gold';
         }
