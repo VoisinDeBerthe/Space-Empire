@@ -126,9 +126,9 @@ var dataConstruction = [].concat(dataConstructionBase);
 
 var tour = { //Mon objet JSon tour qui fait tout, même le café. Après j'ai jamais dit qui le faisait bien...
   nomPartie: 'test',
-  version:0, // numéro de version actuelle
-  versionPrecedante:null, // permet la navigabilité entre les versions
-  versionSuivante:null, // permet la navigabilité entre les versions
+  version: 0, // numéro de version actuelle
+  versionPrecedante: null, // permet la navigabilité entre les versions
+  versionSuivante: null, // permet la navigabilité entre les versions
   numTour: 0, //N° de tour
   reportCP: 0, // CP reportés du tour précédant
   totalCP: 0, // total des CP gagné durant ce tour de production
@@ -166,7 +166,7 @@ tour.colonieCP = 20;
 calculMaintenance();
 
 const dbName = "se";
-const dbVersion = 5;
+const dbVersion = 13;
 
 //ouverture de la base avec un numéro de version, si la version en paramètre est supperieur à celle existante dans le navigateur
 //ou si il n'y a pas de base alors création
@@ -177,13 +177,21 @@ request.onerror = (event) => {
 };
 
 //onupgradeneeded est appelé lors d'une création ou d'une mise à jour si nouvelle version
-request.onupgradeneeded = (event) => {
-  db = event.target.result;
-
+request.onupgradeneeded = function (event) {
   //Création de la base de données
-  const objectStore = db.createObjectStore("partie", { keyPath: "nomPartie" });
-  const objStore = db.createObjectStore("versions", { autoIncrement: true });
+
+  let db = event.target.result;
+  if (!db.objectStoreNames.contains('partie')) {
+    // s'il n'y a pas de magasin "books"
+    db.createObjectStore('books', { keyPath: 'nomPartie' }); // créez-le
+  }
+  if (!db.objectStoreNames.contains('versions')) {
+    // s'il n'y a pas de magasin "books"
+    objStore = db.createObjectStore("versions", { keyPath: "version" });
+  }
+
 };
+
 
 function enregistrerPartie() {
   if (partie.histoTour[0].numTour > 0) {
@@ -191,8 +199,16 @@ function enregistrerPartie() {
 
     request.onsuccess = (event) => {
       db = event.target.result;
-      const transaction = db.transaction(["partie"], "readwrite");
-      const objectStore = transaction.objectStore("partie");
+      const transaction = db.transaction(["partie","versions"], "readwrite");
+      partie.versionSuivante= partie.version + 1;
+      
+      let objectStore = transaction.objectStore("versions");
+      objectStore.add(partie)
+
+      partie.versionPrecedante = partie.version;
+      partie.version++;
+      partie.versionSuivante = null;
+      objectStore = transaction.objectStore("partie");
       const requestUpdate = objectStore.put(partie);
       requestUpdate.onerror = (event) => {
         console.log('echec enregistrement');
@@ -200,6 +216,9 @@ function enregistrerPartie() {
       requestUpdate.onsuccess = (event) => {
         console.log('enregistrement');
       };
+
+
+      
     };
 
     request.onerror = (event) => {
@@ -827,7 +846,7 @@ function majTabMouvement() {
       div.appendChild(button);
       label = document.createElement("label");
       if (partie.dataConstruction[i].upgradable == 1) {
-        label.textContent = calculUpgrade(i,0);
+        label.textContent = calculUpgrade(i, 0);
       }
       label.setAttribute("class", "col4-mvt");
       label.style = "padding-left:7px;"
@@ -916,7 +935,7 @@ function nouveauTour() {
       return;
     };
   }
-  if(!confirm("Passer au tour suivant ?")){
+  if (!confirm("Passer au tour suivant ?")) {
     return;
   }
 
@@ -1039,7 +1058,7 @@ function upgrade() {
 }
 
 
-function calculUpgrade(id,indexTour) {
+function calculUpgrade(id, indexTour) {
   let qte1 = 0;
   let qte2 = 0;
 
@@ -1133,7 +1152,10 @@ function nouvellePartie() {
     partie = {
       histoTour: histoTour,
       dataConstruction: [].concat(dataConstructionBase),
-      nomPartie: nom
+      nomPartie: nom,
+      version: 1,
+      versionPrecedante: null,
+      versionSuivante: null
     };
 
 
@@ -1221,8 +1243,8 @@ function nouvellePartie() {
 
     request.onsuccess = (event) => {
       db = event.target.result;
-      const transaction = db.transaction(["partie"], "readwrite");
-      const objectStore = transaction.objectStore("partie");
+      const transaction = db.transaction(["partie","versions"], "readwrite");
+      let objectStore = transaction.objectStore("partie");
       const requestUpdate = objectStore.add(partie);
       requestUpdate.onerror = (event) => {
         console.log('echec creation partie');
@@ -1237,6 +1259,11 @@ function nouvellePartie() {
         document.getElementById("numTour").textContent = "Tour : " + tour.numTour;
         document.getElementById("nomPartie").textContent = partie.nomPartie;
       };
+
+      objectStore = transaction.objectStore("versions");
+      objectStore.clear();
+      objectStore.add(partie);
+
     };
 
     request.onerror = (event) => {
@@ -1312,7 +1339,7 @@ function pressingDownHisto(e) {
       div.appendChild(button);
       label = document.createElement("label");
       if (partie.dataConstruction[i].upgradable == 1) {
-        label.textContent = calculUpgrade(i,index);
+        label.textContent = calculUpgrade(i, index);
       }
       label.setAttribute("class", "col4-mvt");
       label.style = "padding-left:7px;"
