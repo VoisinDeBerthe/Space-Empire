@@ -27,8 +27,8 @@ const dataConstructionBase = [
   { id: 3, construction: "BC", requiredTech: [[0, 4]], libelle: "Battle Cruiser", hull: 2, cost: 15, maint: 2, maxUnit: 36, upgradable: 1 },
   { id: 4, construction: "BB", requiredTech: [[0, 5]], libelle: "BattleShip", hull: 3, cost: 20, maint: 3, maxUnit: 36, upgradable: 1 },
   { id: 5, construction: "DN", requiredTech: [[0, 6]], libelle: "Dreadnaught", hull: 3, cost: 24, maint: 3, maxUnit: 36, upgradable: 1 },
-  { id: 6, construction: "CO", requiredTech: [[0, 1]], libelle: "Colony Ship", hull: 1, cost: 12, maint: 0, maxUnit: 0, upgradable: 0 },
-  { id: 7, construction: "Ba", requiredTech: [[0, 1]], libelle: "Base", hull: 0, cost: 12, maint: 0, maxUnit: 4, upgradable: 0 },
+  { id: 6, construction: "CO", requiredTech: [[0, 1]], libelle: "Colony Ship", hull: 1, cost: 8, maint: 0, maxUnit: 0, upgradable: 0 },
+  { id: 7, construction: "Ba", requiredTech: [[0, 2]], libelle: "Base", hull: 0, cost: 12, maint: 0, maxUnit: 4, upgradable: 0 },
   { id: 8, construction: "Mi", requiredTech: [[0, 1]], libelle: "Miner", hull: 1, cost: 5, maint: 0, maxUnit: 0, upgradable: 0 },
   { id: 9, construction: "De", requiredTech: [[0, 1]], libelle: "Decoy", hull: 0, cost: 1, maint: 0, maxUnit: 4, upgradable: 0 },
   { id: 10, construction: "SY", requiredTech: [[0, 1]], libelle: "Ship Yard", hull: 0, cost: 6, maint: 0, maxUnit: 36, upgradable: 0 }
@@ -126,6 +126,9 @@ var dataConstruction = [].concat(dataConstructionBase);
 
 var tour = { //Mon objet JSon tour qui fait tout, même le café. Après j'ai jamais dit qui le faisait bien...
   nomPartie: 'test',
+  version:0, // numéro de version actuelle
+  versionPrecedante:null, // permet la navigabilité entre les versions
+  versionSuivante:null, // permet la navigabilité entre les versions
   numTour: 0, //N° de tour
   reportCP: 0, // CP reportés du tour précédant
   totalCP: 0, // total des CP gagné durant ce tour de production
@@ -163,7 +166,7 @@ tour.colonieCP = 20;
 calculMaintenance();
 
 const dbName = "se";
-const dbVersion = 4;
+const dbVersion = 5;
 
 //ouverture de la base avec un numéro de version, si la version en paramètre est supperieur à celle existante dans le navigateur
 //ou si il n'y a pas de base alors création
@@ -179,6 +182,7 @@ request.onupgradeneeded = (event) => {
 
   //Création de la base de données
   const objectStore = db.createObjectStore("partie", { keyPath: "nomPartie" });
+  const objStore = db.createObjectStore("versions", { autoIncrement: true });
 };
 
 function enregistrerPartie() {
@@ -911,7 +915,9 @@ function nouveauTour() {
     if (!confirm('Attention report max de CP : ' + REPORT_MAX_CP + '\n\nTu veux vraiment perdre tes ressources ?')) {
       return;
     };
-
+  }
+  if(!confirm("Passer au tour suivant ?")){
+    return;
   }
 
   let newTurn = cloneJSON(tour);
