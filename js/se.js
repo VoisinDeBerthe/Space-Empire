@@ -116,7 +116,7 @@ const dataTechnoSecurity = [
  */
 const REPORT_MAX_CP = 30;
 const REPORT_MAX_RP = 30;
-
+const NBRE_HISTORIQUE_MAX = 6;
 /**
  * Variables globales
  */
@@ -199,25 +199,39 @@ function enregistrerPartie() {
 
     request.onsuccess = (event) => {
       db = event.target.result;
-      const transaction = db.transaction(["partie","versions"], "readwrite");
-      partie.versionSuivante= partie.version + 1;
-      
+      const transaction = db.transaction(["partie", "versions"], "readwrite");
+
+      partie.versionSuivante = partie.version + 1;
+
       let objectStore = transaction.objectStore("versions");
-      objectStore.add(partie)
 
-      partie.versionPrecedante = partie.version;
-      partie.version++;
-      partie.versionSuivante = null;
-      objectStore = transaction.objectStore("partie");
-      const requestUpdate = objectStore.put(partie);
-      requestUpdate.onerror = (event) => {
-        console.log('echec enregistrement');
+      if (partie.versionSuivante > NBRE_HISTORIQUE_MAX) {
+        partie.versionSuivante = 1
+      }
+
+      const requestCount = objectStore.count(partie.version);
+
+      requestCount.onsuccess = (event) => {
+        let requestVersion;
+        if (event.target.result > 0) {
+          requestVersion = objectStore.put(partie)
+        } else {
+          requestVersion = objectStore.add(partie)
+        }
+        requestVersion.onsuccess = (event) => {
+          partie.versionPrecedante = partie.version;
+
+          if (partie.version < NBRE_HISTORIQUE_MAX) {
+            partie.version++;
+          } else {
+            partie.version = 1;
+          }
+
+          partie.versionSuivante = null;
+          objectStore = transaction.objectStore("partie");
+          const requestUpdate = objectStore.put(partie);
+        }
       };
-      requestUpdate.onsuccess = (event) => {
-        console.log('enregistrement');
-      };
-
-
       
     };
 
@@ -1243,7 +1257,7 @@ function nouvellePartie() {
 
     request.onsuccess = (event) => {
       db = event.target.result;
-      const transaction = db.transaction(["partie","versions"], "readwrite");
+      const transaction = db.transaction(["partie", "versions"], "readwrite");
       let objectStore = transaction.objectStore("partie");
       const requestUpdate = objectStore.add(partie);
       requestUpdate.onerror = (event) => {
