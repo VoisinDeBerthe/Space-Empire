@@ -120,7 +120,9 @@ const NBRE_HISTORIQUE_MAX = 6;
 /**
  * Variables globales
  */
-var dataConstruction = [].concat(dataConstructionBase);
+var versionEnCours = 0; // pour stocker la version en cours, comprendre le numéro de la dernière version modifiée
+// cette version permet de bloque le retour en arriere de l'historique (éviter le chevauchement de version)
+//Si tu as toujours pas compris c'est pas la peine d'aller plus loin, ferme se fichier... tu vas te blesser si tu continue de réchéflir...
 
 
 
@@ -192,6 +194,44 @@ request.onupgradeneeded = function (event) {
 
 };
 
+function ctlzy(sens) {
+
+  let request = indexedDB.open(dbName, dbVersion);
+  request.onsuccess = (event) => {
+    let db = event.target.result;
+    const transaction = db.transaction(["versions"], "readonly");
+    let versionCible = partie.versionSuivante;
+    if (sens < 0) {
+      versionCible = partie.versionPrecedante;
+    }
+    let requestVersion = transaction.objectStore("versions").get(versionCible);
+    requestVersion.onsuccess = (event) => {
+      partie = event.target.result;
+      histoTour = partie.histoTour;
+      tour = histoTour[0];
+      document.getElementById("numTour").textContent = "Tour : " + tour.numTour;
+      document.getElementById("nomPartie").textContent = partie.nomPartie;
+      majTechno();
+      calcul(false);
+      //pour revenir sur l'onglet mouvement pour le début du nouveau tour
+      document.getElementById("bt-tab-mouvement").click();
+    }
+
+  }
+  if (partie.versionPrecedante == versionEnCours || partie.versionPrecedante == null) {
+    //désactiver le bouton précédant
+    document.getElementById('ctlz').setAttribute("disabled", "true");
+  } else {
+    document.getElementById('ctlz').removeAttribute("disabled");
+  }
+  if (partie.version == versionEnCours || partie.versionSuivante == null) {
+    //desactiver le bouton suivant
+    document.getElementById('ctly').setAttribute("disabled", "true");
+  } else {
+    document.getElementById('ctly').removeAttribute("disabled");
+  }
+}
+
 
 function enregistrerPartie() {
   if (partie.histoTour[0].numTour > 0) {
@@ -201,17 +241,27 @@ function enregistrerPartie() {
       db = event.target.result;
       const transaction = db.transaction(["partie", "versions"], "readwrite");
 
-      partie.versionSuivante = partie.version + 1;
 
       let objectStore = transaction.objectStore("versions");
-
-      if (partie.versionSuivante > NBRE_HISTORIQUE_MAX) {
-        partie.versionSuivante = 1
-      }
 
       const requestCount = objectStore.count(partie.version);
 
       requestCount.onsuccess = (event) => {
+        partie.versionPrecedante = partie.version;
+        versionEnCours = partie.version;
+        if (partie.version < NBRE_HISTORIQUE_MAX) {
+          partie.version++;
+        } else {
+          partie.version = 1;
+        }
+
+        
+
+        partie.versionSuivante = partie.version + 1;
+        if (partie.versionSuivante > NBRE_HISTORIQUE_MAX) {
+          partie.versionSuivante = 1
+        }
+
         let requestVersion;
         if (event.target.result > 0) {
           requestVersion = objectStore.put(partie)
@@ -219,20 +269,17 @@ function enregistrerPartie() {
           requestVersion = objectStore.add(partie)
         }
         requestVersion.onsuccess = (event) => {
-          partie.versionPrecedante = partie.version;
+          document.getElementById('ctlz').removeAttribute("disabled");
 
-          if (partie.version < NBRE_HISTORIQUE_MAX) {
-            partie.version++;
-          } else {
-            partie.version = 1;
-          }
-
-          partie.versionSuivante = null;
+          document.getElementById('ctly').setAttribute("disabled", "true");
           objectStore = transaction.objectStore("partie");
           const requestUpdate = objectStore.put(partie);
+
+
+
         }
       };
-      
+
     };
 
     request.onerror = (event) => {
@@ -283,7 +330,7 @@ function chargerPartie() {
       let div = document.getElementById("menu-div");
       div.style.display = "none";
       majTechno();
-      calcul();
+      calcul(true);
       //pour revenir sur l'onglet mouvement pour le début du nouveau tour
       document.getElementById("bt-tab-mouvement").click();
     };
@@ -335,7 +382,7 @@ function getListePartie() {
 //Bon ben puisque ça marche on passe aux constructions... même combat
 majTechno();
 majConstrucDispo();
-calcul();
+calcul(true);
 
 /*************************************************************************************************************/
 /* Gestion des onglets
@@ -407,7 +454,7 @@ function modifValeurNum(id, valeur) {
   }
   let nbre = document.getElementById(id);
   nbre.value = parseInt(nbre.textContent) + valeur;
-  calcul();
+  calcul(true);
 }
 
 //appelé par tous les boutons dans le bloc Technologie
@@ -439,7 +486,7 @@ function modifNivTech(idNewLineTech, type) {
       }
   }
 
-  calcul();
+  calcul(true);
 }
 
 function chgNivTech(index, isWreck, boutonAcacher, boutonAafficher, valeur) {
@@ -491,7 +538,7 @@ function modifConstruction(idNewLineConst, type) {
   } else {
     tour.constructionTour[tab[0]]--;
   }
-  calcul();
+  calcul(true);
 }
 
 /**
@@ -510,6 +557,7 @@ function destruction(id) {
   calculEconomie();
   majTabMouvement();
   majConstrucDispo();
+  enregistrerPartie();
 }
 
 /**
@@ -517,14 +565,18 @@ function destruction(id) {
  * j'ai honte de faire du sale comme ça ... mais ... mais ... trop la flemme de faire du propre quand le sale
  * marche si bien ! 
  * Promis si un jour j'ai des problèmes de performances j'acheterai un téléphone plus puissant !
+ * Putain avec l'historisation ça fout la merde... l'occasion de tout refaire  propre
+ * Non je déconne je rajoute un sale bool si c'est faut pas de sauvegarde en base
+ * Pour féter ça je mets même pas d'accolade
  * */
-function calcul() {
+function calcul(bool) {
   calculTechnologie();
   calculConstruction();
   majConstrucDispo();
   calculEconomie();
   majTabMouvement();
-  enregistrerPartie();
+
+  if (bool) enregistrerPartie();
 }
 
 /**
@@ -991,7 +1043,7 @@ function nouveauTour() {
 
   histoTour.splice(0, 0, newTurn);
   tour = newTurn;
-  calcul();
+  calcul(true);
 
   //pour revenir sur l'onglet mouvement pour le début du nouveau tour
   document.getElementById("bt-tab-mouvement").click();
@@ -1065,7 +1117,7 @@ function upgrade() {
     let up = { id: idConstruct, qte: qte, prix: prix }
     tour.upgrade.push(up);
     tour.reportCP -= total;
-    calcul();
+    calcul(true);
   } else {
     alert("Pas assez de report de CP du tour précédant pour payer ce(s) upgrade(s)");
   }
@@ -1100,7 +1152,7 @@ function eraseUpgrade(id) {
 
     }
   }
-  calcul();
+  calcul(true);
 }
 
 
@@ -1268,7 +1320,7 @@ function nouvellePartie() {
         majTechno();
         majConstrucDispo();
 
-        calcul();
+        calcul(true);
 
         document.getElementById("numTour").textContent = "Tour : " + tour.numTour;
         document.getElementById("nomPartie").textContent = partie.nomPartie;
