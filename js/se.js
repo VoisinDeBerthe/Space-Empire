@@ -184,11 +184,11 @@ request.onupgradeneeded = function (event) {
 
   let db = event.target.result;
   if (!db.objectStoreNames.contains('partie')) {
-    // s'il n'y a pas de magasin "books"
-    db.createObjectStore('books', { keyPath: 'nomPartie' }); // créez-le
+    // s'il n'y a pas de magasin "partie"
+    db.createObjectStore('partie', { keyPath: 'nomPartie' }); // créez-le
   }
   if (!db.objectStoreNames.contains('versions')) {
-    // s'il n'y a pas de magasin "books"
+    // s'il n'y a pas de magasin "versions"
     objStore = db.createObjectStore("versions", { keyPath: "version" });
   }
 
@@ -247,13 +247,14 @@ function enregistrerPartie() {
       const requestCount = objectStore.count(partie.version);
 
       requestCount.onsuccess = (event) => {
-        partie.versionPrecedante = partie.version;
-        versionEnCours = partie.version;
+        
         if (partie.version < NBRE_HISTORIQUE_MAX) {
           partie.version++;
         } else {
           partie.version = 1;
         }
+        partie.versionPrecedante = partie.version;
+        versionEnCours = partie.version;
 
         
 
