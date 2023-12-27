@@ -116,7 +116,7 @@ const dataTechnoSecurity = [
  */
 const REPORT_MAX_CP = 30;
 const REPORT_MAX_RP = 30;
-const NBRE_HISTORIQUE_MAX = 6;
+const NBRE_HISTORIQUE_MAX = 100;
 /**
  * Variables globales
  */
@@ -215,21 +215,26 @@ function ctlzy(sens) {
       calcul(false);
       //pour revenir sur l'onglet mouvement pour le début du nouveau tour
       document.getElementById("bt-tab-mouvement").click();
+      if (partie.versionPrecedante == versionEnCours || partie.versionPrecedante == null) {
+        //désactiver le bouton précédant
+        document.getElementById('ctlz').setAttribute("disabled", "true");
+      } else {
+        document.getElementById('ctlz').removeAttribute("disabled");
+      }
+      if (partie.version == versionEnCours || partie.versionSuivante == null) {
+        //desactiver le bouton suivant
+        document.getElementById('ctly').setAttribute("disabled", "true");
+      } else {
+        document.getElementById('ctly').removeAttribute("disabled");
+      }
+      document.getElementById("v2").innerHTML = partie.versionPrecedante + '< ' + partie.version + ' >' +partie.versionSuivante;
+        
+      document.getElementById("v3").innerHTML = versionEnCours;
+
     }
 
   }
-  if (partie.versionPrecedante == versionEnCours || partie.versionPrecedante == null) {
-    //désactiver le bouton précédant
-    document.getElementById('ctlz').setAttribute("disabled", "true");
-  } else {
-    document.getElementById('ctlz').removeAttribute("disabled");
-  }
-  if (partie.version == versionEnCours || partie.versionSuivante == null) {
-    //desactiver le bouton suivant
-    document.getElementById('ctly').setAttribute("disabled", "true");
-  } else {
-    document.getElementById('ctly').removeAttribute("disabled");
-  }
+ 
 }
 
 
@@ -247,17 +252,18 @@ function enregistrerPartie() {
       const requestCount = objectStore.count(partie.version);
 
       requestCount.onsuccess = (event) => {
-        
+        document.getElementById("v").innerHTML = partie.versionPrecedante + '< ' + partie.version + ' >' +partie.versionSuivante;
+        partie.versionPrecedante = partie.version;
         if (partie.version < NBRE_HISTORIQUE_MAX) {
           partie.version++;
         } else {
           partie.version = 1;
         }
-        partie.versionPrecedante = partie.version;
-        versionEnCours = partie.version;
-
         
-
+        versionEnCours = partie.version;
+        document.getElementById("v2").innerHTML = partie.versionPrecedante + '< ' + partie.version + ' >' +partie.versionSuivante;
+        
+        document.getElementById("v3").innerHTML = versionEnCours;
         partie.versionSuivante = partie.version + 1;
         if (partie.versionSuivante > NBRE_HISTORIQUE_MAX) {
           partie.versionSuivante = 1
