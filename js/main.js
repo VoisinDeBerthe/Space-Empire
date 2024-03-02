@@ -91,3 +91,4 @@ window.modifNivTech = modifNivTech
 window.afficherMenu = showMenuUI
 
 window.createHistorique = createHistorique
+

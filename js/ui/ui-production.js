@@ -135,14 +135,14 @@ function addTechnoLineToCollapse(dataTechnoLine) {
     ui.onglet.production.technos.bodyElt.appendChild(newLineTech);
     if (dataTechnoLine.level + 1 == dataTechnoLine.grid.length && dataTechnoLine.researched == 0) {
 
-        gestionNivMax(dataTechnoLine.tech);
+        gestionNivMaxUI(dataTechnoLine.tech);
 
     }
 }
 
 
 //Permet de désactiver les boutons d'une technologie lorsqu'elle est niveau max
-function gestionNivMax(id) {
+export function gestionNivMaxUI(id) {
     console.log(id)
     let boutonPlus = document.getElementById(id + '_plus');
     let boutonMoins = document.getElementById(id + '_moins');
@@ -167,7 +167,7 @@ function gestionNivMax(id) {
  * Supprime toutes les lignes de construction possible dans le collapse de l'onglet production
  */
 export function deleteAllConstructionUI() {
-    let collapse = ui.onglet.production.contructions.collapseElt
+    let collapse = ui.onglet.production.contructions.bodyElt
     while (collapse.firstChild) {
         collapse.removeChild(collapse.lastChild);
     }
@@ -225,7 +225,7 @@ export function addConstructLineToCollapseUI(dataConstructLine, index) {
     label.setAttribute("class", "qte-totale");
     newLineConstruct.appendChild(label);
 
-    ui.onglet.production.contructions.collapseElt.appendChild(newLineConstruct);
+    ui.onglet.production.contructions.bodyElt.appendChild(newLineConstruct);
 
 }
 

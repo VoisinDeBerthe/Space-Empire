@@ -4,7 +4,7 @@ import { addHistoUpgradeHoldDivUI, hideHoldDivUI, hideMenuUI, initDivHoldTechUI,
 import { majTabMouvementUI } from "./ui/ui-mouvement.js";
 import { detruireMetier, eraseUpdateMetier } from "./metier/metier-mouvement.js";
 import { chargerPartieMetier, nouveauTourMetier, nouvellePartieMetier } from "./metier/metier-menu.js";
-import { majBandeauConstructionUI, majBandeauTechnologieUI, majEconomieUI, majTechnoUI } from "./ui/ui-production.js";
+import { gestionNivMaxUI, majBandeauConstructionUI, majBandeauTechnologieUI, majEconomieUI, majTechnoUI } from "./ui/ui-production.js";
 import { deletePartie, getListePartie, getPartie } from "./db.js";
 import { calculConstructionMetier, calculEconomieMetier, calculTechnologieMetier, majConstrucDispoMetier } from "./metier/metier-production.js";
 import { refreshInfoPartieUI } from "./ui/ui.js";
@@ -153,7 +153,7 @@ export function modifNivTech(idNewLineTech, type) {
         chgNivTech(tab[0], true, null, null, 1);
 
         if (tour.dataTechno[tab[0]].grid.length == tour.dataTechno[tab[0]].level + 1) {
-          gestionNivMax(tab[1]);
+          gestionNivMaxUI(tab[1]);
         }
       }
   }
@@ -245,7 +245,7 @@ export function nouvellePartie() {
 
   const nom = ui.menu.nomNewPartie.value;
   if (nom != "") {
-    nouvellePartieMetier().then(() => {
+    nouvellePartieMetier(nom).then(() => {
       hideMenuUI();
       calculEtMajAll();
 
@@ -310,7 +310,7 @@ export function nouveauTour() {
 
 export function ctlzy(sens) {
 
-  let request = indexedDB.open(dbName, dbVersion);
+  let request = indexedDB.open(constante.DB_NAME, constante.DB_VERSION);
   request.onsuccess = (event) => {
     let db = event.target.result;
     const transaction = db.transaction(["versions"], "readonly");
@@ -325,8 +325,8 @@ export function ctlzy(sens) {
       tour = histoTour[0];
       document.getElementById("numTour").textContent = "Tour : " + tour.numTour;
       document.getElementById("nomPartie").textContent = partie.nomPartie;
-      majTechnoUI();
-      calcul(false);
+      majTechnoUI(tour.dataTechno);
+      calculEtMajAll();
       //pour revenir sur l'onglet mouvement pour le début du nouveau tour
       document.getElementById("bt-tab-mouvement").click();
       if (partie.versionPrecedante == versionEnCours || partie.versionPrecedante == null) {
@@ -341,10 +341,6 @@ export function ctlzy(sens) {
       } else {
         document.getElementById('ctly').removeAttribute("disabled");
       }
-      document.getElementById("v2").innerHTML = partie.versionPrecedante + '< ' + partie.version + ' >' + partie.versionSuivante;
-
-      document.getElementById("v3").innerHTML = versionEnCours;
-
     }
 
   }
@@ -466,14 +462,24 @@ function createHistoCell(texte, className) {
 
 
 function calculEtMajAll() {
-  calculEconomieMetier();
-  majEconomieUI(tour);
+
+  
+
   let bandeau = calculConstructionMetier()
   majBandeauConstructionUI(bandeau);
+  majConstrucDispoMetier();
+
   bandeau = calculTechnologieMetier();
   majBandeauTechnologieUI(bandeau);
   majTechnoUI(tour.dataTechno);
+
   refreshInfoPartieUI(partie.nomPartie, tour.numTour);
+  
   majTabMouvementUI(partie, tour);
+
+  //il faut mettre à jour le bandeau économie en dernier pour pouvoir tenir compte de tous le reste
+  calculEconomieMetier();
+  majEconomieUI(tour);
+
 }
 

@@ -88,7 +88,7 @@ function getNiveauTech(tech) {
  */
 export function getHullCapacityMetier() {
 
-    let resultat = tour.constructionTotal[getIdConstruction('SY')];
+    let resultat = tour.constructionTotal[getIdConstructionMetier('SY')];
     switch (getNiveauTech('SY')) {
         case 3:
             resultat = resultat * 2;
@@ -108,7 +108,7 @@ export function getHullCapacityMetier() {
  * @returns 
  */
 export function getHullConstructTurnMetier() {
-    result = 0;
+    let result = 0;
     tour.constructionTour.forEach((qte, i) => {
         result += partie.dataConstruction[i].hull * qte;
     })

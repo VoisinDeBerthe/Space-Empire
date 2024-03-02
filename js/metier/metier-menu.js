@@ -1,5 +1,7 @@
 import "../data.js";
-import { cloneJSON } from "./metier.js";
+import { clearHistorique, saveHistorique, saveNewPartie } from "../db.js";
+import { ui } from "../ui/ui-element.js";
+import { calculMaintenanceMetier, cloneJSON, getIdConstructionMetier } from "./metier.js";
 
 /* ################################# 
         Gestion du Menu
@@ -38,30 +40,21 @@ export function nouvellePartieMetier(nomPartie) {
         initOption();
 
         //constructions de départ :4 Ship Yard, 3 Colony Ship, 3 Scout et 1 Miner
-        tour.constructionTotal[getIdConstruction('SY')] = 4;
-        tour.constructionTotal[getIdConstruction('CO')] = 3;
-        tour.constructionTotal[getIdConstruction('SC')] = 3;
-        tour.constructionTotal[getIdConstruction('Mi')] = 10;
+        tour.constructionTotal[getIdConstructionMetier('SY')] = 4;
+        tour.constructionTotal[getIdConstructionMetier('CO')] = 3;
+        tour.constructionTotal[getIdConstructionMetier('SC')] = 3;
+        tour.constructionTotal[getIdConstructionMetier('Mi')] = 1;
+
+        calculMaintenanceMetier();
 
         //sauvegarde et mise à jour de l'ui
-        saveNewPartie(partie).then(() => {
+        saveNewPartie(partie)
 
-            /*  majConstrucDispo();
-             calcul(true); */
-            refreshInfoPartie();
-        })
         //Création de l'historique
         clearHistorique().then(() => {
             saveHistorique(partie);
         })
-
-        request.onsuccess = (event) => {
-            let db = event.target.result;
-            resolve(db.transaction(tabObjectStore, etat));
-        }
-        request.onerror = (event) => {
-            reject('Erreur IndexDB')
-        }
+        resolve();
     })
 
 
@@ -118,22 +111,22 @@ function initOption() {
     let tailleTech = null;
 
     //parametrage de la partie avec les options avec les checkbox
-    if (ui.menu.avance.pipeline.checked) {
+    if (ui.menu.avance.pipelineElt.checked) {
         ajoutConst(dataConstPipeline, tailleTech);
     }
 
 
-    if (ui.menu.closeEncounter.boarding.checked) {
+    if (ui.menu.closeEncounter.boardingElt.checked) {
         tailleTech = ajoutTech(dataTechnoBoarding);
         ajoutConst(dataConstBoarding, tailleTech);
     }
-    if (ui.menu.avance.raider.checked) {
+    if (ui.menu.avance.raiderElt.checked) {
         tailleTech = ajoutTech(dataTechnoCloaking);
         ajoutConst(dataConstRaider, tailleTech);
 
         tailleTech = ajoutTech(dataTechnoScanner);
     }
-    if (ui.menu.avance.fighter.checked) {
+    if (ui.menu.avance.fighterElt.checked) {
         tailleTech = ajoutTech(dataTechnoFighter);
         ajoutConst(dataConstCarrier, tailleTech);
         ajoutConst(dataConstFighter, tailleTech);
@@ -141,7 +134,7 @@ function initOption() {
         tailleTech = ajoutTech(dataTechnoDefense);
     }
 
-    if (ui.menu.avance.mine.checked) {
+    if (ui.menu.avance.mineElt.checked) {
 
         tailleTech = ajoutTech(dataTechnoMine);
         ajoutConst(dataConstMine, tailleTech);
@@ -150,26 +143,26 @@ function initOption() {
         ajoutConst(dataConstMineSw, tailleTech);
     }
 
-    if (ui.menu.closeEncounter.titan.checked) {
-        let id = getIdConstruction("DN");
+    if (ui.menu.closeEncounter.titanElt.checked) {
+        let id = getIdConstructionMetier("DN");
         partie.dataConstruction.splice(id + 1, 0, [].concat(dataConstTitan)[0]);
 
         tour.dataTechno[0].grid.push([7, 30]);
     }
 
-    if (ui.menu.closeEncounter.harvestNebulae.checked) {
+    if (ui.menu.closeEncounter.harvestNebulaeElt.checked) {
         tour.dataTechno[6].grid.push([2, 25]);
     }
 
-    if (ui.menu.closeEncounter.reactionMouv.checked) {
+    if (ui.menu.closeEncounter.reactionMouvElt.checked) {
         tour.dataTechno[7].grid.push([2, 15]);
     }
 
-    if (ui.menu.closeEncounter.fastBC.checked) {
+    if (ui.menu.closeEncounter.fastBCElt.checked) {
         ajoutTech(dataTechnofastBC);
     }
 
-    if (ui.menu.closeEncounter.infantry.checked) {
+    if (ui.menu.closeEncounter.infantryElt.checked) {
         tailleTech = ajoutTech(dataTechnoSecurity);
         tailleTech = ajoutTech(dataTechnoGround);
 
@@ -240,14 +233,11 @@ export function nouveauTourMetier() {
 
     //Remise à zero des evolutions du tour de technologie
     newTurn.dataTechno.forEach(tech => {
-        if (tech.researched == 1) { // Si la techno a été rechechée sur le tour on refait apparaitre le bouton plus pour le nouveau tour
-            /* document.getElementById(tech.tech + '_plus').removeAttribute("class", "not-visible");
-            document.getElementById(tech.tech + '_moins').setAttribute("class", "not-visible");
-             */
+        if (tech.researched == 1) { 
             tech.researched = 0;
         }
     })
-    
+
     histoTour.splice(0, 0, newTurn);
     tour = newTurn;
 }
