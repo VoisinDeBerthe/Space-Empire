@@ -1,5 +1,12 @@
 
+/* import { DB_NAME, DB_VERSION } from './config/constante.js'; */
 
+import { openDB } from "./idb/build/index.js";
+
+const TEMPLATE_UPGRADE_INSUFFICIENT_CP = '#upgrade_insufficient_cp'
+
+export const DB_NAME = 'se'
+export const DB_VERSION = 10
 
 /************************************************************************************************************/
 /* Variables contenant toutes les données de référence du jeu
@@ -172,14 +179,39 @@ const dbVersion = 13;
 
 //ouverture de la base avec un numéro de version, si la version en paramètre est supperieur à celle existante dans le navigateur
 //ou si il n'y a pas de base alors création
-let request = indexedDB.open(dbName, dbVersion);
+
+// await initIndexDB(DB_NAME, DB_VERSION);
+
+
+const db = await openDB(DB_NAME, DB_VERSION, {
+  upgrade(db) {
+      console.warn("Création base")
+      if (!db.objectStoreNames.contains('partie')) {
+          // s'il n'y a pas de magasin "partie"
+          db.createObjectStore('partie', { keyPath: 'nomPartie' }); // créez-le
+        }
+        if (!db.objectStoreNames.contains('versions')) {
+          // s'il n'y a pas de magasin "versions"
+          var objStore = db.createObjectStore("versions", { keyPath: "version" });
+        }          
+  }
+});
+
+/* let request = indexedDB.open(dbName, dbVersion);
 
 request.onerror = (event) => {
   // Handle errors.
+  console.warn("Base Error")
+};
+
+request.onsuccess = (event) => {
+  // Handle errors.
+  console.warn("Base OK")
 };
 
 //onupgradeneeded est appelé lors d'une création ou d'une mise à jour si nouvelle version
 request.onupgradeneeded = function (event) {
+  console.warn("Création base")
   //Création de la base de données
 
   let db = event.target.result;
@@ -189,10 +221,10 @@ request.onupgradeneeded = function (event) {
   }
   if (!db.objectStoreNames.contains('versions')) {
     // s'il n'y a pas de magasin "versions"
-    objStore = db.createObjectStore("versions", { keyPath: "version" });
+    var objStore = db.createObjectStore("versions", { keyPath: "version" });
   }
 
-};
+}; */
 
 function ctlzy(sens) {
 
@@ -227,14 +259,14 @@ function ctlzy(sens) {
       } else {
         document.getElementById('ctly').removeAttribute("disabled");
       }
-      document.getElementById("v2").innerHTML = partie.versionPrecedante + '< ' + partie.version + ' >' +partie.versionSuivante;
-        
+      document.getElementById("v2").innerHTML = partie.versionPrecedante + '< ' + partie.version + ' >' + partie.versionSuivante;
+
       document.getElementById("v3").innerHTML = versionEnCours;
 
     }
 
   }
- 
+
 }
 
 
@@ -243,7 +275,7 @@ function enregistrerPartie() {
     request = indexedDB.open(dbName, dbVersion);
 
     request.onsuccess = (event) => {
-      db = event.target.result;
+      let db = event.target.result;
       const transaction = db.transaction(["partie", "versions"], "readwrite");
 
 
@@ -252,17 +284,17 @@ function enregistrerPartie() {
       const requestCount = objectStore.count(partie.version);
 
       requestCount.onsuccess = (event) => {
-        document.getElementById("v").innerHTML = partie.versionPrecedante + '< ' + partie.version + ' >' +partie.versionSuivante;
+        document.getElementById("v").innerHTML = partie.versionPrecedante + '< ' + partie.version + ' >' + partie.versionSuivante;
         partie.versionPrecedante = partie.version;
         if (partie.version < NBRE_HISTORIQUE_MAX) {
           partie.version++;
         } else {
           partie.version = 1;
         }
-        
+
         versionEnCours = partie.version;
-        document.getElementById("v2").innerHTML = partie.versionPrecedante + '< ' + partie.version + ' >' +partie.versionSuivante;
-        
+        document.getElementById("v2").innerHTML = partie.versionPrecedante + '< ' + partie.version + ' >' + partie.versionSuivante;
+
         document.getElementById("v3").innerHTML = versionEnCours;
         partie.versionSuivante = partie.version + 1;
         if (partie.versionSuivante > NBRE_HISTORIQUE_MAX) {
@@ -348,17 +380,58 @@ function chargerPartie() {
   }
 };
 
-function getListePartie() {
+
+
+function getObjectStore(store, rights = "readonly", objectName) {
+  
   return new Promise((resolve, reject) => {
-    request = indexedDB.open(dbName, dbVersion);
+    const request = indexedDB.open(dbName, dbVersion);
 
     request.onsuccess = (event) => {
-      db = event.target.result;
+
+      const db = event.target.result;
+
+      const transaction = db.transaction(store, rights );
+      const objectStore = transaction.objectStore(objectName);
+      
+      /* 
+      const requestUpdate = objectStore.getAllKeys();
+
+      requestUpdate.onerror = (event) => {
+        console.log('echec lors du chargement des noms des parties enregistrées');
+        reject();
+      };
+      requestUpdate.onsuccess = (event) => {
+        console.log('Récupération des noms des parties enregistrées');
+        resolve(event.target.result);
+      }; */
+
+      resolve( objectStore );
+    };
+
+    request.onerror = (event) => {
+      reject('Echec ouverture base.');
+    }
+
+  })
+}
+
+
+
+async function getListePartie() {
+  return new Promise((resolve, reject) => {
+    let request = indexedDB.open(dbName, dbVersion);
+
+    request.onsuccess = (event) => {
+
+      const db = event.target.result;
       const transaction = db.transaction(["partie"], "readonly");
       const objectStore = transaction.objectStore("partie");
       const requestUpdate = objectStore.getAllKeys();
+
       requestUpdate.onerror = (event) => {
         console.log('echec lors du chargement des noms des parties enregistrées');
+        reject();
       };
       requestUpdate.onsuccess = (event) => {
         console.log('Récupération des noms des parties enregistrées');
@@ -857,7 +930,7 @@ function majConstrucDispo() {
       construct.setAttribute("class", "libelle");
       newLineConstruct.appendChild(construct);
 
-      button = createButton(el.construction + "_moins", "bt-moins btn-small", "fa-solid fa-minus");
+      let button = createButton(el.construction + "_moins", "bt-moins btn-small", "fa-solid fa-minus");
       button.addEventListener('click', function () { modifConstruction(idNewLineConstruct, 'moins') });
       if (tour.constructionTour[i] == 0) {
         button.setAttribute("disabled", true);
@@ -872,7 +945,7 @@ function majConstrucDispo() {
       }
       newLineConstruct.appendChild(button);
 
-      label = document.createElement("label");
+      let label = document.createElement("label");
       label.textContent = tour.constructionTour[i];
       label.setAttribute("id", el.construction + "_enCours_" + i);
       label.setAttribute("class", "qte-courante");
@@ -1126,8 +1199,28 @@ function upgrade() {
     tour.reportCP -= total;
     calcul(true);
   } else {
-    alert("Pas assez de report de CP du tour précédant pour payer ce(s) upgrade(s)");
+
+
+    showDialog(TEMPLATE_UPGRADE_INSUFFICIENT_CP)
+    // alert("Pas assez de report de CP du tour précédant pour payer ce(s) upgrade(s)");
   }
+}
+
+function showDialog(templateId) {
+  dialog.innerHTML = ''
+  dialog.appendChild(getDialogContent(templateId));
+  dialog.showModal();
+
+}
+
+function getDialogContent(templateId = null) {
+  const template = document.querySelector(templateId);
+
+  if (!template || template.nodeName !== 'TEMPLATE') return 'No content found!';
+
+  console.log(template)
+
+  return template.content.cloneNode(true);
 }
 
 
@@ -1165,7 +1258,7 @@ function eraseUpgrade(id) {
 
 const entries = performance.getEntriesByType("navigation");
 entries.forEach((entry) => {
-  if (entry.type === "reload") {
+  if (entry.type === "reload" || entry.type === "navigate") {
     afficherMenu();
   }
 });
@@ -1312,10 +1405,12 @@ function nouvellePartie() {
     tour.constructionTotal[getIdConstruction('SC')] = 3;
     tour.constructionTotal[getIdConstruction('Mi')] = 1;
 
-    request = indexedDB.open(dbName, dbVersion);
+    calculMaintenance();
+
+    let request = indexedDB.open(dbName, dbVersion);
 
     request.onsuccess = (event) => {
-      db = event.target.result;
+      let db = event.target.result;
       const transaction = db.transaction(["partie", "versions"], "readwrite");
       let objectStore = transaction.objectStore("partie");
       const requestUpdate = objectStore.add(partie);
@@ -1332,6 +1427,7 @@ function nouvellePartie() {
         document.getElementById("numTour").textContent = "Tour : " + tour.numTour;
         document.getElementById("nomPartie").textContent = partie.nomPartie;
       };
+      
 
       objectStore = transaction.objectStore("versions");
       objectStore.clear();
@@ -1549,3 +1645,12 @@ function createHistoCell(texte, className) {
 }
 
 
+/* ************************************************************************************* 
+Raccrochage des fucntions au scope window. Nécessaire à cause de la modularisation du js
+qui limite la portée des éléments au script.
+*                           ***************                                              */
+
+window.ctlzy = ctlzy
+window.afficherMenu = afficherMenu
+window.nouvellePartie = nouvellePartie
+window.nouveauTour = nouveauTour

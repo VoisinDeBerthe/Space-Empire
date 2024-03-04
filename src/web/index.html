@@ -12,6 +12,8 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
   <link rel="stylesheet" href="css/reset.css">
   <link rel="stylesheet" href="css/se.css">
+  <link rel="stylesheet" href="css/update.css">
+
 
 </head>
 
@@ -19,7 +21,7 @@
 
   <div id="hold-div" class="modal">
     <div class="modal-menu" id="hold-tech">
- 
+
     </div>
   </div>
   <div class="modal" id="menu-div">
@@ -61,16 +63,16 @@
             <div class="gauche"><label for="reaction-move">Reaction Move</label></div>
             <div class="droite"><input type="checkbox" id="fast-bc" value="fast-bc" /></div>
             <div class="gauche"><label for="fast-bc">Fast BC</label></div>
-            <div class="droite"><input type="checkbox" id="academy" value="academy" disabled/></div>
+            <div class="droite"><input type="checkbox" id="academy" value="academy" disabled /></div>
             <div class="gauche"><label for="academy">Military Academy</label></div>
-            <div class="droite"><input type="checkbox" id="research" value="research" disabled/></div>
+            <div class="droite"><input type="checkbox" id="research" value="research" disabled /></div>
             <div class="gauche"><label for="research">Research & Industrial</label></div>
           </div>
         </fieldset>
         <fieldset>
           <legend>Replicator</legend>
           <div class="parametrage">
-            <div class="droite"><input type="checkbox" id="const-avancees" value="const-avancees" disabled/></div>
+            <div class="droite"><input type="checkbox" id="const-avancees" value="const-avancees" disabled /></div>
             <div class="gauche"><label for="const-avancees">Advanced Con.</label></div>
 
             <div class="droite"><input type="checkbox" id="anti-replica" value="anti-replica" disabled /></div>
@@ -85,12 +87,14 @@
         <button onclick="nouvellePartie()" class="btn-grad"><i class="fa-solid fa-dice-d20"> </i></button>
       </div>
     </div>
-   
+
   </div>
 
   <div class="container">
+
+    <label id="nomPartie">Space Empire 4X V0.1</label>
+
     <div class="top_bar">
-      <label id="nomPartie">Space Empire 4X V0.1</label>
       <label id="numTour">1</label>
       <button onclick="nouveauTour();" class="btn-grad">Nouveau Tour
         <i class="fa-solid fa-plus"></i>
@@ -258,8 +262,35 @@
       </div>
     </div>
     <label id="v"></label><br><label id="v2"></label><br><label id="v3"></label>
-    <script src="https://kit.fontawesome.com/49fa35a961.js" crossorigin="anonymous"></script>
-    <script src="js/se.js"></script>
+
+
+
+    <!-- Dialog -->
+
+    <dialog id="dialog">
+
+    </dialog>
+
+    <template id="upgrade_insufficient_cp">
+      <h1>Attention !</h1>
+      <div id="content">
+        Pas assez de report de CP du tour précédant pour payer ce(s) upgrade(s)
+        <input type="range" name="" id="">
+      </div>
+    </template>
+
+    <template id="new_turn">
+      <h1>Voulez vous </h1>
+      <div id="content">
+        Pas assez de report de CP du tour précédant pour payer ce(s) upgrade(s)
+        <input type="range" name="" id="">
+      </div>
+    </template>
+
+
 </body>
+<script src="https://kit.fontawesome.com/49fa35a961.js" crossorigin="anonymous"></script>
+<!-- <script src="js/main.js" type="module"></script> -->
+<script src="js/se.js" type="module"></script>
 
 </html>
